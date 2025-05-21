@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Produtos - Pet Shop Baronesa</title>
+    <meta name="description" content="Confira nosso catálogo completo de produtos para seu pet. Rações, acessórios, brinquedos e muito mais!">
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <div id="header"></div>
+
+    <!-- Conteúdo Principal -->
+    <main>
+        <section class="section">
+            <div class="container">
+                <h1 class="page-title">Catálogo de Produtos</h1>
+                
+                <div class="catalog-layout">
+                    <!-- Filtros - Sidebar -->
+                    <aside class="catalog-sidebar">
+                        <div class="filter-card">
+                            <div class="filter-header">
+                                <i class="fas fa-filter"></i>
+                                <h2>Filtros</h2>
+                            </div>
+                            
+                            <div class="filter-section">
+                                <h3>Categorias</h3>
+                                <div class="filter-options">
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="category" value="cachorros">
+                                        <span>Cachorros</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="category" value="gatos">
+                                        <span>Gatos</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="category" value="passaros">
+                                        <span>Pássaros</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="category" value="outros">
+                                        <span>Outros Pets</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-section">
+                                <h3>Preço</h3>
+                                <div class="filter-options">
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="0-50">
+                                        <span>Até R$ 50</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="50-100">
+                                        <span>R$ 50 a R$ 100</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="100-150">
+                                        <span>R$ 100 a R$ 150</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="price" value="150+">
+                                        <span>Acima de R$ 150</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-section">
+                                <h3>Tipo de Produto</h3>
+                                <div class="filter-options">
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="type" value="alimentacao">
+                                        <span>Alimentação</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="type" value="acessorios">
+                                        <span>Acessórios</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="type" value="higiene">
+                                        <span>Higiene</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" name="type" value="brinquedos">
+                                        <span>Brinquedos</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button class="btn-primary btn-block">Aplicar Filtros</button>
+                        </div>
+                    </aside>
+                    
+                    <!-- Lista de Produtos -->
+                    <div class="catalog-products">
+                        <div class="products-grid">
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/CaoGoldenRacao.jpg" alt="Ração Golden Special">
+                                    <div class="product-category">Cachorros</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Ração Golden Special para Cães Adultos</h3>
+                                    <p>Ração premium para cães adultos de porte médio. Embalagem de 15kg - Sabor Frango e Carne.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 149,90</span>
+                                        <a href="catalogo.html?produto=racao-golden-special-caes-adultos" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/gatoCastradoRacao.jpg" alt="Ração Premium para Gatos Castrados">
+                                    <div class="product-category">Gatos</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Ração Premium para Gatos Castrados</h3>
+                                    <p>Ração premium para gatos castrados com controle de peso. Embalagem de 10kg.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 129,90</span>
+                                        <a href="catalogo.html?produto=racao-premium-gatos-castrados" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/camaCachorroPequeno.jpg" alt="Cama para Cães Pequenos">
+                                    <div class="product-category">Cachorros</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Cama para Cães Pequenos</h3>
+                                    <p>Cama confortável para cães de pequeno porte. Tecido lavável e macio.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 89,90</span>
+                                        <a href="catalogo.html?produto=cama-caes-pequenos" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/brinquedosGatos.jpeg" alt="Kit Brinquedos para Gatos">
+                                    <div class="product-category">Gatos</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Kit Brinquedos para Gatos</h3>
+                                    <p>Conjunto com 5 brinquedos sortidos para gatos. Estimula o instinto de caça.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 59,90</span>
+                                        <a href="catalogo.html?produto=kit-brinquedos-gatos" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/coleiraAntiPulga.jpg" alt="Coleira Antipulgas para Cães">
+                                    <div class="product-category">Cachorros</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Coleira Antipulgas para Cães</h3>
+                                    <p>Coleira antipulgas e carrapatos para cães. Proteção por até 6 meses.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 69,90</span>
+                                        <a href="catalogo.html?produto=coleira-antipulgas-caes" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/areiaGato.png" alt="Areia Higiênica para Gatos">
+                                    <div class="product-category">Gatos</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Areia Higiênica para Gatos</h3>
+                                    <p>Areia higiênica de granulado fino para gatos. Pacote com 12kg.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 39,90</span>
+                                        <a href="catalogo.html?produto=areia-higienica-gatos" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/misturaParaPassaros.webp" alt="Ração para Pássaros">
+                                    <div class="product-category">Pássaros</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Ração para Pássaros</h3>
+                                    <p>Mistura de sementes para pássaros pequenos. Embalagem de 5kg.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 45,90</span>
+                                        <a href="catalogo.html?produto=racao-passaros" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/gaiolaHamster.webp" alt="Gaiola para Hamster">
+                                    <div class="product-category">Outros Pets</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Gaiola para Hamster</h3>
+                                    <p>Gaiola completa para hamster com acessórios. Tamanho médio.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 119,90</span>
+                                        <a href="catalogo.html?produto=gaiola-hamster" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="/assets/images/shampooCaes.webp" alt="Shampoo para Cães">
+                                    <div class="product-category">Cachorros</div>
+                                </div>
+                                <div class="product-info">
+                                    <h3>Shampoo para Cães</h3>
+                                    <p>Shampoo hipoalergênico para cães com pele sensível. Frasco de 500ml.</p>
+                                    <div class="product-footer">
+                                        <span class="product-price">R$ 29,90</span>
+                                        <a href="catalogo.html?produto=shampoo-caes" class="read-more">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé -->
+    <div id="footer"></div>
+
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+</body>
+</html>

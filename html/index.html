@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Shop Baronesa - Cuidando do seu pet com amor</title>
+    <meta name="description" content="Pet Shop Baronesa - Produtos e serviços para seu pet com todo carinho que ele merece">
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <div id="header"></div>
+
+    <!-- Conteúdo Principal -->
+    <main>
+        <!-- Banner Carrossel -->
+        <section class="section">
+            <div class="container">
+                <div class="carousel-container">
+                    <div class="carousel" id="mainCarousel">
+                        <div class="carousel-slide active">
+                            <img src="/assets/images/CachorroPoteDesconto.jpg" alt="Promoção de ração">
+                            <div class="carousel-caption">
+                                <div class="caption-box">
+                                    <h2>Desconto especial na Ração Golden até domingo!</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="/assets/images/goldenBanhoDesconto.jpg" alt="Banho e tosa">
+                            <div class="carousel-caption">
+                                <div class="caption-box">
+                                    <h2>Banho & Tosa com 20% de desconto às quartas-feiras!</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="/assets/images/gatoCasinha.png" alt="Acessórios para pets">
+                            <div class="carousel-caption">
+                                <div class="caption-box">
+                                    <h2>Novos acessórios para seu pet chegaram!</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botões de navegação -->
+                    <button class="carousel-btn prev" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-btn next" id="nextBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    
+                    <!-- Indicadores -->
+                    <div class="carousel-indicators" id="carouselIndicators">
+                        <button class="indicator active" data-slide="0"></button>
+                        <button class="indicator" data-slide="1"></button>
+                        <button class="indicator" data-slide="2"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categorias -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Categorias</h2>
+                <div class="categories-grid">
+                    <a href="catalogo.html?categoria=cachorros" class="category-card bg-lime">
+                        <div class="category-icon">
+                            <i class="fas fa-dog"></i>
+                        </div>
+                        <h3>Cachorros</h3>
+                    </a>
+                    <a href="catalogo.html?categoria=gatos" class="category-card bg-blue">
+                        <div class="category-icon">
+                            <i class="fas fa-cat"></i>
+                        </div>
+                        <h3>Gatos</h3>
+                    </a>
+                    <a href="catalogo.html?categoria=passaros" class="category-card bg-teal">
+                        <div class="category-icon">
+                            <i class="fas fa-dove"></i>
+                        </div>
+                        <h3>Pássaros</h3>
+                    </a>
+                    <a href="catalogo.html?categoria=outros" class="category-card bg-gray">
+                        <div class="category-icon">
+                            <i class="fas fa-paw"></i>
+                        </div>
+                        <h3>Outros Pets</h3>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Promoções em Destaque -->
+        <section class="section bg-white">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Promoções em Destaque</h2>
+                    <a href="promocoes.html" class="view-all">Ver todas</a>
+                </div>
+                <div class="promotions-grid">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="/assets/images/CaoGoldenRacao.jpg" alt="Ração Golden Special">
+                            <div class="product-tag">Oferta</div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Ração Golden Special para Cães Adultos</h3>
+                            <p>Embalagem de 15kg - Sabor Frango e Carne</p>
+                            <div class="product-price">
+                                <span class="current-price">R$ 149,90</span>
+                                <span class="old-price">R$ 179,90</span>
+                            </div>
+                            <a href="https://wa.me/5511999999999?text=Olá! Gostaria de comprar a Ração Golden Special para Cães Adultos que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="/assets/images/brinquedosGatos.jpeg" alt="Kit Brinquedos para Gatos">
+                            <div class="product-tag">Oferta</div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Kit Brinquedos para Gatos</h3>
+                            <p>Conjunto com 5 brinquedos sortidos</p>
+                            <div class="product-price">
+                                <span class="current-price">R$ 59,90</span>
+                                <span class="old-price">R$ 79,90</span>
+                            </div>
+                            <a href="https://wa.me/5511999999999?text=Olá! Gostaria de comprar o Kit Brinquedos para Gatos que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
+                        </div>
+                    </div>
+                    <div class="product-card bg-beige">
+                        <div class="more-offers">
+                            <h3>Mais ofertas especiais para seu pet</h3>
+                            <a href="promocoes.html" class="btn-secondary">Ver todas as promoções</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Depoimentos -->
+        <section class="section bg-petroleum-light">
+            <div class="container">
+                <h2 class="section-title text-white">O que nossos clientes dizem</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-image">
+                                <img src="/assets/images/pessoaIcone.png" alt="Ana Silva">
+                            </div>
+                            <div class="testimonial-info">
+                                <h3>Ana Silva</h3>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-content">
+                            <p>"Ótimo atendimento, recomendo muito! Meu cachorro sempre volta feliz do banho."</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-image">
+                                <img src="/assets/images/pessoaIcone.png" alt="Carlos Oliveira">
+                            </div>
+                            <div class="testimonial-info">
+                                <h3>Carlos Oliveira</h3>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-content">
+                            <p>"Produtos de qualidade e preços justos. Minha gata adora as rações que compro aqui."</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-image">
+                                <img src="/assets/images/pessoaIcone.png" alt="Mariana Costa">
+                            </div>
+                            <div class="testimonial-info">
+                                <h3>Mariana Costa</h3>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-content">
+                            <p>"Equipe muito atenciosa e cuidadosa com os pets. Recomendo o serviço de banho e tosa."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog / Dicas -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Dicas de Cuidados</h2>
+                    <a href="dicas.html" class="view-all">Ver todas</a>
+                </div>
+                <div class="blog-grid">
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="/assets/images/gatoCastradoRacao.jpg" alt="Ração para gatos castrados">
+                        </div>
+                        <div class="blog-content">
+                            <h3>Qual a melhor ração para gatos castrados?</h3>
+                            <p>Descubra as melhores opções de ração para gatos castrados e como escolher a ideal para seu felino.</p>
+                            <a href="dicas.html?post=melhor-racao-gatos-castrados" class="read-more">Leia mais</a>
+                        </div>
+                    </div>
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="/assets/images/CaoIdoso.png" alt="Cuidados com cães idosos">
+                        </div>
+                        <div class="blog-content">
+                            <h3>Cuidados com cães idosos</h3>
+                            <p>Aprenda como cuidar adequadamente do seu cão na terceira idade e garantir qualidade de vida.</p>
+                            <a href="dicas.html?post=cuidados-caes-idosos" class="read-more">Leia mais</a>
+                        </div>
+                    </div>
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="/assets/images/BanhoGato.jpg" alt="Dicas para dar banho em gatos">
+                        </div>
+                        <div class="blog-content">
+                            <h3>Dicas para dar banho em gatos</h3>
+                            <p>Técnicas e produtos recomendados para tornar o banho do seu gato uma experiência menos estressante.</p>
+                            <a href="dicas.html?post=dicas-banho-gatos" class="read-more">Leia mais</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé -->
+    <div id="footer"></div>
+
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script src="/js/carousel.js"></script>
+</body>
+</html>

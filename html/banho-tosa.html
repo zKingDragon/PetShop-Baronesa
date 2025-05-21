@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banho & Tosa - Pet Shop Baronesa</title>
+    <meta name="description" content="Serviços de banho e tosa para seu pet com profissionais qualificados e produtos de qualidade.">
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <a href="index.html" class="logo">
+                    <div class="logo-circle">
+                        <img src="assets/images/placeholder.png" alt="Pet Shop Baronesa" width="40" height="40">
+                    </div>
+                    <span class="logo-text">Pet Shop Baronesa</span>
+                </a>
+
+                <!-- Menu Desktop -->
+                <nav class="nav-desktop">
+                    <ul>
+                        <li><a href="catalogo.html">Catálogo</a></li>
+                        <li><a href="banho-tosa.html" class="active">Banho & Tosa</a></li>
+                        <li><a href="dicas.html">Dicas</a></li>
+                        <li><a href="promocoes.html">Promoções</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Barra de Busca -->
+                <form class="search-form">
+                    <input type="text" placeholder="Digite o nome de um produto">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+
+                <!-- Botão Cadastre-se -->
+                <a href="cadastro.html" class="btn-primary btn-signup">Cadastre-se</a>
+
+                <!-- Botão Menu Mobile -->
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- Menu Mobile -->
+            <div class="nav-mobile" id="mobileMenu">
+                <form class="search-form-mobile">
+                    <input type="text" placeholder="Digite o nome de um produto">
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+                <nav>
+                    <ul>
+                        <li><a href="catalogo.html">Catálogo</a></li>
+                        <li><a href="banho-tosa.html" class="active">Banho & Tosa</a></li>
+                        <li><a href="dicas.html">Dicas</a></li>
+                        <li><a href="promocoes.html">Promoções</a></li>
+                        <li><a href="cadastro.html" class="btn-primary">Cadastre-se</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main>
+        <section class="section">
+            <div class="container">
+                <div class="page-content">
+                    <h1 class="page-title">Banho & Tosa</h1>
+
+                    <div class="banho-tosa-grid">
+                        <div class="banho-tosa-info">
+                            <div class="banho-tosa-image">
+                                <img src="/assets/images/banhoeETosa.jpg" alt="Banho e tosa">
+                            </div>
+                            <div class="services-card">
+                                <h2>Nossos Serviços</h2>
+                                <ul class="services-list">
+                                    <li>
+                                        <span class="bullet"></span>
+                                        <span>Banho com produtos de qualidade</span>
+                                    </li>
+                                    <li>
+                                        <span class="bullet"></span>
+                                        <span>Tosa higiênica e estética</span>
+                                    </li>
+                                    <li>
+                                        <span class="bullet"></span>
+                                        <span>Hidratação e perfumaria</span>
+                                    </li>
+                                    <li>
+                                        <span class="bullet"></span>
+                                        <span>Corte de unhas</span>
+                                    </li>
+                                    <li>
+                                        <span class="bullet"></span>
+                                        <span>Limpeza de ouvidos</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="appointment-card">
+                            <h2>Agende um Horário</h2>
+                            <form id="appointmentForm" class="appointment-form">
+                                <div class="form-group">
+                                    <label for="petName">Nome do Pet</label>
+                                    <input type="text" id="petName" name="petName" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="petType">Tipo de Pet</label>
+                                    <select id="petType" name="petType" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Cão">Cão</option>
+                                        <option value="Gato">Gato</option>
+                                        <option value="Outro">Outro</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="date">Data</label>
+                                        <div class="input-icon">
+                                            <i class="far fa-calendar"></i>
+                                            <input type="date" id="date" name="date" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="time">Horário</label>
+                                        <div class="input-icon">
+                                            <i class="far fa-clock"></i>
+                                            <input type="time" id="time" name="time" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ownerName">Seu Nome</label>
+                                    <input type="text" id="ownerName" name="ownerName" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="phone">Telefone</label>
+                                    <input type="tel" id="phone" name="phone" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="notes">Observações (opcional)</label>
+                                    <textarea id="notes" name="notes" rows="3"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn-primary btn-block">Agendar via WhatsApp</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="faq-card">
+                        <h2>Perguntas Frequentes</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Quanto tempo dura o banho e tosa?</h3>
+                                <p>O tempo médio é de 2 a 3 horas, dependendo do tamanho, raça e condição do pelo do pet.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Preciso trazer algo para o banho do meu pet?</h3>
+                                <p>Não é necessário. Temos todos os produtos e equipamentos necessários para o banho e tosa.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Vocês atendem todas as raças?</h3>
+                                <p>Sim, atendemos cães e gatos de todas as raças e tamanhos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+<div id="footer"></div>
+
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script src="/js/forms.js"></script>
+</body>
+</html>
