@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Carrega o header.html e insere no elemento com id="header"
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("header.html")
+  fetch("html/header.html")
     .then(res => res.text())
     .then(data => {
       document.getElementById("header").innerHTML = data;
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Carrega o header.html e insere no elemento com id="header"
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("footer.html")
+  fetch("html/footer.html")
     .then(res => res.text())
     .then(data => {
       document.getElementById("footer").innerHTML = data;
