@@ -1265,7 +1265,6 @@ main {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
 /* Cadastro */
 .cadastro-grid {
   display: grid;
@@ -1283,7 +1282,7 @@ main {
 .cadastro-form-card {
   background-color: var(--white);
   border-radius: var(--border-radius);
-  padding: 1.5rem;
+  padding: 2rem; /* Increased padding for larger form area */
   box-shadow: var(--box-shadow);
 }
 
@@ -1298,6 +1297,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
 }
 
 .toggle-password {
