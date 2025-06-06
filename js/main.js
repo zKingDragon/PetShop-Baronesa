@@ -53,3 +53,40 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("footer").innerHTML = data;
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  initMobileMenu()
+  updateCurrentYear()
+})
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("../html/header.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+    });
+});
+// ...existing code...
+// Carrega o header.html e insere no elemento com id="header"
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("../html/header.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+      initMobileMenu(); // <-- Chame aqui, após inserir o header!
+    });
+});
+
+// Carrega o footer normalmente
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("../html/footer.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("footer").innerHTML = data;
+    });
+});
+
+// Atualiza o ano após o DOM estar pronto
+document.addEventListener("DOMContentLoaded", () => {
+  updateCurrentYear();
+});
+// ...existing code...
