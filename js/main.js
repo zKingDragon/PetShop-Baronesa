@@ -65,28 +65,28 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("header").innerHTML = data;
     });
 });
-// ...existing code...
+
 // Carrega o header.html e insere no elemento com id="header"
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("../html/header.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("header").innerHTML = data;
-      initMobileMenu(); // <-- Chame aqui, após inserir o header!
-    });
-});
+
 
 // Carrega o footer normalmente
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("../html/footer.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("footer").innerHTML = data;
-    });
+document.addEventListener("DOMContentLoaded", function () {
+  const includes = document.querySelectorAll("include[src]");
+  includes.forEach(async function (el) {
+    const src = el.getAttribute("src");
+    try {
+      const response = await fetch(src);
+      if (!response.ok) throw new Error("Erro ao carregar " + src);
+      const content = await response.text();
+      el.outerHTML = content;
+    } catch (error) {
+      console.error("Erro ao incluir:", error);
+    }
+  });
 });
+
 
 // Atualiza o ano após o DOM estar pronto
 document.addEventListener("DOMContentLoaded", () => {
   updateCurrentYear();
 });
-// ...existing code...
