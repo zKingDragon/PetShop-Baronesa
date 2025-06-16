@@ -66,26 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Carrega o header.html e insere no elemento com id="header"
-
-
-// Carrega o footer normalmente
-document.addEventListener("DOMContentLoaded", function () {
-  const includes = document.querySelectorAll("include[src]");
-  includes.forEach(async function (el) {
-    const src = el.getAttribute("src");
-    try {
-      const response = await fetch(src);
-      if (!response.ok) throw new Error("Erro ao carregar " + src);
-      const content = await response.text();
-      el.outerHTML = content;
-    } catch (error) {
-      console.error("Erro ao incluir:", error);
-    }
-  });
-});
-
-
 // Atualiza o ano após o DOM estar pronto
 document.addEventListener("DOMContentLoaded", () => {
   updateCurrentYear();
