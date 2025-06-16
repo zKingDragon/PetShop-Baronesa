@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateCurrentYear();
 
   // Carrega o header
-  fetch("html/header.html")
+  fetch("header.html")
     .then(res => res.text())
     .then(data => {
       const header = document.getElementById("header");
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   // Carrega o footer
-  fetch("html/footer.html")
+  fetch("footer.html")
     .then(res => res.text())
     .then(data => {
       const footer = document.getElementById("footer");

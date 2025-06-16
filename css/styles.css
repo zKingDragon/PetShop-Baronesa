@@ -1019,10 +1019,10 @@ main {
 }
 
 .banho-tosa-image {
-  height: 16rem;
+  height: 18rem;
   border-radius: var(--border-radius);
   overflow: hidden;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .banho-tosa-image img {
