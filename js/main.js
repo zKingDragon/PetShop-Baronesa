@@ -1,16 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Inicializa menu mobile
-  initMobileMenu();
-
-  // Atualiza o ano atual no rodapé
-  updateCurrentYear();
-
   // Carrega o header
   fetch("header.html")
     .then(res => res.text())
     .then(data => {
       const header = document.getElementById("header");
-      if (header) header.innerHTML = data;
+      if (header) {
+        header.innerHTML = data;
+        initMobileMenu(); // Inicializa o menu mobile após carregar o header
+      }
     });
 
   // Carrega o footer
@@ -20,24 +17,39 @@ document.addEventListener("DOMContentLoaded", () => {
       const footer = document.getElementById("footer");
       if (footer) footer.innerHTML = data;
     });
+
+  // Atualiza o ano atual no rodapé
+  updateCurrentYear();
+
+  // Ajusta visibilidade do texto da logo
+  ensureLogoTextVisible();
 });
 
 function initMobileMenu() {
   const menuToggle = document.getElementById("menuToggle");
   const mobileMenu = document.getElementById("mobileMenu");
 
-  if (menuToggle && mobileMenu) {
-    menuToggle.addEventListener("click", () => {
-      mobileMenu.classList.toggle("active");
-
-      const icon = menuToggle.querySelector("i");
-      if (icon.classList.contains("fa-bars")) {
-        icon.classList.replace("fa-bars", "fa-times");
-      } else {
-        icon.classList.replace("fa-times", "fa-bars");
-      }
-    });
+  if (!menuToggle) {
+    console.error("Elemento menuToggle não encontrado.");
+    return;
   }
+
+  if (!mobileMenu) {
+    console.error("Elemento mobileMenu não encontrado.");
+    return;
+  }
+
+  menuToggle.addEventListener("click", () => {
+    // Alterna a classe 'active' no menu mobile
+    mobileMenu.classList.toggle("active");
+
+    // Alterna o ícone entre 'fa-bars' e 'fa-times'
+    const icon = menuToggle.querySelector("i");
+    if (icon) {
+      icon.classList.toggle("fa-bars");
+      icon.classList.toggle("fa-times");
+    }
+  });
 }
 
 function updateCurrentYear() {
@@ -47,4 +59,11 @@ function updateCurrentYear() {
   yearElements.forEach(element => {
     element.textContent = currentYear;
   });
+}
+
+function ensureLogoTextVisible() {
+  const logoText = document.querySelector(".logo-text");
+  if (logoText) {
+    logoText.style.display = "inline"; // Garante que o texto da logo esteja visível
+  }
 }
