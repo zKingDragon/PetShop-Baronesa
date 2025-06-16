@@ -19,6 +19,23 @@
             <div class="container">
                 <h1 class="page-title">Catálogo de Produtos</h1>
                 
+                <!-- Botão de filtro mobile -->
+                <div class="filter-mobile-toggle">
+                    <button id="filterToggleBtn" class="btn-secondary">
+                        <i class="fas fa-filter"></i> Mostrar Filtros
+                    </button>
+                </div>
+                
+                <!-- Filtros ativos -->
+                <div id="activeFilters" class="active-filters">
+                    <!-- Filtros ativos serão inseridos aqui via JavaScript -->
+                </div>
+                
+                <!-- Contador de produtos -->
+                <div class="product-counter">
+                    <span id="productCounter">0</span> produtos encontrados
+                </div>
+                
                 <div class="catalog-layout">
                     <!-- Filtros - Sidebar -->
                     <aside class="catalog-sidebar">
@@ -32,19 +49,19 @@
                                 <h3>Categorias</h3>
                                 <div class="filter-options">
                                     <label class="filter-option">
-                                        <input type="checkbox" name="category" value="cachorros">
+                                        <input type="checkbox" name="category" value="Cachorros">
                                         <span>Cachorros</span>
                                     </label>
                                     <label class="filter-option">
-                                        <input type="checkbox" name="category" value="gatos">
+                                        <input type="checkbox" name="category" value="Gatos">
                                         <span>Gatos</span>
                                     </label>
                                     <label class="filter-option">
-                                        <input type="checkbox" name="category" value="passaros">
+                                        <input type="checkbox" name="category" value="Pássaros">
                                         <span>Pássaros</span>
                                     </label>
                                     <label class="filter-option">
-                                        <input type="checkbox" name="category" value="outros">
+                                        <input type="checkbox" name="category" value="Outros Pets">
                                         <span>Outros Pets</span>
                                     </label>
                                 </div>
@@ -76,164 +93,35 @@
                                 <h3>Tipo de Produto</h3>
                                 <div class="filter-options">
                                     <label class="filter-option">
-                                        <input type="checkbox" name="type" value="alimentacao">
+                                        <input type="checkbox" name="type" value="Alimentação">
                                         <span>Alimentação</span>
                                     </label>
                                     <label class="filter-option">
-                                        <input type="checkbox" name="type" value="acessorios">
+                                        <input type="checkbox" name="type" value="Acessórios">
                                         <span>Acessórios</span>
                                     </label>
                                     <label class="filter-option">
-                                        <input type="checkbox" name="type" value="higiene">
+                                        <input type="checkbox" name="type" value="Higiene">
                                         <span>Higiene</span>
                                     </label>
                                     <label class="filter-option">
-                                        <input type="checkbox" name="type" value="brinquedos">
+                                        <input type="checkbox" name="type" value="Brinquedos">
                                         <span>Brinquedos</span>
                                     </label>
                                 </div>
                             </div>
                             
-                            <button class="btn-primary btn-block">Aplicar Filtros</button>
+                            <button id="clearFiltersBtn" class="btn-secondary btn-block">Limpar Filtros</button>
                         </div>
                     </aside>
-                    
+
                     <!-- Lista de Produtos -->
                     <div class="catalog-products">
                         <div class="products-grid">
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/cachorroGoldenRacao.jpg" alt="Ração Golden Special">
-                                    <div class="product-category">Cachorros</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Ração Golden Special para Cães Adultos</h3>
-                                    <p>Ração premium para cães adultos de porte médio. Embalagem de 15kg - Sabor Frango e Carne.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 149,90</span>
-                                        <a href="catalogo.html?produto=racao-golden-special-caes-adultos" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/gatoCastradoRacao.jpg" alt="Ração Premium para Gatos Castrados">
-                                    <div class="product-category">Gatos</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Ração Premium para Gatos Castrados</h3>
-                                    <p>Ração premium para gatos castrados com controle de peso. Embalagem de 10kg.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 129,90</span>
-                                        <a href="catalogo.html?produto=racao-premium-gatos-castrados" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/camaCachorroPequeno.jpg" alt="Cama para Cães Pequenos">
-                                    <div class="product-category">Cachorros</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Cama para Cães Pequenos</h3>
-                                    <p>Cama confortável para cães de pequeno porte. Tecido lavável e macio.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 89,90</span>
-                                        <a href="catalogo.html?produto=cama-caes-pequenos" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/brinquedosGatos.jpeg" alt="Kit Brinquedos para Gatos">
-                                    <div class="product-category">Gatos</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Kit Brinquedos para Gatos</h3>
-                                    <p>Conjunto com 5 brinquedos sortidos para gatos. Estimula o instinto de caça.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 59,90</span>
-                                        <a href="catalogo.html?produto=kit-brinquedos-gatos" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/coleiraAntiPulga.jpg" alt="Coleira Antipulgas para Cães">
-                                    <div class="product-category">Cachorros</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Coleira Antipulgas para Cães</h3>
-                                    <p>Coleira antipulgas e carrapatos para cães. Proteção por até 6 meses.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 69,90</span>
-                                        <a href="catalogo.html?produto=coleira-antipulgas-caes" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/areiaGato.png" alt="Areia Higiênica para Gatos">
-                                    <div class="product-category">Gatos</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Areia Higiênica para Gatos</h3>
-                                    <p>Areia higiênica de granulado fino para gatos. Pacote com 12kg.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 39,90</span>
-                                        <a href="catalogo.html?produto=areia-higienica-gatos" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/misturaParaPassaros.webp" alt="Ração para Pássaros">
-                                    <div class="product-category">Pássaros</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Ração para Pássaros</h3>
-                                    <p>Mistura de sementes para pássaros pequenos. Embalagem de 5kg.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 45,90</span>
-                                        <a href="catalogo.html?produto=racao-passaros" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/gaiolaHamster.webp" alt="Gaiola para Hamster">
-                                    <div class="product-category">Outros Pets</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Gaiola para Hamster</h3>
-                                    <p>Gaiola completa para hamster com acessórios. Tamanho médio.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 119,90</span>
-                                        <a href="catalogo.html?produto=gaiola-hamster" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/produtos/shampooCaes.webp" alt="Shampoo para Cães">
-                                    <div class="product-category">Cachorros</div>
-                                </div>
-                                <div class="product-info">
-                                    <h3>Shampoo para Cães</h3>
-                                    <p>Shampoo hipoalergênico para cães com pele sensível. Frasco de 500ml.</p>
-                                    <div class="product-footer">
-                                        <span class="product-price">R$ 29,90</span>
-                                        <a href="catalogo.html?produto=shampoo-caes" class="read-more">Ver detalhes</a>
-                                    </div>
-                                </div>
+                            <!-- Os produtos serão inseridos aqui via JavaScript -->
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Carregando produtos...</span>
                             </div>
                         </div>
                     </div>
@@ -243,9 +131,80 @@
     </main>
 
     <!-- Rodapé -->
-    <div id="footer"></div>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Localização -->
+                <div class="footer-column">
+                    <h3>Localização</h3>
+                    <div class="address">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Av. Padre Leonardo Nunes, 1182, Peruíbe, SP, Brazil</p>
+                    </div>
+                    <div class="map-container">
+                        <iframe 
+                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3645.4975616023347!2d-46.9981848!3d-23.9760286!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d1d398b258d8b3%3A0x934e98c6e60a8048!2sAv.%20Padre%20Leonardo%20Nunes%2C%201182%20-%20Jardim%20Ribamar%2C%20Peru%C3%ADbe%20-%20SP%2C%2011750-000!5e0!3m2!1spt-BR!2sbr!4v1715815200000!5m2!1spt-BR!2sbr"
+                          width="100%" 
+                          height="100%" 
+                          style="border:0;" 
+                          allowfullscreen="" 
+                          loading="lazy" 
+                          referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- Horário de Atendimento -->
+                <div class="footer-column">
+                    <h3>Horário de Atendimento</h3>
+                    <div class="hours">
+                        <i class="far fa-clock"></i>
+                        <div>
+                            <p>Segunda a Sábado: 08h às 18h30</p>
+                            <p>Domingo: Fechado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Links Rápidos -->
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul class="quick-links">
+                        <li><a href="catalogo.html">Catálogo</a></li>
+                        <li><a href="banho-tosa.html">Banho & Tosa</a></li>
+                        <li><a href="dicas.html">Dicas</a></li>
+                        <li><a href="promocoes.html">Promoções</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contato -->
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <div class="contact-phone">
+                        <i class="fas fa-phone"></i>
+                        <a href="https://wa.me/5513996825624">(13) 99682-5624</a>
+                    </div>
+                    <div class="social-icons">
+                        <a href="https://www.instagram.com/petbaronesa/" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/baronesa.petshop?locale=pt_BR" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>Cuidando do seu pet com amor desde 2015 🐾</p>
+                <p class="copyright">© <span id="currentYear"></span> Pet Shop Baronesa. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/catalog.js"></script>
 </body>
 </html>
