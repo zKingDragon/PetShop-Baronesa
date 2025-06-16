@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateCurrentYear()
 })
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("../html/header.html")
+  fetch("/html/header.html")
     .then(res => res.text())
     .then(data => {
       document.getElementById("header").innerHTML = data;
