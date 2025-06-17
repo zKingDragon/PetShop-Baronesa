@@ -1,6 +1,6 @@
 /**
  * Sistema de catálogo para o Pet Shop Baronesa
- * Este módulo gerencia filtros, busca e exibição de produtos
+ * Este módulo gerencia filtros, busca e exibição de produtos usando Firebase Firestore
  */
 
 // Elementos DOM
@@ -16,7 +16,11 @@ const productCounter = document.getElementById("productCounter")
 const filterToggleBtn = document.getElementById("filterToggleBtn")
 const catalogSidebar = document.querySelector(".catalog-sidebar")
 
-// Dados dos produtos (em um sistema real, isso viria do backend)
+// Services
+let productsService
+let authService
+
+// Data
 let allProducts = []
 let filteredProducts = []
 
@@ -28,39 +32,300 @@ const filterState = {
   search: "",
 }
 
+// Loading state
+let isLoading = false
+
+/**
+ * Inicializa os serviços Firebase
+ */
+async function initializeServices() {
+  try {
+    // Initialize Firebase
+    const { db, auth } = await window.FirebaseConfig.initializeFirebase()
+
+    // Initialize services
+    window.ProductsService.initialize(db, auth)
+    window.AuthService.initialize(auth)
+
+    productsService = window.ProductsService
+    authService = window.AuthService
+
+    console.log("Services initialized successfully")
+  } catch (error) {
+    console.error("Error initializing services:", error)
+    showError("Erro ao conectar com o banco de dados. Alguns recursos podem não funcionar corretamente.")
+  }
+}
+
+/**
+ * Carrega produtos do Firestore
+ */
+async function loadProducts() {
+  if (!productsService) {
+    console.error("Products service not initialized")
+    return
+  }
+
+  try {
+    setLoading(true)
+
+    // Check if we have cached products and we're offline
+    if (allProducts.length > 0 && !navigator.onLine) {
+      console.log("Using cached products (offline)")
+      filteredProducts = [...allProducts]
+      renderProducts(filteredProducts)
+      updateProductCounter()
+      return
+    }
+
+    // Fetch products from Firestore
+    allProducts = await productsService.getAllProducts({
+      orderBy: "createdAt",
+      orderDirection: "desc",
+    })
+
+    // If no products found, seed with sample data (for development)
+    if (allProducts.length === 0) {
+      console.log("No products found, seeding with sample data...")
+      await seedSampleProducts()
+      allProducts = await productsService.getAllProducts()
+    }
+
+    // Initialize filtered products
+    filteredProducts = [...allProducts]
+
+    // Apply any existing filters
+    applyFilters()
+
+    console.log(`Loaded ${allProducts.length} products`)
+  } catch (error) {
+    console.error("Error loading products:", error)
+    showError("Erro ao carregar produtos. Tente novamente mais tarde.")
+
+    // Fallback to sample data if available
+    if (allProducts.length === 0) {
+      allProducts = getSampleProducts()
+      filteredProducts = [...allProducts]
+      renderProducts(filteredProducts)
+      updateProductCounter()
+    }
+  } finally {
+    setLoading(false)
+  }
+}
+
+/**
+ * Seeds the database with sample products (for development)
+ */
+async function seedSampleProducts() {
+  if (!productsService) return
+
+  const sampleProducts = getSampleProducts()
+
+  try {
+    await productsService.bulkCreateProducts(sampleProducts)
+    console.log("Sample products seeded successfully")
+  } catch (error) {
+    console.error("Error seeding sample products:", error)
+  }
+}
+
+/**
+ * Gets sample products data
+ */
+function getSampleProducts() {
+  return [
+    {
+      name: "Ração Golden Special para Cães Adultos",
+      description: "Ração premium para cães adultos de porte médio. Embalagem de 15kg - Sabor Frango e Carne.",
+      price: 149.9,
+      image: "/assets/images/placeholder.png",
+      category: "Cachorros",
+      type: "Alimentação",
+    },
+    {
+      name: "Ração Premium para Gatos Castrados",
+      description: "Ração premium para gatos castrados com controle de peso. Embalagem de 10kg.",
+      price: 129.9,
+      image: "/assets/images/placeholder.png",
+      category: "Gatos",
+      type: "Alimentação",
+    },
+    {
+      name: "Cama para Cães Pequenos",
+      description: "Cama confortável para cães de pequeno porte. Tecido lavável e macio.",
+      price: 89.9,
+      image: "/assets/images/placeholder.png",
+      category: "Cachorros",
+      type: "Acessórios",
+    },
+    {
+      name: "Kit Brinquedos para Gatos",
+      description: "Conjunto com 5 brinquedos sortidos para gatos. Estimula o instinto de caça.",
+      price: 59.9,
+      image: "/assets/images/placeholder.png",
+      category: "Gatos",
+      type: "Brinquedos",
+    },
+    {
+      name: "Coleira Antipulgas para Cães",
+      description: "Coleira antipulgas e carrapatos para cães. Proteção por até 6 meses.",
+      price: 69.9,
+      image: "/assets/images/placeholder.png",
+      category: "Cachorros",
+      type: "Acessórios",
+    },
+    {
+      name: "Areia Higiênica para Gatos",
+      description: "Areia higiênica de granulado fino para gatos. Pacote com 12kg.",
+      price: 39.9,
+      image: "/assets/images/placeholder.png",
+      category: "Gatos",
+      type: "Higiene",
+    },
+    {
+      name: "Ração para Pássaros",
+      description: "Mistura de sementes para pássaros pequenos. Embalagem de 5kg.",
+      price: 45.9,
+      image: "/assets/images/placeholder.png",
+      category: "Pássaros",
+      type: "Alimentação",
+    },
+    {
+      name: "Gaiola para Hamster",
+      description: "Gaiola completa para hamster com acessórios. Tamanho médio.",
+      price: 119.9,
+      image: "/assets/images/placeholder.png",
+      category: "Outros Pets",
+      type: "Acessórios",
+    },
+    {
+      name: "Shampoo para Cães",
+      description: "Shampoo hipoalergênico para cães com pele sensível. Frasco de 500ml.",
+      price: 29.9,
+      image: "/assets/images/placeholder.png",
+      category: "Cachorros",
+      type: "Higiene",
+    },
+    {
+      name: "Comedouro Automático para Gatos",
+      description: "Comedouro automático programável para gatos. Capacidade de 2kg.",
+      price: 159.9,
+      image: "/assets/images/placeholder.png",
+      category: "Gatos",
+      type: "Acessórios",
+    },
+    {
+      name: "Brinquedo Interativo para Cães",
+      description: "Brinquedo interativo que estimula a inteligência do seu cão.",
+      price: 49.9,
+      image: "/assets/images/placeholder.png",
+      category: "Cachorros",
+      type: "Brinquedos",
+    },
+    {
+      name: "Gaiola para Pássaros Grande",
+      description: "Gaiola espaçosa para pássaros de médio porte. Com poleiros e comedouros.",
+      price: 189.9,
+      image: "/assets/images/placeholder.png",
+      category: "Pássaros",
+      type: "Acessórios",
+    },
+  ]
+}
+
 /**
  * Filtra os produtos com base nos filtros selecionados
- * @param {Array} filters - Objeto com os filtros selecionados
- * @returns {Array} - Produtos filtrados
  */
-function filterProducts(filters) {
-  return allProducts.filter((product) => {
-    // Filtro de categoria
-    if (filters.categories.length > 0 && !filters.categories.includes(product.category)) {
-      return false
+async function filterProducts() {
+  if (!productsService) {
+    // Fallback to client-side filtering
+    return allProducts.filter((product) => {
+      // Filtro de categoria
+      if (filterState.categories.length > 0 && !filterState.categories.includes(product.category)) {
+        return false
+      }
+
+      // Filtro de preço
+      if (filterState.priceRanges.length > 0 && !filterState.priceRanges.includes(product.priceRange)) {
+        return false
+      }
+
+      // Filtro de tipo
+      if (filterState.types.length > 0 && !filterState.types.includes(product.type)) {
+        return false
+      }
+
+      // Filtro de busca
+      if (
+        filterState.search &&
+        !product.name.toLowerCase().includes(filterState.search.toLowerCase()) &&
+        !product.description.toLowerCase().includes(filterState.search.toLowerCase())
+      ) {
+        return false
+      }
+
+      return true
+    })
+  }
+
+  try {
+    // Use search if available
+    if (filterState.search) {
+      const searchResults = await productsService.searchProducts(filterState.search)
+
+      // Apply additional filters to search results
+      return searchResults.filter((product) => {
+        if (filterState.categories.length > 0 && !filterState.categories.includes(product.category)) {
+          return false
+        }
+        if (filterState.priceRanges.length > 0 && !filterState.priceRanges.includes(product.priceRange)) {
+          return false
+        }
+        if (filterState.types.length > 0 && !filterState.types.includes(product.type)) {
+          return false
+        }
+        return true
+      })
     }
 
-    // Filtro de preço
-    if (filters.priceRanges.length > 0 && !filters.priceRanges.includes(product.priceRange)) {
-      return false
+    // Use Firestore filtering for better performance
+    const hasFilters =
+      filterState.categories.length > 0 || filterState.types.length > 0 || filterState.priceRanges.length > 0
+
+    if (hasFilters) {
+      return await productsService.getFilteredProducts({
+        categories: filterState.categories.length > 0 ? filterState.categories : undefined,
+        types: filterState.types.length > 0 ? filterState.types : undefined,
+        priceRanges: filterState.priceRanges.length > 0 ? filterState.priceRanges : undefined,
+      })
     }
 
-    // Filtro de tipo
-    if (filters.types.length > 0 && !filters.types.includes(product.type)) {
-      return false
-    }
-
-    // Filtro de busca
-    if (
-      filters.search &&
-      !product.name.toLowerCase().includes(filters.search.toLowerCase()) &&
-      !product.description.toLowerCase().includes(filters.search.toLowerCase())
-    ) {
-      return false
-    }
-
-    return true
-  })
+    // Return all products if no filters
+    return allProducts
+  } catch (error) {
+    console.error("Error filtering products:", error)
+    // Fallback to client-side filtering
+    return allProducts.filter((product) => {
+      if (filterState.categories.length > 0 && !filterState.categories.includes(product.category)) {
+        return false
+      }
+      if (filterState.priceRanges.length > 0 && !filterState.priceRanges.includes(product.priceRange)) {
+        return false
+      }
+      if (filterState.types.length > 0 && !filterState.types.includes(product.type)) {
+        return false
+      }
+      if (
+        filterState.search &&
+        !product.name.toLowerCase().includes(filterState.search.toLowerCase()) &&
+        !product.description.toLowerCase().includes(filterState.search.toLowerCase())
+      ) {
+        return false
+      }
+      return true
+    })
+  }
 }
 
 /**
@@ -97,7 +362,7 @@ function renderProducts(products) {
     productElement.className = "product-card"
     productElement.innerHTML = `
       <div class="product-image">
-        <img src="${product.image}" alt="${product.name}">
+        <img src="${product.image}" alt="${product.name}" loading="lazy">
         <div class="product-category">${product.category}</div>
       </div>
       <div class="product-info">
@@ -194,44 +459,29 @@ function updateFilterState() {
 /**
  * Aplica os filtros e atualiza a exibição dos produtos
  */
-function applyFilters() {
-  // Filtra produtos com base no estado dos filtros
-  filteredProducts = allProducts.filter((product) => {
-    // Filtro de categoria
-    if (filterState.categories.length > 0 && !filterState.categories.includes(product.category)) {
-      return false
-    }
+async function applyFilters() {
+  if (isLoading) return
 
-    // Filtro de preço
-    if (filterState.priceRanges.length > 0 && !filterState.priceRanges.includes(product.priceRange)) {
-      return false
-    }
+  try {
+    setLoading(true)
 
-    // Filtro de tipo
-    if (filterState.types.length > 0 && !filterState.types.includes(product.type)) {
-      return false
-    }
+    // Filtra produtos
+    filteredProducts = await filterProducts()
 
-    // Filtro de busca
-    if (
-      filterState.search &&
-      !product.name.toLowerCase().includes(filterState.search.toLowerCase()) &&
-      !product.description.toLowerCase().includes(filterState.search.toLowerCase())
-    ) {
-      return false
-    }
+    // Renderiza produtos filtrados
+    renderProducts(filteredProducts)
 
-    return true
-  })
+    // Atualiza exibição dos filtros ativos
+    updateActiveFilters()
 
-  // Renderiza produtos filtrados
-  renderProducts(filteredProducts)
-
-  // Atualiza exibição dos filtros ativos
-  updateActiveFilters()
-
-  // Atualiza contador de produtos
-  updateProductCounter()
+    // Atualiza contador de produtos
+    updateProductCounter()
+  } catch (error) {
+    console.error("Error applying filters:", error)
+    showError("Erro ao aplicar filtros. Tente novamente.")
+  } finally {
+    setLoading(false)
+  }
 }
 
 /**
@@ -463,10 +713,38 @@ function updateURL() {
 }
 
 /**
+ * Define o estado de carregamento
+ * @param {boolean} loading - Estado de carregamento
+ */
+function setLoading(loading) {
+  isLoading = loading
+
+  if (!productsGrid) return
+
+  if (loading) {
+    productsGrid.innerHTML = `
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Carregando produtos...</span>
+      </div>
+    `
+  }
+}
+
+/**
+ * Mostra uma mensagem de erro
+ * @param {string} message - Mensagem de erro
+ */
+function showError(message) {
+  showToast(message, "error")
+}
+
+/**
  * Mostra uma mensagem de toast
  * @param {string} message - Mensagem a exibir
+ * @param {string} type - Tipo da mensagem ('success' ou 'error')
  */
-function showToast(message) {
+function showToast(message, type = "success") {
   // Verifica se já existe um toast
   let toast = document.querySelector(".toast")
 
@@ -476,6 +754,9 @@ function showToast(message) {
     toast.className = "toast"
     document.body.appendChild(toast)
   }
+
+  // Define a classe baseada no tipo
+  toast.className = `toast ${type === "error" ? "toast-error" : "toast-success"}`
 
   // Define a mensagem e mostra o toast
   toast.textContent = message
@@ -515,151 +796,6 @@ function debounce(func, wait) {
 }
 
 /**
- * Carrega produtos da fonte de dados
- * Em um aplicativo real, isso seria uma chamada à API
- */
-function loadProducts() {
-  // Dados de produtos de amostra - em um aplicativo real, isso viria de uma API
-allProducts = [
-    {
-        id: "1",
-        name: "Ração Golden Special para Cães Adultos",
-        description: "Ração premium para cães adultos de porte médio. Embalagem de 15kg - Sabor Frango e Carne.",
-        price: 149.9,
-        image: "assets/images/produtos/cachorroGoldenRacao.jpg",
-        category: "Cachorros",
-        type: "Alimentação",
-        priceRange: "100-150",
-        slug: "racao-golden-special-caes-adultos",
-    },
-    {
-        id: "2",
-        name: "Ração Premium para Gatos Castrados",
-        description: "Ração premium para gatos castrados com controle de peso. Embalagem de 10kg.",
-        price: 129.9,
-        image: "assets/images/produtos/gatoCastradoRacao.jpg",
-        category: "Gatos",
-        type: "Alimentação",
-        priceRange: "100-150",
-        slug: "racao-premium-gatos-castrados",
-    },
-    {
-        id: "3",
-        name: "Cama para Cães Pequenos",
-        description: "Cama confortável para cães de pequeno porte. Tecido lavável e macio.",
-        price: 89.9,
-        image: "assets/images/produtos/camaCachorroPequeno.jpg",
-        category: "Cachorros",
-        type: "Acessórios",
-        priceRange: "50-100",
-        slug: "cama-caes-pequenos",
-    },
-    {
-        id: "4",
-        name: "Kit Brinquedos para Gatos",
-        description: "Conjunto com 5 brinquedos sortidos para gatos. Estimula o instinto de caça.",
-        price: 59.9,
-        image: "assets/images/produtos/brinquedosGatos.jpeg",
-        category: "Gatos",
-        type: "Brinquedos",
-        priceRange: "50-100",
-        slug: "kit-brinquedos-gatos",
-    },
-    {
-        id: "5",
-        name: "Coleira Antipulgas para Cães",
-        description: "Coleira antipulgas e carrapatos para cães. Proteção por até 6 meses.",
-        price: 69.9,
-        image: "assets/images/produtos/coleiraAntiPulga.jpg",
-        category: "Cachorros",
-        type: "Acessórios",
-        priceRange: "50-100",
-        slug: "coleira-antipulgas-caes",
-    },
-    {
-        id: "6",
-        name: "Areia Higiênica para Gatos",
-        description: "Areia higiênica de granulado fino para gatos. Pacote com 12kg.",
-        price: 39.9,
-        image: "assets/images/produtos/areiaGato.png",
-        category: "Gatos",
-        type: "Higiene",
-        priceRange: "0-50",
-        slug: "areia-higienica-gatos",
-    },
-    {
-        id: "7",
-        name: "Ração para Pássaros",
-        description: "Mistura de sementes para pássaros pequenos. Embalagem de 5kg.",
-        price: 45.9,
-        image: "assets/images/produtos/misturaParaPassaros.webp",
-        category: "Pássaros",
-        type: "Alimentação",
-        priceRange: "0-50",
-        slug: "racao-passaros",
-    },
-    {
-        id: "8",
-        name: "Gaiola para Hamster",
-        description: "Gaiola completa para hamster com acessórios. Tamanho médio.",
-        price: 119.9,
-        image: "assets/images/produtos/gaiolaHamster.webp",
-        category: "Outros Pets",
-        type: "Acessórios",
-        priceRange: "100-150",
-        slug: "gaiola-hamster",
-    },
-    {
-        id: "9",
-        name: "Shampoo para Cães",
-        description: "Shampoo hipoalergênico para cães com pele sensível. Frasco de 500ml.",
-        price: 29.9,
-        image: "assets/images/produtos/shampooCaes.webp",
-        category: "Cachorros",
-        type: "Higiene",
-        priceRange: "0-50",
-        slug: "shampoo-caes",
-    },
-    {
-        id: "10",
-        name: "Comedouro Automático para Gatos",
-        description: "Comedouro automático programável para gatos. Capacidade de 2kg.",
-        price: 159.9,
-        image: "assets/images/produtos/comedouroParaGatos.webp",
-        category: "Gatos",
-        type: "Acessórios",
-        priceRange: "150+",
-        slug: "comedouro-automatico-gatos",
-    },
-    {
-        id: "11",
-        name: "Brinquedo Interativo para Cães",
-        description: "Brinquedo interativo que estimula a inteligência do seu cão.",
-        price: 49.9,
-        image: "assets/images/produtos/brinquedoInterativoCao.webp",
-        category: "Cachorros",
-        type: "Brinquedos",
-        priceRange: "0-50",
-        slug: "brinquedo-interativo-caes",
-    },
-    {
-        id: "12",
-        name: "Gaiola para Pássaros Grande",
-        description: "Gaiola espaçosa para pássaros de médio porte. Com poleiros e comedouros.",
-        price: 189.9,
-        image: "assets/images/produtos/gaiolaPassaroGrande.webp",
-        category: "Pássaros",
-        type: "Acessórios",
-        priceRange: "150+",
-        slug: "gaiola-passaros-grande",
-    },
-]
-
-  // Inicializa produtos filtrados com todos os produtos
-  filteredProducts = [...allProducts]
-}
-
-/**
  * Inicializa todos os event listeners
  */
 function initEventListeners() {
@@ -667,6 +803,7 @@ function initEventListeners() {
   if (filterForm) {
     filterForm.addEventListener("submit", (e) => {
       e.preventDefault()
+      updateFilterState()
       applyFilters()
     })
   }
@@ -752,24 +889,108 @@ function initEventListeners() {
       }
     })
   }
+
+  // Listen for online/offline events
+  window.addEventListener("online", () => {
+    console.log("Back online, refreshing products...")
+    loadProducts()
+  })
+
+  window.addEventListener("offline", () => {
+    console.log("Gone offline, using cached data")
+    showToast("Você está offline. Usando dados em cache.", "info")
+  })
 }
 
 /**
  * Inicializa o sistema de catálogo
  */
-function initCatalog() {
-  // Carrega produtos
-  loadProducts()
+async function initCatalog() {
+  try {
+    // Inicializa serviços Firebase
+    await initializeServices()
 
-  // Inicializa event listeners
-  initEventListeners()
+    // Inicializa event listeners
+    initEventListeners()
 
-  // Aplica filtros a partir dos parâmetros da URL
-  applyFiltersFromURL()
+    // Aplica filtros a partir dos parâmetros da URL
+    applyFiltersFromURL()
 
-  // Renderiza produtos iniciais
-  renderProducts(allProducts)
+    // Carrega produtos
+    await loadProducts()
+  } catch (error) {
+    console.error("Error initializing catalog:", error)
+    showError("Erro ao inicializar o catálogo. Alguns recursos podem não funcionar corretamente.")
+  }
 }
 
 // Inicializa o catálogo quando o DOM estiver carregado
 document.addEventListener("DOMContentLoaded", initCatalog)
+
+// Export functions for admin use
+window.CatalogAdmin = {
+  async createProduct(productData) {
+    if (!productsService) {
+      throw new Error("Products service not initialized")
+    }
+
+    try {
+      await authService.requireAdmin()
+      const productId = await productsService.createProduct(productData)
+      await loadProducts() // Refresh products
+      showToast("Produto criado com sucesso!")
+      return productId
+    } catch (error) {
+      console.error("Error creating product:", error)
+      showError(`Erro ao criar produto: ${error.message}`)
+      throw error
+    }
+  },
+
+  async updateProduct(productId, updateData) {
+    if (!productsService) {
+      throw new Error("Products service not initialized")
+    }
+
+    try {
+      await authService.requireAdmin()
+      await productsService.updateProduct(productId, updateData)
+      await loadProducts() // Refresh products
+      showToast("Produto atualizado com sucesso!")
+    } catch (error) {
+      console.error("Error updating product:", error)
+      showError(`Erro ao atualizar produto: ${error.message}`)
+      throw error
+    }
+  },
+
+  async deleteProduct(productId) {
+    if (!productsService) {
+      throw new Error("Products service not initialized")
+    }
+
+    try {
+      await authService.requireAdmin()
+      await productsService.deleteProduct(productId)
+      await loadProducts() // Refresh products
+      showToast("Produto excluído com sucesso!")
+    } catch (error) {
+      console.error("Error deleting product:", error)
+      showError(`Erro ao excluir produto: ${error.message}`)
+      throw error
+    }
+  },
+
+  async getProductStats() {
+    if (!productsService) {
+      throw new Error("Products service not initialized")
+    }
+
+    try {
+      return await productsService.getProductStats()
+    } catch (error) {
+      console.error("Error getting product stats:", error)
+      throw error
+    }
+  },
+}
