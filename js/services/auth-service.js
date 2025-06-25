@@ -12,14 +12,11 @@ class AuthService {
   }
 
   /**
-   * Initializes the service with Firebase Auth instance
-   * @param {firebase.auth.Auth} auth - Auth instance
+   * Inicializa o serviço com a instância do Firebase Auth
    */
   initialize(auth) {
     this.auth = auth
     this.initialized = true
-
-    // Listen for auth state changes
     this.auth.onAuthStateChanged((user) => {
       this.currentUser = user
       this._notifyAuthStateListeners(user)

@@ -17,8 +17,8 @@ const filterToggleBtn = document.getElementById("filterToggleBtn")
 const catalogSidebar = document.querySelector(".catalog-sidebar")
 
 // Services
-let productsService
-let authService
+let productsService = null
+let authService = null
 
 // Data
 let allProducts = []
@@ -83,6 +83,13 @@ async function loadProducts() {
       orderBy: "createdAt",
       orderDirection: "desc",
     })
+    // Adiciona priceRange para filtros de preço
+    allProducts.forEach(p => {
+      if (p.price <= 50) p.priceRange = "0-50"
+      else if (p.price <= 100) p.priceRange = "50-100"
+      else if (p.price <= 150) p.priceRange = "100-150"
+      else p.priceRange = "150+"
+    })
 
     // If no products found, seed with sample data (for development)
     if (allProducts.length === 0) {
@@ -119,9 +126,7 @@ async function loadProducts() {
  */
 async function seedSampleProducts() {
   if (!productsService) return
-
   const sampleProducts = getSampleProducts()
-
   try {
     await productsService.bulkCreateProducts(sampleProducts)
     console.log("Sample products seeded successfully")

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Pet Shop Baronesa</title>
+    <meta name="description" content="Painel administrativo para gerenciar produtos da Pet Shop Baronesa.">
+    <link rel="stylesheet" href="../css/styles.css">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <a href="index.html" class="logo">
+                    <div class="logo-circle">
+                        <img src="../assets/images/gerais/iconeBaronesa.png" alt="Pet Shop Baronesa" width="40" height="40">
+                    </div>
+                    <span class="logo-text">Pet Shop Baronesa</span>
+                </a>
+
+                <!-- Menu Desktop -->
+                <nav class="nav-desktop">
+                    <ul>
+                        <li><a href="catalogo.html">Catálogo</a></li>
+                        <li><a href="banho-tosa.html">Banho & Tosa</a></li>
+                        <li><a href="dicas.html">Dicas</a></li>
+                        <li><a href="promocoes.html">Promoções</a></li>
+                        <li><a href="admin.html" class="active">Admin</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Admin Actions -->
+                <div class="admin-header-actions">
+                    <button id="addProductBtn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Novo Produto
+                    </button>
+                    <div class="admin-user-info">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Administrador</span>
+                    </div>
+                </div>
+
+                <!-- Botão Menu Mobile -->
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- Menu Mobile -->
+            <div class="nav-mobile" id="mobileMenu">
+                <nav>
+                    <ul>
+                        <li><a href="catalogo.html">Catálogo</a></li>
+                        <li><a href="banho-tosa.html">Banho & Tosa</a></li>
+                        <li><a href="dicas.html">Dicas</a></li>
+                        <li><a href="promocoes.html">Promoções</a></li>
+                        <li><a href="admin.html" class="active">Admin</a></li>
+                    </ul>
+                </nav>
+                <div class="mobile-admin-actions">
+                    <button id="addProductBtnMobile" class="btn-primary btn-block">
+                        <i class="fas fa-plus"></i> Novo Produto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main>
+        <section class="section">
+            <div class="container">
+                <!-- Título da Página -->
+                <div class="admin-page-header">
+                    <h1 class="page-title">Gerenciar Produtos</h1>
+                    <p class="page-description">
+                        Gerencie todos os produtos da Pet Shop Baronesa. Adicione, edite ou remova produtos do catálogo.
+                    </p>
+                </div>
+
+                <!-- Estatísticas Rápidas -->
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalProductsCount">0</h3>
+                            <p>Total de Produtos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="categoriesCount">0</h3>
+                            <p>Categorias</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="averagePrice">R$ 0,00</h3>
+                            <p>Preço Médio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros e Busca -->
+                <div class="admin-filters">
+                    <div class="filter-card">
+                        <div class="filter-header">
+                            <i class="fas fa-filter"></i>
+                            <h2>Filtros</h2>
+                        </div>
+                        
+                        <!-- Busca -->
+                        <div class="filter-section">
+                            <label for="adminSearchInput">Buscar Produtos</label>
+                            <div class="search-input-container">
+                                <input type="text" id="adminSearchInput" placeholder="Digite o nome do produto...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Categoria -->
+                        <div class="filter-section">
+                            <h3>Categoria</h3>
+                            <div class="filter-options">
+                                <label class="filter-option">
+                                    <input type="checkbox" value="" id="allCategories" checked>
+                                    <span>Todas as Categorias</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="Cachorros" class="category-filter">
+                                    <span>Cachorros</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="Gatos" class="category-filter">
+                                    <span>Gatos</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="Pássaros" class="category-filter">
+                                    <span>Pássaros</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="Outros Pets" class="category-filter">
+                                    <span>Outros Pets</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Tipo -->
+                        <div class="filter-section">
+                            <h3>Tipo de Produto</h3>
+                            <div class="filter-options">
+                                <label class="filter-option">
+                                    <input type="checkbox" value="" id="allTypes" checked>
+                                    <span>Todos os Tipos</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="Alimentação" class="type-filter">
+                                    <span>Alimentação</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="Acessórios" class="type-filter">
+                                    <span>Acessórios</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="Higiene" class="type-filter">
+                                    <span>Higiene</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" value="Brinquedos" class="type-filter">
+                                    <span>Brinquedos</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Botão Limpar Filtros -->
+                        <button id="clearFiltersBtn" class="btn-secondary btn-block">
+                            <i class="fas fa-times"></i> Limpar Filtros
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Produtos -->
+                <div class="admin-products-section">
+                    <div class="products-header">
+                        <h2>Produtos</h2>
+                        <div class="products-counter">
+                            <span id="filteredProductsCount">0</span> produtos encontrados
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="productsLoading" class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando produtos...</p>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div id="adminProductsGrid" class="admin-products-grid">
+                        <!-- Products will be loaded here -->
+                    </div>
+
+                    <!-- No Products Message -->
+                    <div id="noProductsMessage" class="no-products" style="display: none;">
+                        <i class="fas fa-box-open"></i>
+                        <h3>Nenhum produto encontrado</h3>
+                        <p>Não há produtos que correspondam aos filtros selecionados.</p>
+                        <button id="addFirstProductBtn" class="btn-primary">
+                            <i class="fas fa-plus"></i> Adicionar Primeiro Produto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para Adicionar/Editar Produto -->
+    <div id="productModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Adicionar Produto</h2>
+                <button id="closeModalBtn" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="productForm" class="product-form">
+                <div class="form-grid">
+                    <!-- Nome do Produto -->
+                    <div class="form-group">
+                        <label for="productName">Nome do Produto *</label>
+                        <input type="text" id="productName" name="name" required>
+                    </div>
+
+                    <!-- Categoria -->
+                    <div class="form-group">
+                        <label for="productCategory">Categoria *</label>
+                        <select id="productCategory" name="category" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Cachorros">Cachorros</option>
+                            <option value="Gatos">Gatos</option>
+                            <option value="Pássaros">Pássaros</option>
+                            <option value="Outros Pets">Outros Pets</option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo -->
+                    <div class="form-group">
+                        <label for="productType">Tipo de Produto *</label>
+                        <select id="productType" name="type" required>
+                            <option value="">Selecione um tipo</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Acessórios">Acessórios</option>
+                            <option value="Higiene">Higiene</option>
+                            <option value="Brinquedos">Brinquedos</option>
+                        </select>
+                    </div>
+
+                    <!-- Preço -->
+                    <div class="form-group">
+                        <label for="productPrice">Preço (R$) *</label>
+                        <input type="number" id="productPrice" name="price" step="0.01" min="0" required>
+                    </div>
+
+                    <!-- URL da Imagem -->
+                    <div class="form-group full-width">
+                        <label for="productImage">URL da Imagem</label>
+                        <input type="url" id="productImage" name="image" placeholder="https://exemplo.com/imagem.jpg">
+                        <small>Deixe em branco para usar a imagem padrão</small>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div class="form-group full-width">
+                        <label for="productDescription">Descrição *</label>
+                        <textarea id="productDescription" name="description" rows="4" required></textarea>
+                    </div>
+
+                    <!-- Preview da Imagem -->
+                    <div class="form-group full-width">
+                        <label>Preview da Imagem</label>
+                        <div class="image-preview">
+                            <img id="imagePreview" src="../assets/images/gerais/iconeBaronesa.png" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="cancelBtn" class="btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" id="saveBtn" class="btn-primary">
+                        <i class="fas fa-save"></i> Salvar Produto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Confirmar Exclusão</h2>
+                <button id="closeDeleteModalBtn" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Tem certeza que deseja excluir o produto <strong id="deleteProductName"></strong>?</p>
+                    <p class="warning-text">Esta ação não pode ser desfeita.</p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="cancelDeleteBtn" class="btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" id="confirmDeleteBtn" class="btn-danger">
+                    <i class="fas fa-trash"></i> Excluir Produto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Localização -->
+                <div class="footer-column">
+                    <h3>Localização</h3>
+                    <div class="address">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Av. Padre Leonardo Nunes, 1182, Peruíbe, SP, Brazil</p>
+                    </div>
+                    <div class="map-container">
+                        <iframe 
+                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3645.4975616023347!2d-46.9981848!3d-23.9760286!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d1d398b258d8b3%3A0x934e98c6e60a8048!2sAv.%20Padre%20Leonardo%20Nunes%2C%201182%20-%20Jardim%20Ribamar%2C%20Peru%C3%ADbe%20-%20SP%2C%2011750-000!5e0!3m2!1spt-BR!2sbr!4v1715815200000!5m2!1spt-BR!2sbr"
+                          width="100%" 
+                          height="100%" 
+                          style="border:0;" 
+                          allowfullscreen="" 
+                          loading="lazy" 
+                          referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- Horário de Atendimento -->
+                <div class="footer-column">
+                    <h3>Horário de Atendimento</h3>
+                    <div class="hours">
+                        <i class="far fa-clock"></i>
+                        <div>
+                            <p>Segunda a Sábado: 08h às 18h30</p>
+                            <p>Domingo: Fechado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Links Rápidos -->
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul class="quick-links">
+                        <li><a href="catalogo.html">Catálogo</a></li>
+                        <li><a href="banho-tosa.html">Banho & Tosa</a></li>
+                        <li><a href="dicas.html">Dicas</a></li>
+                        <li><a href="promocoes.html">Promoções</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contato -->
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <div class="contact-phone">
+                        <i class="fas fa-phone"></i>
+                        <a href="https://wa.me/5513996825624">(13) 99682-5624</a>
+                    </div>
+                    <div class="social-icons">
+                        <a href="https://www.instagram.com/petbaronesa/" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/baronesa.petshop?locale=pt_BR" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>Cuidando do seu pet com amor desde 2015 🐾</p>
+                <p class="copyright">© <span id="currentYear"></span> Pet Shop Baronesa. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+    <!-- Scripts -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/services/products.js"></script>
+    <script src="../js/services/auth-service.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

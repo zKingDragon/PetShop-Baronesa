@@ -118,4 +118,84 @@ pet-shop-baronesa/
 
 1. **Browse Products**: Visit the catalog page to see all products
 2. **Filter Products**: Use the sidebar filters to narrow down products
-3.
+3. **Search Products**: Use the search bar to find products by name or description
+4. **View Product Details**: Click on a product to see its details
+5. **Add to Cart**: Select a product and click "Add to Cart"
+6. **Checkout**: Visit the cart page and proceed to checkout
+
+### For Admins
+
+1. **Login**: Access the admin panel by logging in
+2. **Manage Products**: Add, edit, or remove products in the inventory
+3. **View Statistics**: Check product statistics on the dashboard
+4. **Bulk Operations**: Perform bulk updates or deletions of products
+5. **Logout**: Securely logout from the admin panel
+
+## Development
+
+### Prerequisites
+
+- Node.js (>=12.x)
+- npm (>=6.x)
+- Firebase CLI
+
+### Installing Dependencies
+
+Run the following command in the project root:
+
+\`\`\`bash
+npm install
+\`\`\`
+
+### Running the Project
+
+To run the project locally:
+
+1. Start the development server:
+
+\`\`\`bash
+npm run serve
+\`\`\`
+
+2. Open your browser and visit `http://localhost:3000`
+
+### Building for Production
+
+To build the project for production:
+
+\`\`\`bash
+npm run build
+\`\`\`
+
+## Troubleshooting
+
+- **Firebase Errors**: Check your Firebase configuration and rules
+- **Network Issues**: Ensure you have a stable internet connection
+- **Permission Denied**: Verify that your admin user has the correct claims
+- **Missing Files**: Ensure all files are uploaded and paths are correct
+
+## Contributing
+
+We welcome contributions to the Pet Shop Baronesa project!
+
+### How to Contribute
+
+1. Fork the repository
+2. Create a new branch for your feature or bugfix
+3. Make your changes and commit them
+4. Push to your forked repository
+5. Create a pull request describing your changes
+
+### Code Standards
+
+- Follow the existing code style and conventions
+- Write clear, concise commit messages
+- Ensure your code is well-documented
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+Made with ❤️ by Daniel Pereira

@@ -2,21 +2,17 @@
  * Firebase Configuration for Pet Shop Baronesa
  * This file contains the Firebase configuration and initialization
  */
-
-// Import Firebase SDK
-import firebase from "firebase/app"
-import "firebase/firestore"
-import "firebase/auth"
-
+console.log('firebase:', firebase); 
 // Firebase configuration object
 // Replace these values with your actual Firebase project configuration
 const firebaseConfig = {
-  apiKey: "your-api-key-here",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "your-sender-id",
-  appId: "your-app-id",
+  apiKey: "AIzaSyArGX1h-b1ByHNd3cv-h_daKMl6RCl8lE0",
+  authDomain: "petshop-baronesa.firebaseapp.com",
+  projectId: "petshop-baronesa",
+  storageBucket: "petshop-baronesa.appspot.com", // Corrija para .appspot.com
+  messagingSenderId: "405139802386",
+  appId: "1:405139802386:web:f40693472a4d182d0d4bcb",
+  measurementId: "G-QG8STMJGQQ"
 }
 
 // Initialize Firebase
@@ -31,12 +27,11 @@ let auth
 async function initializeFirebase() {
   try {
     // Check if Firebase is already initialized
-    if (typeof firebase === "undefined") {
-      throw new Error("Firebase SDK not loaded. Please include Firebase scripts in your HTML.")
+    if (!firebase.apps.length) {
+      app = firebase.initializeApp(firebaseConfig)
+    } else {
+      app = firebase.app() // if already initialized, use that one
     }
-
-    // Initialize Firebase app
-    app = firebase.initializeApp(firebaseConfig)
 
     // Initialize Firestore
     db = firebase.firestore()
@@ -44,19 +39,23 @@ async function initializeFirebase() {
     // Initialize Auth
     auth = firebase.auth()
 
-    // Enable offline persistence
-    await db
-      .enablePersistence({
-        synchronizeTabs: true,
-      })
-      .catch((err) => {
-        if (err.code === "failed-precondition") {
-          console.warn("Multiple tabs open, persistence can only be enabled in one tab at a time.")
-        } else if (err.code === "unimplemented") {
-          console.warn("The current browser does not support all of the features required to enable persistence")
-        }
-      })
+    // Enable offline persistence (opcional para Auth, mas mantido para Firestore)
+    if (db && db.enablePersistence) {
+      await db
+        .enablePersistence({
+          synchronizeTabs: true,
+        })
+        .catch((err) => {
+          if (err.code === "failed-precondition") {
+            console.warn("Multiple tabs open, persistence can only be enabled in one tab at a time.")
+          } else if (err.code === "unimplemented") {
+            console.warn("The current browser does not support all of the features required to enable persistence")
+          }
+        })
+    }
 
+    window.db = db
+    window.auth = auth
     console.log("Firebase initialized successfully")
     return { app, db, auth }
   } catch (error) {
@@ -105,3 +104,6 @@ window.FirebaseConfig = {
   getAuth,
   getApp,
 }
+
+window.db = db
+window.auth = auth

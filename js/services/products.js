@@ -1,496 +1,403 @@
 /**
  * Products Service for Pet Shop Baronesa
- * This service handles all CRUD operations for products in Firestore
+ * Handles all product-related database operations
  */
 
-import firebase from "firebase/app"
-import "firebase/firestore"
-import "firebase/auth"
 
 class ProductsService {
   constructor() {
-    this.db = null
-    this.auth = null
-    this.collection = "products"
-    this.initialized = false
+    this.collection = "Produtos"
+    this.db = window.db
   }
 
   /**
-   * Initializes the service with Firebase instances
-   * @param {firebase.firestore.Firestore} db - Firestore instance
-   * @param {firebase.auth.Auth} auth - Auth instance
+   * Permite inicializar com instâncias customizadas de db/auth
    */
   initialize(db, auth) {
-    this.db = db
-    this.auth = auth
-    this.initialized = true
+    if (db) this.db = db
+    // auth não é usado aqui, mas pode ser útil para futuras permissões
   }
 
   /**
-   * Checks if the service is initialized
-   * @private
+   * Gera um slug para o produto (para URLs amigáveis)
    */
-  _checkInitialized() {
-    if (!this.initialized) {
-      throw new Error("ProductsService not initialized. Call initialize() first.")
-    }
-  }
-
-  /**
-   * Validates product data
-   * @param {Object} productData - Product data to validate
-   * @private
-   */
-  _validateProductData(productData) {
-    const requiredFields = ["name", "description", "price", "category", "type"]
-    const missingFields = requiredFields.filter((field) => !productData[field])
-
-    if (missingFields.length > 0) {
-      throw new Error(`Missing required fields: ${missingFields.join(", ")}`)
-    }
-
-    if (typeof productData.price !== "number" || productData.price < 0) {
-      throw new Error("Price must be a positive number")
-    }
-
-    return true
-  }
-
-  /**
-   * Generates a URL-friendly slug from product name
-   * @param {string} name - Product name
-   * @returns {string} - URL slug
-   * @private
-   */
-  _generateSlug(name) {
+  generateSlug(name) {
     return name
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "") // Remove accents
-      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-      .replace(/\s+/g, "-") // Replace spaces with hyphens
-      .replace(/-+/g, "-") // Replace multiple hyphens with single
-      .trim("-") // Remove leading/trailing hyphens
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "")
   }
 
   /**
-   * Determines price range based on price value
-   * @param {number} price - Product price
-   * @returns {string} - Price range category
-   * @private
+   * Map Firestore product document to frontend format
+   * @param {firebase.firestore.DocumentSnapshot} doc
+   * @returns {Object}
    */
-  _getPriceRange(price) {
-    if (price <= 50) return "0-50"
-    if (price <= 100) return "50-100"
-    if (price <= 150) return "100-150"
-    return "150+"
-  }
-
-  /**
-   * Processes product data before saving
-   * @param {Object} productData - Raw product data
-   * @returns {Object} - Processed product data
-   * @private
-   */
-  _processProductData(productData) {
-    const processed = {
-      ...productData,
-      slug: this._generateSlug(productData.name),
-      priceRange: this._getPriceRange(productData.price),
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  mapFirestoreProduct(doc) {
+    const data = doc.data()
+    return {
+      id: doc.id,
+      name: data.nomeProduto,
+      description: data.descricao,
+      price: parseFloat(data.Preco),
+      image: data.urlImg,
+      category: data.categoria,
+      type: data.tipoProduto,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+      slug: data.slug || this.generateSlug(data.nomeProduto || ""),
     }
-
-    // Set default image if not provided
-    if (!processed.image) {
-      processed.image = "/assets/images/placeholder.png"
-    }
-
-    return processed
   }
 
   /**
-   * Fetches all products from Firestore
-   * @param {Object} options - Query options
-   * @param {string} options.orderBy - Field to order by (default: 'createdAt')
-   * @param {string} options.orderDirection - Order direction ('asc' or 'desc', default: 'desc')
-   * @param {number} options.limit - Maximum number of products to fetch
-   * @returns {Promise<Array>} - Array of products
+   * Get all products from Firestore
+   * @returns {Promise<Array>} Array of products
    */
-  async getAllProducts(options = {}) {
-    this._checkInitialized()
-
+  async getAllProducts() {
     try {
-      const { orderBy = "createdAt", orderDirection = "desc", limit } = options
-
-      let query = this.db.collection(this.collection)
-
-      // Apply ordering
-      query = query.orderBy(orderBy, orderDirection)
-
-      // Apply limit if specified
-      if (limit) {
-        query = query.limit(limit)
-      }
-
-      const snapshot = await query.get()
-
-      if (snapshot.empty) {
-        console.log("No products found")
-        return []
-      }
-
-      const products = []
-      snapshot.forEach((doc) => {
-        const data = doc.data()
-        products.push({
-          id: doc.id,
-          ...data,
-          // Convert Firestore timestamps to JavaScript dates
-          createdAt: data.createdAt?.toDate(),
-          updatedAt: data.updatedAt?.toDate(),
-        })
-      })
-
-      console.log(`Fetched ${products.length} products`)
-      return products
+      const snapshot = await this.db.collection(this.collection).orderBy("createdAt", "desc").get()
+      return snapshot.docs.map((doc) => this.mapFirestoreProduct(doc))
     } catch (error) {
-      console.error("Error fetching products:", error)
-      throw new Error(`Failed to fetch products: ${error.message}`)
+      console.error("Error getting products:", error)
+      throw new Error("Erro ao carregar produtos")
     }
   }
 
   /**
-   * Fetches products with filtering options
-   * @param {Object} filters - Filter options
-   * @param {Array<string>} filters.categories - Categories to filter by
-   * @param {Array<string>} filters.types - Types to filter by
-   * @param {Array<string>} filters.priceRanges - Price ranges to filter by
-   * @returns {Promise<Array>} - Array of filtered products
-   */
-  async getFilteredProducts(filters = {}) {
-    this._checkInitialized()
-
-    try {
-      let query = this.db.collection(this.collection)
-
-      // Apply category filter
-      if (filters.categories && filters.categories.length > 0) {
-        query = query.where("category", "in", filters.categories)
-      }
-
-      // Apply type filter
-      if (filters.types && filters.types.length > 0) {
-        query = query.where("type", "in", filters.types)
-      }
-
-      // Apply price range filter
-      if (filters.priceRanges && filters.priceRanges.length > 0) {
-        query = query.where("priceRange", "in", filters.priceRanges)
-      }
-
-      // Order by creation date
-      query = query.orderBy("createdAt", "desc")
-
-      const snapshot = await query.get()
-
-      const products = []
-      snapshot.forEach((doc) => {
-        const data = doc.data()
-        products.push({
-          id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate(),
-          updatedAt: data.updatedAt?.toDate(),
-        })
-      })
-
-      return products
-    } catch (error) {
-      console.error("Error fetching filtered products:", error)
-      throw new Error(`Failed to fetch filtered products: ${error.message}`)
-    }
-  }
-
-  /**
-   * Fetches a single product by ID
+   * Get a single product by ID
    * @param {string} productId - Product ID
-   * @returns {Promise<Object|null>} - Product data or null if not found
+   * @returns {Promise<Object|null>} Product data or null if not found
    */
   async getProductById(productId) {
-    this._checkInitialized()
-
     try {
       const doc = await this.db.collection(this.collection).doc(productId).get()
-
-      if (!doc.exists) {
-        console.log(`Product with ID ${productId} not found`)
-        return null
+      if (doc.exists) {
+        return this.mapFirestoreProduct(doc)
       }
-
-      const data = doc.data()
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate(),
-        updatedAt: data.updatedAt?.toDate(),
-      }
+      return null
     } catch (error) {
-      console.error("Error fetching product:", error)
-      throw new Error(`Failed to fetch product: ${error.message}`)
+      console.error("Error getting product:", error)
+      throw new Error("Erro ao carregar produto")
     }
   }
 
   /**
-   * Fetches a product by slug
-   * @param {string} slug - Product slug
-   * @returns {Promise<Object|null>} - Product data or null if not found
-   */
-  async getProductBySlug(slug) {
-    this._checkInitialized()
-
-    try {
-      const snapshot = await this.db.collection(this.collection).where("slug", "==", slug).limit(1).get()
-
-      if (snapshot.empty) {
-        console.log(`Product with slug ${slug} not found`)
-        return null
-      }
-
-      const doc = snapshot.docs[0]
-      const data = doc.data()
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate(),
-        updatedAt: data.updatedAt?.toDate(),
-      }
-    } catch (error) {
-      console.error("Error fetching product by slug:", error)
-      throw new Error(`Failed to fetch product by slug: ${error.message}`)
-    }
-  }
-
-  /**
-   * Creates a new product
+   * Create a new product
    * @param {Object} productData - Product data
-   * @returns {Promise<string>} - Created product ID
+   * @returns {Promise<string>} Created product ID
    */
   async createProduct(productData) {
-    this._checkInitialized()
-
     try {
-      // Validate product data
-      this._validateProductData(productData)
-
-      // Process product data
-      const processedData = this._processProductData(productData)
-
-      // Check if slug already exists
-      const existingProduct = await this.getProductBySlug(processedData.slug)
-      if (existingProduct) {
-        // Append timestamp to make slug unique
-        processedData.slug = `${processedData.slug}-${Date.now()}`
+      this.validateProductData(productData)
+      const slug = this.generateSlug(productData.name)
+      const productWithTimestamps = {
+        nomeProduto: productData.name,
+        descricao: productData.description,
+        Preco: productData.price,
+        urlImg: productData.image,
+        categoria: productData.category,
+        tipoProduto: productData.type,
+        slug,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }
-
-      // Add product to Firestore
-      const docRef = await this.db.collection(this.collection).add(processedData)
-
+      const docRef = await this.db.collection(this.collection).add(productWithTimestamps)
       console.log("Product created with ID:", docRef.id)
       return docRef.id
     } catch (error) {
       console.error("Error creating product:", error)
-      throw new Error(`Failed to create product: ${error.message}`)
+      throw new Error("Erro ao criar produto")
     }
   }
 
   /**
-   * Updates an existing product
+   * Update an existing product
    * @param {string} productId - Product ID
    * @param {Object} updateData - Data to update
    * @returns {Promise<void>}
    */
   async updateProduct(productId, updateData) {
-    this._checkInitialized()
-
     try {
-      // Check if product exists
-      const existingProduct = await this.getProductById(productId)
-      if (!existingProduct) {
-        throw new Error(`Product with ID ${productId} not found`)
-      }
-
-      // Prepare update data
-      const processedUpdate = {
-        ...updateData,
+      this.validateProductData(updateData)
+      const slug = this.generateSlug(updateData.name)
+      const updateWithTimestamp = {
+        nomeProduto: updateData.name,
+        descricao: updateData.description,
+        Preco: updateData.price,
+        urlImg: updateData.image,
+        categoria: updateData.category,
+        tipoProduto: updateData.type,
+        slug,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }
-
-      // Update slug if name changed
-      if (updateData.name && updateData.name !== existingProduct.name) {
-        processedUpdate.slug = this._generateSlug(updateData.name)
-
-        // Check if new slug already exists
-        const existingSlugProduct = await this.getProductBySlug(processedUpdate.slug)
-        if (existingSlugProduct && existingSlugProduct.id !== productId) {
-          processedUpdate.slug = `${processedUpdate.slug}-${Date.now()}`
-        }
-      }
-
-      // Update price range if price changed
-      if (updateData.price !== undefined) {
-        processedUpdate.priceRange = this._getPriceRange(updateData.price)
-      }
-
-      // Update product in Firestore
-      await this.db.collection(this.collection).doc(productId).update(processedUpdate)
-
-      console.log("Product updated successfully:", productId)
+      await this.db.collection(this.collection).doc(productId).update(updateWithTimestamp)
+      console.log("Product updated:", productId)
     } catch (error) {
       console.error("Error updating product:", error)
-      throw new Error(`Failed to update product: ${error.message}`)
+      throw new Error("Erro ao atualizar produto")
     }
   }
 
   /**
-   * Deletes a product
+   * Delete a product
    * @param {string} productId - Product ID
    * @returns {Promise<void>}
    */
   async deleteProduct(productId) {
-    this._checkInitialized()
-
     try {
-      // Check if product exists
-      const existingProduct = await this.getProductById(productId)
-      if (!existingProduct) {
-        throw new Error(`Product with ID ${productId} not found`)
-      }
-
-      // Delete product from Firestore
       await this.db.collection(this.collection).doc(productId).delete()
 
-      console.log("Product deleted successfully:", productId)
+      console.log("Product deleted:", productId)
     } catch (error) {
       console.error("Error deleting product:", error)
-      throw new Error(`Failed to delete product: ${error.message}`)
+      throw new Error("Erro ao excluir produto")
     }
   }
 
   /**
-   * Searches products by text
+   * Get products by category
+   * @param {string} category - Product category
+   * @returns {Promise<Array>} Array of products
+   */
+  async getProductsByCategory(category) {
+    try {
+      const snapshot = await this.db
+        .collection(this.collection)
+        .where("categoria", "==", category)
+        .orderBy("createdAt", "desc")
+        .get()
+      return snapshot.docs.map((doc) => this.mapFirestoreProduct(doc))
+    } catch (error) {
+      console.error("Error getting products by category:", error)
+      throw new Error("Erro ao carregar produtos por categoria")
+    }
+  }
+
+  /**
+   * Get products by type
+   * @param {string} type - Product type
+   * @returns {Promise<Array>} Array of products
+   */
+  async getProductsByType(type) {
+    try {
+      const snapshot = await this.db
+        .collection(this.collection)
+        .where("tipoProduto", "==", type)
+        .orderBy("createdAt", "desc")
+        .get()
+      return snapshot.docs.map((doc) => this.mapFirestoreProduct(doc))
+    } catch (error) {
+      console.error("Error getting products by type:", error)
+      throw new Error("Erro ao carregar produtos por tipo")
+    }
+  }
+
+  /**
+   * Search products by name or description
    * @param {string} searchTerm - Search term
-   * @returns {Promise<Array>} - Array of matching products
+   * @returns {Promise<Array>} Array of products
    */
   async searchProducts(searchTerm) {
-    this._checkInitialized()
-
     try {
-      if (!searchTerm || searchTerm.trim().length === 0) {
-        return []
-      }
+      // Note: Firestore doesn't support full-text search natively
+      // This is a basic implementation that gets all products and filters client-side
+      // For production, consider using Algolia or similar service
 
-      const searchTermLower = searchTerm.toLowerCase()
-
-      // Get all products (Firestore doesn't support full-text search natively)
       const allProducts = await this.getAllProducts()
+      const searchLower = searchTerm.toLowerCase()
 
-      // Filter products based on search term
-      const filteredProducts = allProducts.filter((product) => {
-        return (
-          product.name.toLowerCase().includes(searchTermLower) ||
-          product.description.toLowerCase().includes(searchTermLower) ||
-          product.category.toLowerCase().includes(searchTermLower) ||
-          product.type.toLowerCase().includes(searchTermLower)
-        )
-      })
-
-      return filteredProducts
+      return allProducts.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchLower) || product.description.toLowerCase().includes(searchLower),
+      )
     } catch (error) {
       console.error("Error searching products:", error)
-      throw new Error(`Failed to search products: ${error.message}`)
+      throw new Error("Erro ao buscar produtos")
     }
   }
 
   /**
-   * Bulk creates products (useful for initial data seeding)
-   * @param {Array<Object>} productsData - Array of product data
-   * @returns {Promise<Array<string>>} - Array of created product IDs
+   * Get products with filters
+   * @param {Object} filters - Filter options
+   * @returns {Promise<Array>} Array of products
    */
-  async bulkCreateProducts(productsData) {
-    this._checkInitialized()
-
+  async getFilteredProducts(filters = {}) {
     try {
-      const batch = this.db.batch()
-      const productIds = []
+      let query = this.db.collection(this.collection)
+      // Suporte a múltiplas categorias/tipos
+      if (filters.categories && Array.isArray(filters.categories) && filters.categories.length > 0) {
+        query = query.where("categoria", "in", filters.categories.slice(0, 10))
+      } else if (filters.category) {
+        query = query.where("categoria", "==", filters.category)
+      }
+      if (filters.types && Array.isArray(filters.types) && filters.types.length > 0) {
+        query = query.where("tipoProduto", "in", filters.types.slice(0, 10))
+      } else if (filters.type) {
+        query = query.where("tipoProduto", "==", filters.type)
+      }
+      // Faixa de preço
+      if (filters.minPrice !== undefined) {
+        query = query.where("Preco", ">=", filters.minPrice)
+      }
+      if (filters.maxPrice !== undefined) {
+        query = query.where("Preco", "<=", filters.maxPrice)
+      }
+      // Order by creation date
+      query = query.orderBy("createdAt", "desc")
+      if (filters.limit) {
+        query = query.limit(filters.limit)
+      }
+      const snapshot = await query.get()
+      return snapshot.docs.map((doc) => this.mapFirestoreProduct(doc))
+    } catch (error) {
+      console.error("Error getting filtered products:", error)
+      throw new Error("Erro ao filtrar produtos")
+    }
+  }
 
-      for (const productData of productsData) {
-        this._validateProductData(productData)
-        const processedData = this._processProductData(productData)
+  /**
+   * Validate product data
+   * @param {Object} productData - Product data to validate
+   * @throws {Error} If validation fails
+   */
+  validateProductData(productData) {
+    const requiredFields = ["name", "category", "type", "price", "description"]
 
-        const docRef = this.db.collection(this.collection).doc()
-        batch.set(docRef, processedData)
-        productIds.push(docRef.id)
+    for (const field of requiredFields) {
+      if (!productData[field] || productData[field].toString().trim() === "") {
+        throw new Error(`Campo obrigatório: ${field}`)
+      }
+    }
+
+    // Validate price
+    if (typeof productData.price !== "number" || productData.price < 0) {
+      throw new Error("Preço deve ser um número válido maior ou igual a zero")
+    }
+
+    // Validate category
+    const validCategories = ["Cachorros", "Gatos", "Pássaros", "Outros Pets"]
+    if (!validCategories.includes(productData.category)) {
+      throw new Error("Categoria inválida")
+    }
+
+    // Validate type
+    const validTypes = ["Alimentação", "Acessórios", "Higiene", "Brinquedos"]
+    if (!validTypes.includes(productData.type)) {
+      throw new Error("Tipo de produto inválido")
+    }
+
+    // Validate image URL if provided
+    if (productData.image && productData.image.trim()) {
+      try {
+        new URL(productData.image)
+      } catch {
+        throw new Error("URL da imagem inválida")
+      }
+    }
+  }
+
+  /**
+   * Seed initial products (for development/testing)
+   * @returns {Promise<void>}
+   */
+  async seedProducts() {
+    try {
+      const sampleProducts = [
+        {
+          name: "Ração Premium para Cães Adultos",
+          category: "Cachorros",
+          type: "Alimentação",
+          price: 89.9,
+          image: "assets/images/placeholder.png",
+          description: "Ração completa e balanceada para cães adultos de todas as raças.",
+        },
+        {
+          name: "Areia Sanitária para Gatos",
+          category: "Gatos",
+          type: "Higiene",
+          price: 24.9,
+          image: "assets/images/placeholder.png",
+          description: "Areia sanitária com controle de odor para gatos.",
+        },
+        {
+          name: "Brinquedo Corda para Cães",
+          category: "Cachorros",
+          type: "Brinquedos",
+          price: 15.9,
+          image: "assets/images/placeholder.png",
+          description: "Brinquedo de corda resistente para cães de todos os tamanhos.",
+        },
+      ]
+
+      for (const product of sampleProducts) {
+        await this.createProduct(product)
       }
 
-      await batch.commit()
-      console.log(`Bulk created ${productIds.length} products`)
-      return productIds
+      console.log("Sample products seeded successfully")
     } catch (error) {
-      console.error("Error bulk creating products:", error)
-      throw new Error(`Failed to bulk create products: ${error.message}`)
+      console.error("Error seeding products:", error)
+      throw new Error("Erro ao criar produtos de exemplo")
     }
   }
 
   /**
-   * Gets product statistics
-   * @returns {Promise<Object>} - Product statistics
+   * Get product statistics
+   * @returns {Promise<Object>} Statistics object
    */
   async getProductStats() {
-    this._checkInitialized()
-
     try {
       const products = await this.getAllProducts()
 
       const stats = {
-        total: products.length,
-        byCategory: {},
-        byType: {},
-        byPriceRange: {},
-        averagePrice: 0,
+        totalProducts: products.length,
+        categories: [...new Set(products.map((p) => p.category))].length,
+        types: [...new Set(products.map((p) => p.type))].length,
+        averagePrice: products.length > 0 ? products.reduce((sum, p) => sum + (p.price || 0), 0) / products.length : 0,
+        productsByCategory: {},
+        productsByType: {},
       }
 
-      let totalPrice = 0
-
+      // Count products by category
       products.forEach((product) => {
-        // Count by category
-        stats.byCategory[product.category] = (stats.byCategory[product.category] || 0) + 1
-
-        // Count by type
-        stats.byType[product.type] = (stats.byType[product.type] || 0) + 1
-
-        // Count by price range
-        stats.byPriceRange[product.priceRange] = (stats.byPriceRange[product.priceRange] || 0) + 1
-
-        // Sum prices for average calculation
-        totalPrice += product.price
+        stats.productsByCategory[product.category] = (stats.productsByCategory[product.category] || 0) + 1
       })
 
-      // Calculate average price
-      if (products.length > 0) {
-        stats.averagePrice = totalPrice / products.length
-      }
+      // Count products by type
+      products.forEach((product) => {
+        stats.productsByType[product.type] = (stats.productsByType[product.type] || 0) + 1
+      })
 
       return stats
     } catch (error) {
       console.error("Error getting product stats:", error)
-      throw new Error(`Failed to get product stats: ${error.message}`)
+      throw new Error("Erro ao obter estatísticas dos produtos")
     }
   }
 }
 
-// Create and export a singleton instance
 const productsService = new ProductsService()
-
-// Export for use in other modules
 window.ProductsService = productsService
+
+
+// Para importar e usar corretamente em outro arquivo:
+// import productsService from './services/products.js' // ajuste o caminho conforme necessário
+
+// Para criar um produto:
+// const novoProduto = {
+//   name: "Nome do Produto",
+//   category: "Cachorros",
+//   type: "Alimentação",
+//   price: 99.9,
+//   description: "Descrição do produto",
+//   image: "url-da-imagem"
+// }
+
+// productsService.createProduct(novoProduto)
+//   .then((id) => {
+//     console.log("Produto criado com ID:", id)
+//   })
+//   .catch((err) => {
+//     console.error(err)
+//   })
