@@ -16,7 +16,7 @@ const productCounter = document.getElementById("productCounter")
 const filterToggleBtn = document.getElementById("filterToggleBtn")
 const catalogSidebar = document.querySelector(".catalog-sidebar")
 
-// Services
+// Serviços
 let productsService = null
 let authService = null
 
