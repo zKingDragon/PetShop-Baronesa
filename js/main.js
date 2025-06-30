@@ -1,6 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Carrega o header
-  fetch("header.html")
+  // Tenta carregar primeiro pelo caminho direto, se falhar tenta pela pasta
+  let headerReference = "header.html";
+  fetch(headerReference)
+    .then(res => {
+      if (!res.ok) {
+        // Se não encontrar, tenta o caminho com a pasta
+        headerReference = "html/header.html";
+        return fetch(headerReference);
+      }
+      return res;
+    })
     .then(res => res.text())
     .then(data => {
       const header = document.getElementById("header");
@@ -11,13 +20,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   // Carrega o footer
-  fetch("footer.html")
+  let footerReference = "footer.html";
+  fetch(footerReference)
+    .then(res => {
+      if (!res.ok) {
+        // Se não encontrar, tenta o caminho com a pasta
+        footerReference = "html/footer.html";
+        return fetch(footerReference);
+      }
+      return res;
+    })
     .then(res => res.text())
     .then(data => {
       const footer = document.getElementById("footer");
-      if (footer) footer.innerHTML = data;
+      if (footer) {
+        footer.innerHTML = data;
+      }
     });
-
   // Atualiza o ano atual no rodapé
   updateCurrentYear();
 

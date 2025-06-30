@@ -1248,6 +1248,7 @@ img {
   border: 1px solid #e5e7eb;
   border-radius: var(--border-radius);
   font-size: 1rem;
+  width: 95%;
 }
 
 .form-row {
@@ -1260,10 +1261,10 @@ img {
   position: relative;
 }
 
-.input-icon i {
+.fa-eye {
   position: absolute;
-  left: 0.75rem;
-  top: 50%;
+  top: 10%;
+  right: 0.75rem;
   transform: translateY(-50%);
   color: #9ca3af;
 }
@@ -1508,30 +1509,50 @@ img {
 /* Toast */
 .toast {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: var(--emerald-green);
-  color: white;
-  padding: 12px 20px;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  min-width: 220px;
+  max-width: 90vw;
+  padding: 16px 32px;
+  border-radius: 8px;
+  background: #222;
+  color: #fff;
+  font-size: 1rem;
+  text-align: center;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  transition: opacity 0.3s, top 0.3s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  max-height: 30px;
 }
 
 .toast.show {
   opacity: 1;
-  transform: translateY(0);
-}
-
-.toast-error {
-  background-color: #ef4444;
+  pointer-events: auto;
 }
 
 .toast-success {
-  background-color: var(--emerald-green);
+  background: #27ae60;
+}
+
+.toast-error {
+  background: #c0392b;
+}
+
+@media (max-width: 600px) {
+  .toast {
+    left: 10px;
+    bottom: 20px;
+    transform: translate(-50%, 100%);
+    min-width: 220px;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.show {
+    transform: translate(-50%, 0);
+  }
 }
 
 /* Loading spinner */
@@ -2452,6 +2473,12 @@ img {
 .btn-danger:hover {
   background-color: #dc2626;
   border-color: #dc2626;
+}
+
+.toggle-checkbox {
+  display: flex;
+  position: relative;
+  top: -25px;
 }
 
 /* Modal Styles */

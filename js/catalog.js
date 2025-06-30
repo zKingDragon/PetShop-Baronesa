@@ -1,7 +1,8 @@
-/**
- * Sistema de catálogo para o Pet Shop Baronesa
- * Este módulo gerencia filtros, busca e exibição de produtos usando Firebase Firestore
- */
+(() => {
+  /**
+   * Sistema de catálogo para o Pet Shop Baronesa
+   * Este módulo gerencia filtros, busca e exibição de produtos usando Firebase Firestore
+   */
 
 // Elementos DOM
 const filterForm = document.querySelector(".filter-card")
@@ -133,110 +134,6 @@ async function seedSampleProducts() {
   } catch (error) {
     console.error("Error seeding sample products:", error)
   }
-}
-
-/**
- * Gets sample products data
- */
-function getSampleProducts() {
-  return [
-    {
-      name: "Ração Golden Special para Cães Adultos",
-      description: "Ração premium para cães adultos de porte médio. Embalagem de 15kg - Sabor Frango e Carne.",
-      price: 149.9,
-      image: "/assets/images/placeholder.png",
-      category: "Cachorros",
-      type: "Alimentação",
-    },
-    {
-      name: "Ração Premium para Gatos Castrados",
-      description: "Ração premium para gatos castrados com controle de peso. Embalagem de 10kg.",
-      price: 129.9,
-      image: "/assets/images/placeholder.png",
-      category: "Gatos",
-      type: "Alimentação",
-    },
-    {
-      name: "Cama para Cães Pequenos",
-      description: "Cama confortável para cães de pequeno porte. Tecido lavável e macio.",
-      price: 89.9,
-      image: "/assets/images/placeholder.png",
-      category: "Cachorros",
-      type: "Acessórios",
-    },
-    {
-      name: "Kit Brinquedos para Gatos",
-      description: "Conjunto com 5 brinquedos sortidos para gatos. Estimula o instinto de caça.",
-      price: 59.9,
-      image: "/assets/images/placeholder.png",
-      category: "Gatos",
-      type: "Brinquedos",
-    },
-    {
-      name: "Coleira Antipulgas para Cães",
-      description: "Coleira antipulgas e carrapatos para cães. Proteção por até 6 meses.",
-      price: 69.9,
-      image: "/assets/images/placeholder.png",
-      category: "Cachorros",
-      type: "Acessórios",
-    },
-    {
-      name: "Areia Higiênica para Gatos",
-      description: "Areia higiênica de granulado fino para gatos. Pacote com 12kg.",
-      price: 39.9,
-      image: "/assets/images/placeholder.png",
-      category: "Gatos",
-      type: "Higiene",
-    },
-    {
-      name: "Ração para Pássaros",
-      description: "Mistura de sementes para pássaros pequenos. Embalagem de 5kg.",
-      price: 45.9,
-      image: "/assets/images/placeholder.png",
-      category: "Pássaros",
-      type: "Alimentação",
-    },
-    {
-      name: "Gaiola para Hamster",
-      description: "Gaiola completa para hamster com acessórios. Tamanho médio.",
-      price: 119.9,
-      image: "/assets/images/placeholder.png",
-      category: "Outros Pets",
-      type: "Acessórios",
-    },
-    {
-      name: "Shampoo para Cães",
-      description: "Shampoo hipoalergênico para cães com pele sensível. Frasco de 500ml.",
-      price: 29.9,
-      image: "/assets/images/placeholder.png",
-      category: "Cachorros",
-      type: "Higiene",
-    },
-    {
-      name: "Comedouro Automático para Gatos",
-      description: "Comedouro automático programável para gatos. Capacidade de 2kg.",
-      price: 159.9,
-      image: "/assets/images/placeholder.png",
-      category: "Gatos",
-      type: "Acessórios",
-    },
-    {
-      name: "Brinquedo Interativo para Cães",
-      description: "Brinquedo interativo que estimula a inteligência do seu cão.",
-      price: 49.9,
-      image: "/assets/images/placeholder.png",
-      category: "Cachorros",
-      type: "Brinquedos",
-    },
-    {
-      name: "Gaiola para Pássaros Grande",
-      description: "Gaiola espaçosa para pássaros de médio porte. Com poleiros e comedouros.",
-      price: 189.9,
-      image: "/assets/images/placeholder.png",
-      category: "Pássaros",
-      type: "Acessórios",
-    },
-  ]
 }
 
 /**
@@ -439,7 +336,7 @@ function updateFilterState() {
 
   // Atualiza faixas de preço
   filterState.priceRanges = []
-  const priceCheckboxes = document.querySelectorAll('input[name="price"]:checked')
+  const priceCheckboxes = document.querySelectorAll('input[name="priceRanges"]:checked')
   priceCheckboxes.forEach((checkbox) => {
     filterState.priceRanges.push(checkbox.value)
   })
@@ -549,7 +446,7 @@ function updateActiveFilters() {
 
     const filterTag = createFilterTag(priceLabel, () => {
       // Remove esta faixa de preço do estado dos filtros
-      const checkbox = document.querySelector(`input[name="price"][value="${priceRange}"]`)
+      const checkbox = document.querySelector(`input[name="priceRanges"][value="${priceRange}"]`)
       if (checkbox) checkbox.checked = false
 
       filterState.priceRanges = filterState.priceRanges.filter((p) => p !== priceRange)
@@ -639,7 +536,7 @@ function clearAllFilters() {
     checkbox.checked = false
   })
 
-  const priceCheckboxes = document.querySelectorAll('input[name="price"]')
+  const priceCheckboxes = document.querySelectorAll('input[name="priceRanges"]')
   priceCheckboxes.forEach((checkbox) => {
     checkbox.checked = false
   })
@@ -648,6 +545,10 @@ function clearAllFilters() {
   typeCheckboxes.forEach((checkbox) => {
     checkbox.checked = false
   })
+
+  // Desmarca o checkbox "Todos os produtos"
+  const allProductsCheckbox = document.getElementById("all-products-checkbox")
+  if (allProductsCheckbox) allProductsCheckbox.checked = false
 
   // Limpa campos de busca
   if (searchInput) searchInput.value = ""
@@ -663,6 +564,32 @@ function clearAllFilters() {
   applyFilters()
 
   // Atualiza URL
+  updateURL()
+}
+
+/**
+ * Limpa todos os filtros e ativa o botão "Todos os produtos"
+ */
+function clearAllFiltersAndActivateAllBtn() {
+  // Desmarca todos os checkboxes
+  document.querySelectorAll('input[name="category"], input[name="priceRanges"], input[name="type"]').forEach(cb => cb.checked = false)
+
+  // Limpa campos de busca
+  if (searchInput) searchInput.value = ""
+  if (searchInputMobile) searchInputMobile.value = ""
+
+  // Reseta estado dos filtros
+  filterState.categories = []
+  filterState.priceRanges = []
+  filterState.types = []
+  filterState.search = ""
+
+  // Ativa botão "Todos os produtos"
+  const btnTodos = document.getElementById("btn-todos-produtos")
+  if (btnTodos) btnTodos.classList.add("ativo")
+
+  // Aplica filtros (mostra todos os produtos)
+  applyFilters()
   updateURL()
 }
 
@@ -813,18 +740,34 @@ function initEventListeners() {
     })
   }
 
+  // Botão "Todos os produtos"
+  const btnTodos = document.getElementById("btn-todos-produtos")
+  if (btnTodos) {
+    // Já inicia ativo
+    btnTodos.classList.add("ativo")
+    btnTodos.addEventListener("click", function () {
+      clearAllFiltersAndActivateAllBtn()
+    })
+  }
+
   // Eventos de mudança nos checkboxes para filtragem instantânea
   const categoryCheckboxes = document.querySelectorAll('input[name="category"]')
   categoryCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
+      // Remove destaque do botão "Todos os produtos"
+      const btnTodos = document.getElementById("btn-todos-produtos")
+      if (btnTodos) btnTodos.classList.remove("ativo")
       updateFilterState()
       applyFilters()
     })
   })
 
-  const priceCheckboxes = document.querySelectorAll('input[name="price"]')
+  const priceCheckboxes = document.querySelectorAll('input[name="priceRanges"]')
   priceCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
+      // Remove destaque do botão "Todos os produtos"
+      const btnTodos = document.getElementById("btn-todos-produtos")
+      if (btnTodos) btnTodos.classList.remove("ativo")
       updateFilterState()
       applyFilters()
     })
@@ -833,10 +776,34 @@ function initEventListeners() {
   const typeCheckboxes = document.querySelectorAll('input[name="type"]')
   typeCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
+      // Remove destaque do botão "Todos os produtos"
+      const btnTodos = document.getElementById("btn-todos-produtos")
+      if (btnTodos) btnTodos.classList.remove("ativo")
       updateFilterState()
       applyFilters()
     })
   })
+
+  // Checkbox "Todos os produtos"
+  const allProductsCheckbox = document.getElementById("all-products-checkbox")
+  if (allProductsCheckbox) {
+    allProductsCheckbox.addEventListener("change", function () {
+      if (this.checked) {
+        // Desmarca todos os outros filtros
+        document.querySelectorAll('input[name="category"], input[name="priceRanges"], input[name="type"]').forEach(cb => cb.checked = false)
+        // Limpa busca
+        if (searchInput) searchInput.value = ""
+        if (searchInputMobile) searchInputMobile.value = ""
+        // Reseta estado dos filtros
+        filterState.categories = []
+        filterState.priceRanges = []
+        filterState.types = []
+        filterState.search = ""
+        // Mostra todos os produtos
+        applyFilters()
+      }
+    })
+  }
 
   // Submit dos formulários de busca
   if (searchForm) {
@@ -918,11 +885,21 @@ async function initCatalog() {
     // Inicializa event listeners
     initEventListeners()
 
-    // Aplica filtros a partir dos parâmetros da URL
+    // Carrega produtos (já mostra todos ao abrir)
+    await loadProducts()
+
+    // Aplica filtros a partir dos parâmetros da URL (se houver)
     applyFiltersFromURL()
 
-    // Carrega produtos
-    await loadProducts()
+    // Se não houver filtros ativos, mostra todos os produtos
+    if (
+      filterState.categories.length === 0 &&
+      filterState.priceRanges.length === 0 &&
+      filterState.types.length === 0 &&
+      !filterState.search
+    ) {
+      applyFilters()
+    }
   } catch (error) {
     console.error("Error initializing catalog:", error)
     showError("Erro ao inicializar o catálogo. Alguns recursos podem não funcionar corretamente.")
@@ -999,3 +976,5 @@ window.CatalogAdmin = {
     }
   },
 }
+document.addEventListener("DOMContentLoaded", initCatalog)
+})();

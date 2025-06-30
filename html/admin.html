@@ -287,6 +287,19 @@
                         <textarea id="productDescription" name="description" rows="4" required></textarea>
                     </div>
 
+                    <!-- Promoção -->
+                    <div class="form-group">
+                        <label>Produto em Promoção</label>
+                        <input type="checkbox" id="productOnSale" name="onSale" class="toggle-checkbox">
+
+                    </div>
+
+                    <!-- Preço Promocional -->
+                    <div class="form-group">
+                        <label for="productSalePrice">Preço Promocional (R$)</label>
+                        <input type="number" id="productSalePrice" name="salePrice" step="0.01" min="0" placeholder="Deixe em branco se não houver promoção">
+                    </div>
+
                     <!-- Preview da Imagem -->
                     <div class="form-group full-width">
                         <label>Preview da Imagem</label>

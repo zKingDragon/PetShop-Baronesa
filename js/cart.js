@@ -330,6 +330,9 @@ function showToast(message) {
  * Inicializa o sistema de carrinho
  */
 function initCart() {
+  // Garante que o número do carrinho seja atualizado imediatamente
+  updateCartCount()
+
   // Atualiza a UI inicial
   updateCartUI()
 

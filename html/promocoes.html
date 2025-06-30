@@ -21,103 +21,11 @@
                 <h1 class="page-title">Promoções</h1>
                 <p class="page-description">Confira nossas ofertas especiais para o seu pet. Produtos de qualidade com preços imperdíveis!</p>
                 
-                <div class="promotions-grid full-grid">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="assets/images/produtos/cachorroGoldenRacao.jpg" alt="Ração Golden Special">
-                            <div class="product-tag">Oferta</div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Ração Golden Special para Cães Adultos</h3>
-                            <p>Embalagem de 15kg - Sabor Frango e Carne</p>
-                            <div class="product-price">
-                                <span class="current-price">R$ 149,90</span>
-                                <span class="old-price">R$ 179,90</span>
-                            </div>
-                            <a href="https://wa.me/5513996825624?text=Olá! Gostaria de comprar a Ração Golden Special para Cães Adultos que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
-                        </div>
-                    </div>
-                    
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="assets/images/produtos/brinquedosGatos.jpeg" alt="Kit Brinquedos para Gatos">
-                            <div class="product-tag">Oferta</div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Kit Brinquedos para Gatos</h3>
-                            <p>Conjunto com 5 brinquedos sortidos</p>
-                            <div class="product-price">
-                                <span class="current-price">R$ 59,90</span>
-                                <span class="old-price">R$ 79,90</span>
-                            </div>
-                            <a href="https://wa.me/5513996825624?text=Olá! Gostaria de comprar o Kit Brinquedos para Gatos que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
-                        </div>
-                    </div>
-                    
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="assets/images/produtos/camaCachorroPequeno.jpg" alt="Cama para Cães Pequenos">
-                            <div class="product-tag">Oferta</div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Cama para Cães Pequenos</h3>
-                            <p>Tamanho P - Tecido lavável e macio</p>
-                            <div class="product-price">
-                                <span class="current-price">R$ 89,90</span>
-                                <span class="old-price">R$ 119,90</span>
-                            </div>
-                            <a href="https://wa.me/5513996825624?text=Olá! Gostaria de comprar a Cama para Cães Pequenos que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
-                        </div>
-                    </div>
-                    
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="assets/images/produtos/areiaGato.png" alt="Areia Higiênica para Gatos">
-                            <div class="product-tag">Oferta</div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Areia Higiênica para Gatos</h3>
-                            <p>Pacote com 12kg - Granulado fino</p>
-                            <div class="product-price">
-                                <span class="current-price">R$ 39,90</span>
-                                <span class="old-price">R$ 49,90</span>
-                            </div>
-                            <a href="https://wa.me/5513996825624?text=Olá! Gostaria de comprar a Areia Higiênica para Gatos que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
-                        </div>
-                    </div>
-                    
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="assets/images/produtos/coleiraAntiPulga.jpg" alt="Coleira Antipulgas para Cães">
-                            <div class="product-tag">Oferta</div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Coleira Antipulgas para Cães</h3>
-                            <p>Tamanho M - Proteção por até 6 meses</p>
-                            <div class="product-price">
-                                <span class="current-price">R$ 69,90</span>
-                                <span class="old-price">R$ 89,90</span>
-                            </div>
-                            <a href="https://wa.me/5513996825624?text=Olá! Gostaria de comprar a Coleira Antipulgas para Cães que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
-                        </div>
-                    </div>
-                    
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="assets/images/produtos/gatoCastradoRacao.jpg" alt="Ração Premium para Gatos Castrados">
-                            <div class="product-tag">Oferta</div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Ração Premium para Gatos Castrados</h3>
-                            <p>Embalagem de 10kg - Controle de peso</p>
-                            <div class="product-price">
-                                <span class="current-price">R$ 129,90</span>
-                                <span class="old-price">R$ 159,90</span>
-                            </div>
-                            <a href="https://wa.me/5513996825624?text=Olá! Gostaria de comprar a Ração Premium para Gatos Castrados que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
-                        </div>
-                    </div>
+                <!-- INÍCIO: Renderização dinâmica dos produtos em promoção -->
+                <div id="promotionsGrid" class="promotions-grid full-grid">
+                    <!-- Os produtos em promoção serão carregados dinamicamente via JS -->
                 </div>
+                <!-- FIM: Renderização dinâmica dos produtos em promoção -->
             </div>
         </section>
     </main>
@@ -126,5 +34,6 @@
 
     <!-- Scripts -->
     <script src="../js/main.js"></script>
+    <script src="../js/promocoes.js"></script>
 </body>
 </html>

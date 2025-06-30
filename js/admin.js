@@ -247,12 +247,16 @@ class AdminPanel {
   createProductCard(product) {
     const imageUrl = product.image || "assets/images/placeholder.png"
     const price = typeof product.price === "number" ? product.price.toFixed(2) : "0.00"
+    // Promoção
+    const onSale = !!product.onSale && product.salePrice && product.salePrice < product.price
+    const salePrice = onSale ? Number(product.salePrice).toFixed(2) : null
 
     return `
       <div class="admin-product-card" data-product-id="${product.id}">
         <div class="product-image">
           <img src="${imageUrl}" alt="${product.name}" loading="lazy">
           <div class="product-category">${product.category}</div>
+          ${onSale ? `<div class="product-tag sale-tag">Promoção</div>` : ""}
         </div>
         
         <div class="product-info">
@@ -265,7 +269,10 @@ class AdminPanel {
               <span>${product.type}</span>
             </div>
             <div class="product-price">
-              <span class="current-price">R$ ${price}</span>
+              ${onSale
+                ? `<span class="current-price sale-price">R$ ${salePrice}</span> <span class="old-price">R$ ${price}</span>`
+                : `<span class="current-price">R$ ${price}</span>`
+              }
             </div>
           </div>
           
@@ -439,6 +446,9 @@ class AdminPanel {
       document.getElementById("productPrice").value = product.price || ""
       document.getElementById("productImage").value = product.image || ""
       document.getElementById("productDescription").value = product.description || ""
+      // Promoção
+      document.getElementById("productOnSale").checked = !!product.onSale
+      document.getElementById("productSalePrice").value = product.salePrice || ""
 
       this.updateImagePreview(product.image)
 
@@ -489,6 +499,10 @@ class AdminPanel {
 
       // Get form data
       const formData = new FormData(this.elements.productForm)
+      const onSale = !!formData.get("onSale")
+      const salePriceRaw = formData.get("salePrice")
+      const salePrice = salePriceRaw ? Number.parseFloat(salePriceRaw) : null
+
       const productData = {
         name: formData.get("name").trim(),
         category: formData.get("category"),
@@ -496,6 +510,8 @@ class AdminPanel {
         price: Number.parseFloat(formData.get("price")),
         image: formData.get("image").trim() || "assets/images/placeholder.png",
         description: formData.get("description").trim(),
+        onSale: onSale,
+        salePrice: onSale && salePriceRaw ? salePrice : null,
       }
 
       // Validate required fields
@@ -505,6 +521,10 @@ class AdminPanel {
 
       if (isNaN(productData.price) || productData.price < 0) {
         throw new Error("Preço deve ser um número válido maior ou igual a zero")
+      }
+
+      if (productData.onSale && (isNaN(productData.salePrice) || productData.salePrice <= 0 || productData.salePrice >= productData.price)) {
+        throw new Error("O preço promocional deve ser menor que o preço original e maior que zero")
       }
 
       // Save product
