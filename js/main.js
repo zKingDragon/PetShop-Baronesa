@@ -1,10 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("../html/header.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("header").innerHTML = data;
-    });
-});
+
 // ...existing code...
 // Carrega o header.html e inse
 // re no elemento com id="header"
