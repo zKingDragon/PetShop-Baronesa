@@ -5,7 +5,8 @@
 
 // Constantes
 const AUTH_KEY = "petshop_baronesa_auth"
-const PROTECTED_PAGES = ["/promocoes.html"]
+const PROTECTED_PAGES = ["/promocoes.html", "/admin.html"]
+
 
 // Elementos DOM
 const authButtons = document.querySelector(".auth-buttons")
@@ -45,22 +46,16 @@ function getAuthUser() {
  * @param {string} password - Senha do usuário
  * @returns {boolean} - Verdadeiro se o login for bem-sucedido
  */
-function login(email, password) {
-  // Em um sistema real, isso seria uma chamada de API
-  const user = MOCK_USERS.find((u) => u.email === email && u.password === password)
-
-  if (user) {
-    // Armazena apenas os dados não sensíveis
-    const userData = {
-      email: user.email,
-      name: user.name,
-    }
-
-    localStorage.setItem(AUTH_KEY, JSON.stringify(userData))
+// Exemplo para login com Firebase Auth
+async function login(email, password) {
+  try {
+    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
+    // Usuário autenticado, você pode buscar dados adicionais no Firestore se quiser
     return true
+  } catch (error) {
+    alert("Erro ao fazer login: " + (error.message || "Tente novamente."))
+    return false
   }
-
-  return false
 }
 
 /**

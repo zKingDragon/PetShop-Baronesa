@@ -49,10 +49,12 @@ function initCadastroForm() {
   const cadastroForm = document.getElementById("cadastroForm")
 
   if (cadastroForm) {
-    cadastroForm.addEventListener("submit", (e) => {
+    cadastroForm.addEventListener("submit", async (e) => {
       e.preventDefault()
 
-      // Validar senha
+      const name = document.getElementById("name").value
+      const email = document.getElementById("email").value
+      const phone = document.getElementById("phone").value
       const password = document.getElementById("password").value
       const confirmPassword = document.getElementById("confirmPassword").value
 
@@ -61,11 +63,23 @@ function initCadastroForm() {
         return
       }
 
-      // Aqui você implementaria a lógica de cadastro
-      // Por enquanto, apenas simularemos um cadastro bem-sucedido
+      try {
+        // Cria o usuário no Firebase Auth
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password)
+        const user = userCredential.user
 
-      // Redirecionar para uma página de sucesso ou mostrar uma mensagem
-      showSuccessMessage()
+        // Salva dados adicionais no Firestore
+        await firebase.firestore().collection("Usuários").doc(user.uid).set({
+          name,
+          email,
+          phone,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+
+        showSuccessMessage()
+      } catch (error) {
+        alert("Erro ao cadastrar: " + (error.message || "Tente novamente."))
+      }
     })
   }
 }
