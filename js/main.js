@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Tenta carregar primeiro pelo caminho direto, se falhar tenta pela pasta
-  let headerReference = "header.html";
+  let headerReference = "html/header.html";
   fetch(headerReference)
     .then(res => {
       if (!res.ok) {
         // Se não encontrar, tenta o caminho com a pasta
-        headerReference = "html/header.html";
+        headerReference = "header.html";
         return fetch(headerReference);
       }
       return res;
