@@ -1,28 +1,42 @@
-
-// ...existing code...
-// Carrega o header.html e inse
-// re no elemento com id="header"
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("../html/header.html")
+  // Tenta carregar primeiro pelo caminho direto, se falhar tenta pela pasta
+  let headerReference = "header.html";
+  fetch(headerReference)
+    .then(res => {
+      if (!res.ok) {
+        // Se não encontrar, tenta o caminho com a pasta
+        headerReference = "html/header.html";
+        return fetch(headerReference);
+      }
+      return res;
+    })
     .then(res => res.text())
     .then(data => {
-      document.getElementById("header").innerHTML = data;
-      initMobileMenu(); // <-- Chame aqui, após inserir o header!
+      const header = document.getElementById("header");
+      if (header) {
+        header.innerHTML = data;
+        initMobileMenu(); // Inicializa o menu mobile após carregar o header
+      }
     });
-});
 
-// Carrega o footer normalmente
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("../html/footer.html")
+  // Carrega o footer
+  let footerReference = "footer.html";
+  fetch(footerReference)
+    .then(res => {
+      if (!res.ok) {
+        // Se não encontrar, tenta o caminho com a pasta
+        footerReference = "html/footer.html";
+        return fetch(footerReference);
+      }
+      return res;
+    })
     .then(res => res.text())
     .then(data => {
-      document.getElementById("footer").innerHTML = data;
+      const footer = document.getElementById("footer");
+      if (footer) {
+        footer.innerHTML = data;
+      }
     });
-});
-
-// Atualiza o ano após o DOM estar prontoAdd commentMore actions
-document.addEventListener("DOMContentLoaded", () => {
-
   // Atualiza o ano atual no rodapé
   updateCurrentYear();
 
