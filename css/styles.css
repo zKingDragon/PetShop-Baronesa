@@ -664,6 +664,8 @@ img {
   overflow: hidden;
   box-shadow: var(--box-shadow);
   transition: transform 0.3s ease;
+    display: flex;
+  flex-direction: column;  height: 100%;
 }
 
 .product-card:hover {
@@ -1345,7 +1347,35 @@ img {
     grid-template-columns: 1fr 1fr;
   }
 }
-
+.btn-top {
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+.btn-bottom {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+  .products-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem  0;
+  }
+.fa-whatsapp {
+  color: hsl(0, 0%, 99%);
+  font-size: 1rem;
+}
+.btn-whatsapp {
+  display: inline-block;
+  background-color: var(--emerald-green);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 .cadastro-form-card {
   background-color: white;
   border-radius: var(--border-radius);

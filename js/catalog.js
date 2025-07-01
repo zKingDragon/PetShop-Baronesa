@@ -272,11 +272,15 @@ function renderProducts(products) {
         <p>${product.description}</p>
         <div class="product-footer">
           <span class="product-price">R$ ${product.price.toFixed(2)}</span>
-          <a href="catalogo.html?produto=${product.slug}" class="read-more">Ver detalhes</a>
         </div>
-        <button class="btn-primary btn-block add-to-cart-btn" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-image="${product.image}">
-          <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
-        </button>
+        <div class="product-buttons">
+          <button class="btn-primary add-to-cart-btn btn-top" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-image="${product.image}">
+            <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+          </button>
+          <button class="btn-whatsapp buy-now-btn btn-bottom" data-name="${product.name}" data-price="${product.price}" data-id="${product.id}">
+            <i class="fab fa-whatsapp"></i> Comprar Agora
+          </button>
+        </div>
       </div>
     `
 
@@ -285,6 +289,9 @@ function renderProducts(products) {
 
   // Adiciona event listeners aos botões de adicionar ao carrinho
   initAddToCartButtons()
+  
+  // Adiciona event listeners aos botões de comprar no WhatsApp
+  initBuyNowButtons()
 }
 
 /**
@@ -319,6 +326,33 @@ function initAddToCartButtons() {
         // Mostra mensagem de toast
         showToast("Produto adicionado ao carrinho!")
       }
+    })
+  })
+}
+
+/**
+ * Inicializa os botões de comprar no WhatsApp
+ */
+function initBuyNowButtons() {
+  const buyNowButtons = document.querySelectorAll(".buy-now-btn")
+
+  buyNowButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const productName = button.getAttribute("data-name")
+      const productPrice = button.getAttribute("data-price")
+      const productId = button.getAttribute("data-id")
+
+      // Cria a mensagem para o WhatsApp
+      const message = `Olá! Tenho interesse no produto:\n\n*${productName}*\nPreço: R$ ${parseFloat(productPrice).toFixed(2)}\nCódigo: ${productId}\n\nGostaria de mais informações e finalizar a compra.`
+      
+      // Número do WhatsApp do Pet Shop (substitua pelo número real)
+      const whatsappNumber = "5511999999999" // Formato: código do país + DDD + número
+      
+      // Cria a URL do WhatsApp
+      const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+      
+      // Abre o WhatsApp em uma nova aba
+      window.open(whatsappURL, "_blank")
     })
   })
 }
