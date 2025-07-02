@@ -1,5 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Tenta carregar primeiro pelo caminho direto, se falhar tenta pela pasta
+// Tenta carregar primeiro pelo caminho direto, se falhar tenta pela pastaAdd commentMore actions
   let headerReference = "header.html";
   fetch(headerReference)
     .then(res => {
@@ -12,32 +11,19 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(res => res.text())
     .then(data => {
+      document.getElementById("header").innerHTML = data;
+      initMobileMenu(); // <-- Chame aqui, após inserir o header!
       const header = document.getElementById("header");
       if (header) {
         header.innerHTML = data;
-        initMobileMenu(); // inicializa menu mobile
-
-        // role‐based visibility
-        window.FirebaseConfig.initializeFirebase().then(() => {
-          firebase.auth().onAuthStateChanged(async user => {
-            let role = "guest";
-            if (user) {
-              const idToken = await user.getIdTokenResult();
-              role = idToken.claims.admin ? "admin" : "user";
-            }
-            document.querySelectorAll("[data-role]").forEach(el => {
-              const allowed = el.getAttribute("data-role").split(" ");
-              el.style.display = allowed.includes(role) ? "" : "none";
-            });
-          });
-
-          // logout handlers
-          document.getElementById("logoutBtn")?.addEventListener("click", () => firebase.auth().signOut());
-          document.getElementById("logoutBtnMobile")?.addEventListener("click", () => firebase.auth().signOut());
-        });
+        initMobileMenu(); // Inicializa o menu mobile após carregar o header
       }
     });
+});
 
+// Carrega o footer normalmente
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("../html/footer.html")
   // Carrega o footer
   let footerReference = "footer.html";
   fetch(footerReference)
@@ -51,11 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(res => res.text())
     .then(data => {
+      document.getElementById("footer").innerHTML = data;
       const footer = document.getElementById("footer");
       if (footer) {
         footer.innerHTML = data;
       }
     });
+});
+
+// Atualiza o ano após o DOM estar prontoAdd commentMore actions
+document.addEventListener("DOMContentLoaded", () => {
+
   // Atualiza o ano atual no rodapé
   updateCurrentYear();
 
@@ -100,7 +92,7 @@ function updateCurrentYear() {
 }
 
 function ensureLogoTextVisible() {
-  const logoText = document.querySelector(".logo-text");
+  const logoText = document.querySelector(".logo-text");More actions
   if (logoText) {
     logoText.style.display = "inline"; // Garante que o texto da logo esteja visível
   }
