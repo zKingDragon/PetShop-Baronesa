@@ -15,7 +15,26 @@ document.addEventListener("DOMContentLoaded", () => {
       const header = document.getElementById("header");
       if (header) {
         header.innerHTML = data;
-        initMobileMenu(); // Inicializa o menu mobile após carregar o header
+        initMobileMenu(); // inicializa menu mobile
+
+        // role‐based visibility
+        window.FirebaseConfig.initializeFirebase().then(() => {
+          firebase.auth().onAuthStateChanged(async user => {
+            let role = "guest";
+            if (user) {
+              const idToken = await user.getIdTokenResult();
+              role = idToken.claims.admin ? "admin" : "user";
+            }
+            document.querySelectorAll("[data-role]").forEach(el => {
+              const allowed = el.getAttribute("data-role").split(" ");
+              el.style.display = allowed.includes(role) ? "" : "none";
+            });
+          });
+
+          // logout handlers
+          document.getElementById("logoutBtn")?.addEventListener("click", () => firebase.auth().signOut());
+          document.getElementById("logoutBtnMobile")?.addEventListener("click", () => firebase.auth().signOut());
+        });
       }
     });
 

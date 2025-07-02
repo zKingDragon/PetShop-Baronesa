@@ -5,20 +5,25 @@
             <!-- Logo -->
             <a href="index.html" class="logo">
         <div class="logo-circle">
-      <img src="assets/images/gerais/iconeBaronesa.png" alt="Pet Shop Baronesa" width="40" height="40">
+      <img src="../assets/images/gerais/iconeBaronesa.png" alt="Pet Shop Baronesa" width="40" height="40">
        </div>
   <span class="logo-text" style="display: inline;">Pet Shop Baronesa</span>
             </a>
          <nav class="nav-desktop">
              <ul>
-               <li><a href="html/catalogo.html">Catálogo</a></li>
-               <li><a href="html/banho-tosa.html">Banho & Tosa</a></li>
-               <li><a href="html/dicas.html">Dicas</a></li>
-               <li><a href="html/promocoes.html">Promoções</a></li>
-               <div class="user-actions">
+               <li data-role="guest"><a href="html/catalogo.html">Catálogo</a></li>
+               <li data-role="guest"><a href="html/banho-tosa.html">Banho & Tosa</a></li>
+               <li data-role="guest"><a href="html/dicas.html">Dicas</a></li>
+               <li data-role="guest"><a href="html/promocoes.html">Promoções</a></li>
+               <li data-role="user admin">
                     <a href="html/carrinho.html" class="cart-icon active">
                         <i class="fas fa-shopping-cart"></i>
                     </a>
+             </li>
+               <li data-role="guest"><a href="html/cadastro.html" class="btn-primary btn-signup">Cadastre-se</a></li>
+               <li data-role="user admin"><button id="logoutBtn" class="btn-secondary">Sair</button></li>
+               <li data-role="admin"><button id="addProductBtn" class="btn-primary">Novo Produto</button></li>
+               <li data-role="admin"><a href="html/admin.html">Painel Admin</a></li>
              </ul>
          </nav>
 
@@ -49,10 +54,14 @@
             </form>
             <nav>
                 <ul>
-                    <li><a href="html/catalogo.html">Catálogo</a></li>
-                    <li><a href="html/banho-tosa.html">Banho & Tosa</a></li>
-                    <li><a href="html/promocoes.html">Promoções</a></li>
-                    <li><a href="html/cadastro.html">Cadastre-se</a></li>
+                    <li data-role="guest"><a href="html/catalogo.html">Catálogo</a></li>
+                    <li data-role="guest"><a href="html/banho-tosa.html">Banho & Tosa</a></li>
+                    <li data-role="guest"><a href="html/promocoes.html">Promoções</a></li>
+                    <li data-role="guest"><a href="html/cadastro.html">Cadastre-se</a></li>
+                    <li data-role="user admin"><a href="html/carrinho.html">Carrinho</a></li>
+                    <li data-role="user admin"><button id="logoutBtnMobile">Sair</button></li>
+                    <li data-role="admin"><button id="addProductBtnMobile">Novo Produto</button></li>
+                    <li data-role="admin"><a href="html/admin.html">Painel Admin</a></li>
                 </ul>
             </nav>
         </div>
