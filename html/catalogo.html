@@ -1,4 +1,4 @@
-<!DOCTYPE html>More actions
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,7 @@
     <title>Catálogo de Produtos - Pet Shop Baronesa</title>
     <meta name="description" content="Confira nosso catálogo completo de produtos para seu pet. Rações, acessórios, brinquedos e muito mais!">
     <link rel="shortcut icon" type="image/png" href="assets/images/gerais/iconeBaronesa.png"> 
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -19,24 +19,24 @@
         <section class="section">
             <div class="container">
                 <h1 class="page-title">Catálogo de Produtos</h1>
-
+                
                 <!-- Botão de filtro mobile -->
                 <div class="filter-mobile-toggle">
                     <button id="filterToggleBtn" class="btn-secondary">
                         <i class="fas fa-filter"></i> Mostrar Filtros
                     </button>
                 </div>
-
+                
                 <!-- Filtros ativos -->
                 <div id="activeFilters" class="active-filters">
                     <!-- Filtros ativos serão inseridos aqui via JavaScript -->
                 </div>
-
+                
                 <!-- Contador de produtos -->
                 <div class="product-counter">
                     <span id="productCounter">0</span> produtos encontrados
                 </div>
-
+                
                 <div class="catalog-layout">
                     <!-- Filtros - Sidebar -->
                     <aside class="catalog-sidebar">
@@ -67,7 +67,7 @@
                                     </label>
                                 </div>
                             </div>
-
+                            
                             <div class="filter-section">
                                 <h3>Preço</h3>
                                 <div class="filter-options">
@@ -89,7 +89,7 @@
                                     </label>
                                 </div>
                             </div>
-
+                            
                             <div class="filter-section">
                                 <h3>Tipo de Produto</h3>
                                 <div class="filter-options">
@@ -111,7 +111,7 @@
                                     </label>
                                 </div>
                             </div>
-
+                            
                             <button id="clearFiltersBtn" class="btn-secondary btn-block">Limpar Filtros</button>
                         </div>
                     </aside>
@@ -143,7 +143,7 @@
     <script src="../js/firebase-config.js"></script>
     <script src="../js/services/products.js"></script>
     <script src="../js/services/auth-service.js"></script>
-    <script src="../js/main.js"></script>More actions
+    <script src="../js/main.js"></script>
     <script src="../js/cart.js"></script>
     <script src="../js/catalog.js"></script>
 </body>

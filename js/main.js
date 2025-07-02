@@ -1,4 +1,5 @@
-// Tenta carregar primeiro pelo caminho direto, se falhar tenta pela pastaAdd commentMore actions
+document.addEventListener("DOMContentLoaded", () => {
+  // Tenta carregar primeiro pelo caminho direto, se falhar tenta pela pasta
   let headerReference = "header.html";
   fetch(headerReference)
     .then(res => {
@@ -11,19 +12,13 @@
     })
     .then(res => res.text())
     .then(data => {
-      document.getElementById("header").innerHTML = data;
-      initMobileMenu(); // <-- Chame aqui, após inserir o header!
       const header = document.getElementById("header");
       if (header) {
         header.innerHTML = data;
         initMobileMenu(); // Inicializa o menu mobile após carregar o header
       }
     });
-});
 
-// Carrega o footer normalmente
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("../html/footer.html")
   // Carrega o footer
   let footerReference = "footer.html";
   fetch(footerReference)
@@ -37,17 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(res => res.text())
     .then(data => {
-      document.getElementById("footer").innerHTML = data;
       const footer = document.getElementById("footer");
       if (footer) {
         footer.innerHTML = data;
       }
     });
-});
-
-// Atualiza o ano após o DOM estar prontoAdd commentMore actions
-document.addEventListener("DOMContentLoaded", () => {
-
   // Atualiza o ano atual no rodapé
   updateCurrentYear();
 
@@ -92,7 +81,7 @@ function updateCurrentYear() {
 }
 
 function ensureLogoTextVisible() {
-  const logoText = document.querySelector(".logo-text");More actions
+  const logoText = document.querySelector(".logo-text");
   if (logoText) {
     logoText.style.display = "inline"; // Garante que o texto da logo esteja visível
   }
