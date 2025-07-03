@@ -336,6 +336,11 @@ function initCart() {
   // Atualiza a UI inicial
   updateCartUI()
 
+  // Inicializa o sistema de endereços se disponível
+  if (typeof addressManager !== 'undefined') {
+    addressManager.updateAddressDisplay()
+  }
+
   // Configura o botão de limpar carrinho
   if (clearCartButton) {
     clearCartButton.addEventListener("click", () => {
@@ -351,20 +356,42 @@ function initCart() {
       const cartItems = getCartItems()
       const total = calculateCartTotal()
 
+      // Verifica se há endereço completo
+      if (typeof addressManager !== 'undefined' && !addressManager.isAddressComplete()) {
+        alert("Por favor, adicione seu endereço de entrega antes de finalizar a compra.")
+        return
+      }
+
       // Constrói a mensagem para o WhatsApp
       let message = "Olá! Gostaria de fazer um pedido:\n\n"
 
       cartItems.forEach((item) => {
-        message += `${item.quantity}x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}\n`
+        message += `${item.quantity}x ${item.name}\n`
       })
 
-      message += `\nTotal: R$ ${total.toFixed(2)}`
+      message += `\nTotal: R$ ${total.toFixed(2).replace('.', ',')}\n\n`
+
+      // Adiciona informações de endereço se disponível
+      if (typeof addressManager !== 'undefined') {
+        const address = addressManager.getAddressData()
+        if (address) {
+          message += "📍 Informações de Entrega:\n"
+          message += `${address.name}\n`
+          message += `${address.street}, ${address.number}`
+          if (address.complement) message += ` - ${address.complement}`
+          message += `\n${address.neighborhood}\n`
+          if (address.reference) message += `Referência: ${address.reference}\n`
+          message += "\n"
+        }
+      }
+
+      message += "Obrigado!"
 
       // Codifica a mensagem para URL
       const encodedMessage = encodeURIComponent(message)
 
       // Abre o WhatsApp com a mensagem
-      window.open(`https://wa.me/5513996825624?text=${encodedMessage}`, "_blank")
+      window.open(`https://wa.me/551334559994?text=${encodedMessage}`, "_blank")
     })
   }
 

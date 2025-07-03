@@ -38,10 +38,21 @@
                 <div class="footer-column">
                     <h3>Links Rápidos</h3>
                     <ul class="quick-links">
+                        <!-- Links públicos (sempre visíveis) -->
                         <li><a href="catalogo.html">Catálogo</a></li>
                         <li><a href="banho-tosa.html">Banho & Tosa</a></li>
-                        <li><a href="dicas.html">Dicas</a></li>
-                        <li><a href="promocoes.html">Promoções</a></li>
+                       <!-- <li><a href="dicas.html">Dicas</a></li> !-->
+                        
+                        <!-- Links para usuários não logados (guest) -->
+                        <li class="guest-only"><a href="login.html">Login</a></li>
+                        <li class="guest-only"><a href="cadastro.html">Cadastre-se</a></li>
+                        
+                        <!-- Links para usuários logados (user/admin) -->
+                        <li class="user-only"><a href="promocoes.html">Promoções</a></li>
+                        <li class="user-only"><a href="carrinho.html">Carrinho</a></li>
+                        
+                        <!-- Links apenas para admin -->
+                        <li class="admin-only"><a href="admin.html">Painel Admin</a></li>
                     </ul>
                 </div>
 
@@ -50,7 +61,7 @@
                     <h3>Contato</h3>
                     <div class="contact-phone">
                         <i class="fas fa-phone"></i>
-                        <a href="https://wa.me/5513996825624">(13) 99682-5624</a>
+                        <a href="https://wa.me/551334559994">(13) 99682-5624</a>
                     </div>
                     <div class="social-icons">
                         <a href="https://www.instagram.com/petbaronesa/" target="_blank" rel="noopener noreferrer">
@@ -60,12 +71,57 @@
                             <i class="fab fa-facebook-f"></i>
                         </a>
                     </div>
+                    
+                    <!-- Links de usuário baseados em permissões -->
+                    <div class="user-links">
+                        <!-- Para usuários não logados -->
+                        <div class="guest-only">
+                            <a href="login.html" class="footer-user-link">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Entrar</span>
+                            </a>
+                        </div>
+                        
+                        <!-- Para usuários logados -->
+                        <div class="user-only">
+                            <a href="#" class="footer-user-link" id="userProfileLink">
+                                <i class="fas fa-user"></i>
+                                <span id="footerUserName">Minha Conta</span>
+                            </a>
+                            <a href="#" class="footer-user-link" id="footerLogoutLink">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Sair</span>
+                            </a>
+                        </div>
+                        
+                        <!-- Para admin -->
+                        <div class="admin-only">
+                            <a href="admin.html" class="footer-user-link">
+                                <i class="fas fa-cog"></i>
+                                <span>Administração</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="footer-bottom">
                 <p>Cuidando do seu pet com amor desde 2015 🐾</p>
                 <p class="copyright">© <span id="currentYear"></span> Pet Shop Baronesa. Todos os direitos reservados.</p>
+                
+                <!-- Links de política e termos baseados em permissões -->
+                <div class="footer-legal">
+                    <!-- Link para usuários logados -->
+                    <a href="#" class="legal-link user-only">Histórico de Pedidos</a>
+                    <!-- Link apenas para admin -->
+                    <a href="#" class="legal-link admin-only">Configurações</a>
+                </div>
             </div>
         </div>
     </footer>
+
+    <!-- Footer Permissions CSS -->
+    <link rel="stylesheet" href="../css/footer-permissions.css">
+    
+    <!-- Footer Permissions JavaScript -->
+    <script src="../js/footer-permissions.js"></script>

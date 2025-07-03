@@ -396,7 +396,7 @@ function initBuyNowButtons() {
       const message = `Olá! Tenho interesse no produto:\n\n*${productName}*\nPreço: R$ ${parseFloat(productPrice).toFixed(2)}\nCódigo: ${productId}\n\nGostaria de mais informações e finalizar a compra.`
       
       // Número do WhatsApp do Pet Shop (substitua pelo número real)
-      const whatsappNumber = "5511999999999" // Formato: código do país + DDD + número
+      const whatsappNumber = "551334559994" // Formato: código do país + DDD + número
       
       // Cria a URL do WhatsApp
       const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`

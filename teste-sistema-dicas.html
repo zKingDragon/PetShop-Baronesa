@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Sistema de Dicas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .step h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+            margin: 20px 0;
+        }
+        .warning {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+            margin: 20px 0;
+        }
+        .success {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐾 Sistema de Dicas - Pet Shop Baronesa</h1>
+        <p>Sistema dinâmico para gerenciar dicas do pet shop. Use este guia para testar todas as funcionalidades.</p>
+        
+        <div class="success">
+            <h3>✅ Sistema Configurado para GitHub Pages!</h3>
+            <p>O sistema foi otimizado para funcionar perfeitamente em hospedagens como GitHub Pages, Netlify e Vercel.</p>
+            <ul>
+                <li>🔗 Caminhos automáticos resolvidos</li>
+                <li>📱 Compatível com mobile</li>
+                <li>⚡ Performance otimizada</li>
+                <li>🔄 Atualizações em tempo real</li>
+            </ul>
+        </div>
+
+        <div class="info">
+            <h3>🚀 Deploy no GitHub Pages</h3>
+            <p>Para hospedar no GitHub Pages:</p>
+            <ol>
+                <li>Faça upload dos arquivos para um repositório GitHub</li>
+                <li>Vá em Settings → Pages</li>
+                <li>Selecione "main branch" e "/ (root)"</li>
+                <li>Seu site estará em: <code>https://seu-usuario.github.io/nome-repositorio</code></li>
+            </ol>
+        </div>
+
+        <div class="info">
+            <h3>🔧 Funcionalidades Implementadas:</h3>
+            <ul>
+                <li>✅ Integração com Firebase/Firestore (tabela "Dicas")</li>
+                <li>✅ CRUD completo de dicas no painel admin</li>
+                <li>✅ Página pública com dicas dinâmicas</li>
+                <li>✅ Filtros por categoria e busca</li>
+                <li>✅ Sistema de abas no admin</li>
+                <li>✅ Fallback para localStorage</li>
+                <li>✅ Design responsivo</li>
+                <li>✅ Campos: conteudo, dataDePublicacao, fileURL</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>1. Acesse o Painel Administrativo</h3>
+            <p>Abra o painel admin para gerenciar dicas:</p>
+            <a href="/html/admin.html" class="button">🛠️ Abrir Admin</a>
+        </div>
+
+        <div class="step">
+            <h3>2. Navegue para a Aba "Dicas"</h3>
+            <p>No painel admin, clique na aba "Dicas" para acessar o gerenciamento de dicas.</p>
+        </div>
+
+        <div class="step">
+            <h3>3. Adicione uma Nova Dica</h3>
+            <p>Clique em "Nova Dica" e preencha os campos:</p>
+            <ul>
+                <li><strong>Título:</strong> Nome da dica</li>
+                <li><strong>Categoria:</strong> Cachorros, Gatos, Pássaros ou Geral</li>
+                <li><strong>Status:</strong> Rascunho ou Publicada</li>
+                <li><strong>Resumo:</strong> Texto curto para o card</li>
+                <li><strong>Conteúdo:</strong> Texto completo da dica</li>
+                <li><strong>Imagem:</strong> URL da imagem (opcional)</li>
+                <li><strong>Tags:</strong> Palavras-chave (opcional)</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>4. Visualize as Dicas Públicas</h3>
+            <p>Acesse a página pública para ver as dicas publicadas:</p>
+            <a href="/html/dicas.html" class="button">👁️ Ver Dicas Públicas</a>
+        </div>
+
+        <div class="step">
+            <h3>5. Teste os Filtros</h3>
+            <p>Na página pública, teste:</p>
+            <ul>
+                <li>Filtros por categoria (Cachorros, Gatos, etc.)</li>
+                <li>Busca por texto</li>
+                <li>Navegação entre filtros</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <h3>⚠️ Importante:</h3>
+            <p>Apenas dicas com status "Publicada" aparecerão na página pública. Dicas "Rascunho" ficam visíveis apenas no admin.</p>
+        </div>
+
+        <div class="info">
+            <h3>🗄️ Estrutura do Banco de Dados:</h3>
+            <p><strong>Coleção:</strong> Dicas</p>
+            <p><strong>Campos principais:</strong></p>
+            <ul>
+                <li><code>conteudo</code>: Texto da dica</li>
+                <li><code>dataDePublicacao</code>: Data de publicação</li>
+                <li><code>fileURL</code>: URL da imagem</li>
+                <li><code>title</code>: Título da dica</li>
+                <li><code>category</code>: Categoria</li>
+                <li><code>status</code>: published/draft</li>
+                <li><code>resumo</code>: Resumo para card</li>
+                <li><code>tags</code>: Array de tags</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>6. Exemplo de Dica de Teste</h3>
+            <p>Use estes dados para criar uma dica de teste:</p>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                <strong>Título:</strong> Como escovar os dentes do seu cão<br>
+                <strong>Categoria:</strong> Cachorros<br>
+                <strong>Status:</strong> Publicada<br>
+                <strong>Resumo:</strong> Aprenda a manter a higiene dental do seu cão em dia com dicas práticas.<br>
+                <strong>Conteúdo:</strong> A escovação regular dos dentes é essencial para a saúde bucal do seu cão. Use pasta de dente específica para cães e escove suavemente em movimentos circulares.<br>
+                <strong>Tags:</strong> higiene, saúde, cuidados, dentes
+            </div>
+        </div>
+
+        <div class="success">
+            <h3>🎉 Próximos Passos:</h3>
+            <ul>
+                <li>✅ Sistema totalmente funcional</li>
+                <li>🔄 Dicas são atualizadas automaticamente</li>
+                <li>📱 Interface responsiva</li>
+                <li>🔒 Dados seguros no Firebase</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>7. Links Úteis</h3>
+            <a href="/html/admin.html" class="button">🛠️ Painel Admin</a>
+            <a href="/html/dicas.html" class="button">📖 Página de Dicas</a>
+            <a href="/index.html" class="button">🏠 Página Inicial</a>
+        </div>
+    </div>
+</body>
+</html>

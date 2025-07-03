@@ -7,115 +7,183 @@
     <meta name="description" content="Cadastre-se na Pet Shop Baronesa e receba ofertas exclusivas para seu pet.">
     <link rel="shortcut icon" type="image/png" href="../assets/images/gerais/iconeBaronesa.png"> 
         <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/cadastro-styles.css">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-   <div id="header"></div>
+    <!-- Cabeçalho -->
+    <div id="header"></div>
 
     <!-- Conteúdo Principal -->
     <main>
         <section class="section">
             <div class="container">
-                <h1 class="page-title">Cadastre-se</h1>
+                <h1 class="page-title">
+                    <i class="fas fa-user-plus"></i>
+                    Criar sua conta
+                </h1>
                 
                 <div class="cadastro-grid">
                     <div class="cadastro-form-card">
-                        <h2>Crie sua conta</h2>
+                        <div class="form-header">
+                            <div class="logo-section">
+                                <img src="../assets/images/gerais/iconeBaronesa.png" alt="Pet Shop Baronesa" class="form-logo">
+                                <h2>Junte-se à família Baronesa!</h2>
+                                <p class="form-subtitle">Crie sua conta e aproveite todos os benefícios</p>
+                            </div>
+                        </div>
+                        
                         <form id="cadastroForm" class="cadastro-form">
                             <div class="form-group">
-                                <label for="name">Nome Completo</label>
-                                <div class="input-icon">
+                                <label for="name">
                                     <i class="fas fa-user"></i>
-                                    <input type="text" id="name" name="name" placeholder="Seu nome completo" required>
+                                    Nome Completo
+                                </label>
+                                <div class="input-icon">
+                                    <input type="text" id="name" name="name" placeholder="Digite seu nome completo" required>
+                                    <div class="input-border"></div>
                                 </div>
                             </div>
                             
                             <div class="form-group">
-                                <label for="email">E-mail</label>
-                                <div class="input-icon">
+                                <label for="email">
                                     <i class="fas fa-envelope"></i>
-                                    <input type="email" id="email" name="email" placeholder="seu.email@exemplo.com" required>
+                                    E-mail
+                                </label>
+                                <div class="input-icon">
+                                    <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
+                                    <div class="input-border"></div>
                                 </div>
                             </div>
                             
                             <div class="form-group">
-                                <label for="phone">Telefone</label>
-                                <div class="input-icon">
+                                <label for="phone">
                                     <i class="fas fa-phone"></i>
-                                    <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required>
+                                    Telefone
+                                </label>
+                                <div class="input-icon">
+                                    <input type="tel" id="phone" name="phone" placeholder="Digite seu telefone" required>
+                                    <div class="input-border"></div>
                                 </div>
                             </div>
                             
                             <div class="form-group">
-                                <label for="password">Senha</label>
-                                <div class="input-icon">
+                                <label for="password">
                                     <i class="fas fa-lock"></i>
-                                    <input type="password" id="password" name="password" placeholder="Sua senha" required>
+                                    Senha
+                                </label>
+                                <div class="input-icon">
+                                    <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
                                     <button type="button" class="toggle-password" data-target="password">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    <div class="input-border"></div>
                                 </div>
                             </div>
                             
                             <div class="form-group">
-                                <label for="confirmPassword">Confirmar Senha</label>
-                                <div class="input-icon">
+                                <label for="confirmPassword">
                                     <i class="fas fa-lock"></i>
+                                    Confirmar Senha
+                                </label>
+                                <div class="input-icon">
                                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirme sua senha" required>
                                     <button type="button" class="toggle-password" data-target="confirmPassword">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    <div class="input-border"></div>
                                 </div>
                             </div>
-                            <button type="button" id="googleLoginBtn" class="btn-google">
-                                        <i class="fab fa-google"></i> Entrar com Google
+                            
+                            <button type="submit" class="btn-primary btn-block btn-animated" id="cadastroBtn">
+                                <span class="btn-text">
+                                    <i class="fas fa-user-plus"></i>
+                                    Criar Conta
+                                </span>
+                                <div class="btn-loader" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Criando conta...
+                                </div>
                             </button>
-                            
-                            <button type="submit" class="btn-primary btn-block">Cadastrar</button>
-                            
-                            <p class="login-link">
-                                Já tem uma conta? <a href="login.html">Faça login</a>
-                            </p>
                         </form>
+                        
+                        <div class="login-divider">
+                            <span>ou cadastre-se com</span>
+                        </div>
+                        
+                        <button type="button" id="googleLoginBtn" class="btn-google btn-animated">
+                            <i class="fab fa-google"></i> 
+                            <span>Cadastrar com Google</span>
+                        </button>
+                        
+                        <div class="login-section">
+                            <p class="login-link">
+                                Já tem uma conta? 
+                                <a href="login.html">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Faça login aqui
+                                </a>
+                            </p>
+                        </div>
                     </div>
                     
                     <div class="cadastro-image">
                         <div class="image-container">
-                            <img src="../assets/images/cadastro/petsFelizes.avif" alt="Pets felizes">
+                            <div class="image-background">
+                                <img src="../assets/images/cadastro/petsFelizes.avif" alt="Pets felizes">
+                            </div>
                             <div class="image-overlay">
-                                <h2>Junte-se à família Baronesa</h2>
-                                <p>Cadastre-se para receber ofertas exclusivas, dicas de cuidados e muito mais para o seu pet.</p>
+                                <div class="welcome-content">
+                                    <h2>
+                                        <i class="fas fa-heart"></i>
+                                        Bem-vindo à família!
+                                    </h2>
+                                    <p>Cadastre-se e tenha acesso a benefícios exclusivos, ofertas especiais e muito mais para o seu pet querido.</p>                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="benefits-card">
-                    <h2>Benefícios do Cadastro</h2>
+                    <div class="benefits-header">
+                        <h2>
+                            <i class="fas fa-star"></i>
+                            Benefíciosde ter uma conta
+                        </h2>
+                        <p>Descubra todas as vantagens exclusivas que preparamos para você</p>
+                    </div>
                     <div class="benefits-grid">
                         <div class="benefit-item">
                             <div class="benefit-icon">
-                                <i class="fas fa-dollar-sign"></i>
+                                <i class="fas fa-shopping-cart"></i>
                             </div>
-                            <h3>Descontos Exclusivos</h3>
-                            <p>Acesso a promoções e descontos especiais para clientes cadastrados.</p>
+                            <div class="benefit-content">
+                                <h3>Compras mais rápidas</h3>
+                                <p>Finalize suas compras com apenas alguns cliques usando seus dados salvos e endereços cadastrados.</p>
+                            </div>
                         </div>
                         
                         <div class="benefit-item">
                             <div class="benefit-icon">
-                                <i class="fas fa-bell"></i>
+                                <i class="fas fa-heart"></i>
                             </div>
-                            <h3>Notificações de Ofertas</h3>
-                            <p>Receba alertas sobre novas promoções e produtos diretamente no seu e-mail.</p>
+                            <div class="benefit-content">
+                                <h3>Lista de favoritos</h3>
+                                <p>Salve seus produtos favoritos para comprar depois ou acompanhar promoções especiais.</p>
+                            </div>
                         </div>
-                        
                         <div class="benefit-item">
                             <div class="benefit-icon">
-                                <i class="fas fa-clipboard-list"></i>
+                                <i class="fas fa-percent"></i>
                             </div>
-                            <h3>Histórico de Compras</h3>
-                            <p>Acompanhe seus pedidos e tenha acesso ao histórico completo de compras.</p>
+                            <div class="benefit-content">
+                                <h3>Ofertas exclusivas</h3>
+                                <p>Receba descontos especiais e seja o primeiro a saber sobre promoções imperdíveis.</p>
+                            </div>
+                        </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -136,5 +204,6 @@
     <script src="../js/cart.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/cadastro.js"></script>
+    <script src="../js/cadastro-enhanced.js"></script>
 </body>
 </html>

@@ -104,52 +104,35 @@
         </section>
 
         <!-- Promoções em Destaque -->
-        <section class="section bg-white">
+        <section class="section">
             <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Promoções em Destaque</h2>
+                <!-- Guest-only promotion -->
+                <div id="guest-cta" class="guest-only" style="display: none;">
+                    <!-- Guest promotion content will be added by JavaScript -->
                 </div>
-                <div class="promotions-grid">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="assets/images/produtos/cachorroGoldenRacao.jpg" alt="Ração Golden Special">
-                            <div class="product-tag">Oferta</div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Ração Golden Special para Cães Adultos</h3>
-                            <p>Embalagem de 15kg - Sabor Frango e Carne</p>
-                            <div class="product-price">
-                                <span class="current-price">R$ 149,90</span>
-                                <span class="old-price">R$ 179,90</span>
-                            </div>
-                            <a href="https://wa.me/5513996825624?text=Olá! Gostaria de comprar a Ração Golden Special para Cães Adultos que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <div class="product-image">
-                            <img src="assets/images/produtos/brinquedosGatos.jpeg" alt="Kit Brinquedos para Gatos">
-                            <div class="product-tag">Oferta</div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Kit Brinquedos para Gatos</h3>
-                            <p>Conjunto com 5 brinquedos sortidos</p>
-                            <div class="product-price">
-                                <span class="current-price">R$ 59,90</span>
-                                <span class="old-price">R$ 79,90</span>
-                            </div>
-                            <a href="https://wa.me/5513996825624?text=Olá! Gostaria de comprar o Kit Brinquedos para Gatos que está em promoção." class="btn-primary btn-block" target="_blank">Comprar pelo WhatsApp</a>
-                        </div>
-                    </div>
-                    <div class="product-card bg-beige">
-                        <div class="more-offers">
-                            <h3>Mais ofertas especiais para seu pet</h3>
-                            <a href="html/promocoes.html" class="btn-secondary">Ver todas as promoções</a>
-                        </div>
-                    </div>
+                
+                <!-- User-only promotions -->
+                <div id="user-promotions" class="user-only" style="display: none;">
+                    <!-- User promotion content will be added by JavaScript -->
+                </div>
+                
+                <!-- Personalized greeting for logged-in users -->
+                <div id="personalized-greeting" class="user-only" style="display: none;">
+                    <!-- Personalized greeting will be added by JavaScript -->
+                </div>
+                
+                <!-- Admin badge -->
+                <div id="admin-badge" class="admin-only" style="display: none;">
+                    <!-- Admin badge will be added by JavaScript -->
+                </div>
+                
+                <!-- Admin quick actions -->
+                <div id="admin-quick-actions" class="admin-only" style="display: none;">
+                    <!-- Admin quick actions will be added by JavaScript -->
                 </div>
             </div>
         </section>
-
+       
         <!-- Depoimentos -->
         <section class="section bg-petroleum-light">
             <div class="container">
@@ -272,7 +255,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
     <!-- Scripts -->
+    <script src="js/path-config.js"></script>
     <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/index-permissions.js"></script>
     <script src="js/services/auth-service.js"></script>
     <script src="js/main.js"></script>
     <script src="js/carousel.js"></script>

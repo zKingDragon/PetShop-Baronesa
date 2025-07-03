@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               <span class="current-price">R$ ${salePrice}</span>
               <span class="old-price">R$ ${price}</span>
             </div>
-            <a href="https://wa.me/5513996825624?text=${waText}" class="btn-primary btn-block" target="_blank">
+            <a href="https://wa.me/551334559994?text=${waText}" class="btn-primary btn-block" target="_blank">
               Comprar pelo WhatsApp
             </a>
           </div>
