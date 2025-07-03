@@ -196,11 +196,61 @@ async function filterProducts() {
       filterState.categories.length > 0 || filterState.types.length > 0 || filterState.priceRanges.length > 0
 
     if (hasFilters) {
-      return await productsService.getFilteredProducts({
+      // Converte faixas de preço para min/max
+      let minPrice = undefined
+      let maxPrice = undefined
+
+      if (filterState.priceRanges.length > 0) {
+        const prices = []
+        filterState.priceRanges.forEach(range => {
+          switch (range) {
+            case "0-50":
+              prices.push({ min: 0, max: 50 })
+              break
+            case "50-100":
+              prices.push({ min: 50, max: 100 })
+              break
+            case "100-150":
+              prices.push({ min: 100, max: 150 })
+              break
+            case "150+":
+              prices.push({ min: 150, max: 999999 })
+              break
+          }
+        })
+        
+        if (prices.length > 0) {
+          minPrice = Math.min(...prices.map(p => p.min))
+          maxPrice = Math.max(...prices.map(p => p.max))
+        }
+      }
+
+      const filters = {
         categories: filterState.categories.length > 0 ? filterState.categories : undefined,
         types: filterState.types.length > 0 ? filterState.types : undefined,
-        priceRanges: filterState.priceRanges.length > 0 ? filterState.priceRanges : undefined,
-      })
+      }
+      
+      // Adiciona filtros de preço se houver
+      if (minPrice !== undefined) filters.minPrice = minPrice
+      if (maxPrice !== undefined && maxPrice !== 999999) filters.maxPrice = maxPrice
+
+      const result = await productsService.getFilteredProducts(filters)
+      
+      // Se usamos faixas de preço, ainda precisamos filtrar no lado cliente para múltiplas faixas
+      if (filterState.priceRanges.length > 0) {
+        return result.filter(product => {
+          // Garante que o produto tem priceRange definido
+          if (!product.priceRange) {
+            if (product.price <= 50) product.priceRange = "0-50"
+            else if (product.price <= 100) product.priceRange = "50-100"
+            else if (product.price <= 150) product.priceRange = "100-150"
+            else product.priceRange = "150+"
+          }
+          return filterState.priceRanges.includes(product.priceRange)
+        })
+      }
+      
+      return result
     }
 
     // Return all products if no filters
@@ -1010,5 +1060,32 @@ window.CatalogAdmin = {
     }
   },
 }
+
+// Export functions for search
+window.CatalogSearch = {
+  /**
+   * Executa uma pesquisa no catálogo
+   * @param {string} searchTerm - Termo de pesquisa
+   */
+  performSearch(searchTerm) {
+    if (!searchTerm || searchTerm.trim() === '') {
+      return;
+    }
+
+    // Atualiza os campos de pesquisa
+    if (searchInput) searchInput.value = searchTerm;
+    if (searchInputMobile) searchInputMobile.value = searchTerm;
+    
+    // Atualiza o estado do filtro
+    filterState.search = searchTerm;
+    
+    // Aplica os filtros
+    applyFilters();
+    
+    // Atualiza a URL
+    updateURL();
+  }
+};
+
 document.addEventListener("DOMContentLoaded", initCatalog)
 })();

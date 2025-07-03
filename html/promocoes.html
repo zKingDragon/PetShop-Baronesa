@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Promoções - Pet Shop Baronesa</title>
     <meta name="description" content="Confira nossas ofertas especiais para o seu pet. Produtos de qualidade com preços imperdíveis!">
-    <link rel="shortcut icon" type="image/png" href="assets/images/gerais/iconeBaronesa.png"> 
-        <link rel="stylesheet" href="../css/styles.css">>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/gerais/iconeBaronesa.png"> 
+        <link rel="stylesheet" href="../css/styles.css">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -33,7 +33,14 @@
 
     <div id="footer"></div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
     <!-- Scripts -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/services/auth-service.js"></script>
     <script src="../js/main.js"></script>
     <script src="../js/promocoes.js"></script>
 </body>

@@ -136,6 +136,91 @@ class AuthService {
   }
 
   /**
+   * Gets user role
+   * @returns {Promise<string>} - User role: 'guest', 'user', or 'admin'
+   */
+  async getUserRole() {
+    if (!this.currentUser) {
+      return 'guest'
+    }
+
+    try {
+      const idTokenResult = await this.currentUser.getIdTokenResult()
+      if (idTokenResult.claims.admin) {
+        return 'admin'
+      }
+      return 'user'
+    } catch (error) {
+      console.error("Error getting user role:", error)
+      return 'user'
+    }
+  }
+
+  /**
+   * Checks if user has required role
+   * @param {string} requiredRole - Required role: 'user' or 'admin'
+   * @returns {Promise<boolean>} - True if user has required role
+   */
+  async hasRole(requiredRole) {
+    const userRole = await this.getUserRole()
+    
+    if (requiredRole === 'user') {
+      return userRole === 'user' || userRole === 'admin'
+    }
+    
+    if (requiredRole === 'admin') {
+      return userRole === 'admin'
+    }
+    
+    return true // For 'guest' or any other role
+  }
+
+  /**
+   * Gets user display name
+   * @returns {Promise<string>} - User display name
+   */
+  async getUserDisplayName() {
+    if (!this.currentUser) {
+      return 'Visitante'
+    }
+
+    const role = await this.getUserRole()
+    if (role === 'admin') {
+      return 'Administrador'
+    }
+
+    return this.currentUser.displayName || this.currentUser.email?.split('@')[0] || 'Usuário'
+  }
+
+  /**
+   * Creates a new user account
+   * @param {string} email - User email
+   * @param {string} password - User password
+   * @param {string} displayName - User display name
+   * @returns {Promise<firebase.User>} - Created user
+   */
+  async createUserWithEmailAndPassword(email, password, displayName) {
+    this._checkInitialized()
+
+    try {
+      const userCredential = await this.auth.createUserWithEmailAndPassword(email, password)
+      
+      // Update display name
+      if (displayName) {
+        await userCredential.user.updateProfile({
+          displayName: displayName
+        })
+      }
+      
+      console.log("User created successfully")
+      return userCredential.user
+    } catch (error) {
+      console.error("Error creating user:", error)
+      throw new Error(`Failed to create user: ${error.message}`)
+    }
+  }
+
+  /**
    * Requires admin authentication
    * @throws {Error} - If user is not admin
    */
