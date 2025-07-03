@@ -32,7 +32,36 @@
             
 
             <!-- Botão Cadastre-se -->
-            <a href="../html/cadastro.html" class="btn-primary btn-signup active">Cadastre-se</a>
+            <div class="auth-buttons">
+                <a href="../html/login.html" class="btn-secondary">Entrar</a>
+                <a href="../html/cadastro.html" class="btn-primary btn-signup">Cadastre-se</a>
+            </div>
+            
+            <!-- User Dropdown (inicialmente oculto) -->
+            <div class="user-dropdown" style="display: none;">
+                <div class="user-dropdown-toggle">
+                    <span class="user-name" id="headerUserName">Usuário</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-dropdown-menu">
+                    <a href="#" class="dropdown-item user-only">
+                        <i class="fas fa-user"></i> Minha Conta
+                    </a>
+                    <a href="../html/carrinho.html" class="dropdown-item user-only">
+                        <i class="fas fa-shopping-cart"></i> Meu Carrinho
+                    </a>
+                    <a href="../html/promocoes.html" class="dropdown-item user-only">
+                        <i class="fas fa-tag"></i> Promoções
+                    </a>
+                    <a href="../html/admin.html" class="dropdown-item admin-only">
+                        <i class="fas fa-cog"></i> Painel Admin
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
+                </div>
+            </div>
             <!-- Botão Menu Mobile -->
             <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
                 <i class="fas fa-bars"></i>

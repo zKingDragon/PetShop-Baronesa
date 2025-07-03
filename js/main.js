@@ -22,6 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
         initSearchEvents(); // Inicializa eventos de pesquisa após carregar o header
         initSmoothNavigation(); // Inicializa navegação suave
         
+        // Inicializa sistema de autenticação do header
+        if (window.headerAuth) {
+          window.headerAuth.updateHeaderUI();
+        }
+        
         // Inicializa sistema de permissões após carregar o header
         if (window.uiPermissionManager) {
           window.uiPermissionManager.init();

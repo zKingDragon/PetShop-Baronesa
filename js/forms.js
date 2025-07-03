@@ -62,21 +62,53 @@ function initCadastroForm() {
       }
 
       try {
+        // Garantir que o Firebase está inicializado
+        if (typeof initializeFirebase === 'function') {
+          await initializeFirebase()
+        }
+
         // Cria o usuário no Firebase Auth
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password)
         const user = userCredential.user
 
-        // Salva dados adicionais no Firestore
-        await firebase.firestore().collection("Usuários").doc(user.uid).set({
-          name,
-          email,
-          phone,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        // Atualiza o perfil do usuário com o nome
+        await user.updateProfile({
+          displayName: name
         })
 
+        // Salva dados adicionais na coleção "Usuarios" (com "U" maiúsculo)
+        await firebase.firestore().collection("Usuarios").doc(user.uid).set({
+          name: name,
+          email: email,
+          phone: phone,
+          type: "user", // Tipo padrão para novos usuários
+          Type: "user", // Garantir compatibilidade
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        })
+
+        console.log('Usuário cadastrado com sucesso:', user.uid)
         showSuccessMessage()
       } catch (error) {
-        alert("Erro ao cadastrar: " + (error.message || "Tente novamente."))
+        console.error('Erro ao cadastrar:', error)
+        let errorMessage = "Erro ao cadastrar: "
+        
+        // Mensagens de erro mais específicas
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage += "Este email já está em uso."
+            break
+          case 'auth/weak-password':
+            errorMessage += "A senha deve ter pelo menos 6 caracteres."
+            break
+          case 'auth/invalid-email':
+            errorMessage += "Email inválido."
+            break
+          default:
+            errorMessage += error.message || "Tente novamente."
+        }
+        
+        alert(errorMessage)
       }
     })
   }
