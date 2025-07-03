@@ -353,11 +353,11 @@ class UIPermissionManager {
     }
 
     if (this.currentRole === 'guest') {
-      // Mostra botão de login para visitantes
+      // Mostra botão de cadastro para visitantes
       if (signupBtn) {
         signupBtn.style.display = 'inline-block'
-        signupBtn.textContent = 'Entrar'
-        signupBtn.href = '../html/login.html'
+        signupBtn.textContent = 'Cadastre-se'
+        signupBtn.href = '../html/cadastro.html'
       }
     } else {
       // Esconde botão de cadastro e mostra dropdown do usuário
@@ -488,11 +488,11 @@ class UIPermissionManager {
     if (!nav) return
 
     if (this.currentRole === 'guest') {
-      // Adiciona link de login no menu mobile
-      const loginItem = document.createElement('li')
-      loginItem.className = 'mobile-user-item'
-      loginItem.innerHTML = '<a href="../html/login.html">Entrar</a>'
-      nav.appendChild(loginItem)
+      // Adiciona link de cadastro no menu mobile
+      const signupItem = document.createElement('li')
+      signupItem.className = 'mobile-user-item'
+      signupItem.innerHTML = '<a href="../html/cadastro.html">Cadastre-se</a>'
+      nav.appendChild(signupItem)
     } else {
       // Adiciona promoções se for usuário ou admin
       const promotionsItem = document.createElement('li')

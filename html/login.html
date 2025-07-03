@@ -20,7 +20,7 @@
             <div class="container">
                 <h1 class="page-title">Entrar na sua conta</h1>
                 
-                <div class="login-container">
+                <div class="login-grid">
                     <div class="login-form-card">
                         <h2>Faça seu login</h2>
                         
@@ -49,6 +49,14 @@
                                 </div>
                             </div>
                             
+                            <div class="form-options">
+                                <label class="remember-me">
+                                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                                    <span>Lembrar de mim</span>
+                                </label>
+                                <a href="#" class="forgot-password">Esqueci minha senha</a>
+                            </div>
+                            
                             <button type="submit" class="btn-primary btn-block" id="loginBtn">
                                 <i class="fas fa-sign-in-alt"></i>
                                 Entrar
@@ -59,74 +67,64 @@
                             <span>ou</span>
                         </div>
                         
+                        <button type="button" id="googleLoginBtn" class="btn-google">
+                            <i class="fab fa-google"></i> Entrar com Google
+                        </button>
+                        
                         <div class="demo-accounts">
                             <h3>Contas de demonstração:</h3>
-                            <button type="button" class="demo-btn btn-secondary" data-email="user@petshop.com" data-password="user123">
-                                <i class="fas fa-user"></i> Entrar como Usuário
-                            </button>
-                            <button type="button" class="demo-btn btn-secondary" data-email="admin@petshop.com" data-password="admin123">
-                                <i class="fas fa-crown"></i> Entrar como Admin
-                            </button>
-                        </div>
-                            
-                            <div class="form-options">
-                                <label class="remember-me">
-                                    <input type="checkbox" id="rememberMe" name="rememberMe">
-                                    <span>Lembrar de mim</span>
-                                </label>
-                                <a href="#" class="forgot-password">Esqueci minha senha</a>
+                            <div class="demo-buttons">
+                                <button type="button" class="demo-btn btn-outline" data-email="user@petshop.com" data-password="user123">
+                                    <i class="fas fa-user"></i> Entrar como Usuário
+                                </button>
+                                <button type="button" class="demo-btn btn-outline" data-email="admin@petshop.com" data-password="admin123">
+                                    <i class="fas fa-crown"></i> Entrar como Admin
+                                </button>
                             </div>
-                            <button type="button" id="googleLoginBtn" class="btn-google">
-                                <i class="fab fa-google"></i> Entrar com Google
-                            
-                            <button type="submit" class="btn-primary btn-block">Entrar</button>
-                        
-                            
-                            <p class="signup-link">
-                                Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
-                            </p>
-                        </form>
-                        
-                        <!-- Demo Credentials -->
-                        <div style="margin-top: 2rem; padding: 1rem; background-color: #f3f4f6; border-radius: 0.5rem; font-size: 0.875rem;">
-                            <h4 style="margin-bottom: 0.5rem; color: var(--petroleum-blue);">Credenciais de Demonstração:</h4>
-                            <p><strong>Admin:</strong> admin@petshopbaronesa.com / admin123</p>
-                            <p><strong>Cliente:</strong> cliente@exemplo.com / senha123</p>
                         </div>
+                        
+                        <p class="signup-link">
+                            Não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
+                        </p>
                     </div>
                     
-                    <div class="login-benefits">
-                        <h2>Benefícios de ter uma conta</h2>
-                        <ul class="benefits-list">
-                            <li>
+                    <div class="login-image">
+                        <div class="image-container">
+                            <img src="../assets/images/cadastro/petsFelizes.avif" alt="Pets felizes">
+                            <div class="image-overlay">
+                                <h2>Bem-vindo de volta!</h2>
+                                <p>Entre na sua conta e aproveite benefícios exclusivos, ofertas especiais e muito mais para o seu pet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="benefits-card">
+                    <h2>Por que ter uma conta?</h2>
+                    <div class="benefits-grid">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
                                 <i class="fas fa-shopping-cart"></i>
-                                <div>
-                                    <h3>Compras mais rápidas</h3>
-                                    <p>Finalize suas compras com apenas alguns cliques usando seus dados salvos.</p>
-                                </div>
-                            </li>
-                            <li>
+                            </div>
+                            <h3>Compras mais rápidas</h3>
+                            <p>Finalize suas compras com apenas alguns cliques usando seus dados salvos.</p>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
                                 <i class="fas fa-heart"></i>
-                                <div>
-                                    <h3>Lista de favoritos</h3>
-                                    <p>Salve seus produtos favoritos para comprar depois ou acompanhar promoções.</p>
-                                </div>
-                            </li>
-                            <li>
-                                <i class="fas fa-history"></i>
-                                <div>
-                                    <h3>Histórico de pedidos</h3>
-                                    <p>Acompanhe todos os seus pedidos e refaça compras anteriores facilmente.</p>
-                                </div>
-                            </li>
-                            <li>
+                            </div>
+                            <h3>Lista de favoritos</h3>
+                            <p>Salve seus produtos favoritos para comprar depois ou acompanhar promoções.</p>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
                                 <i class="fas fa-percent"></i>
-                                <div>
-                                    <h3>Ofertas exclusivas</h3>
-                                    <p>Receba descontos especiais e seja o primeiro a saber sobre promoções.</p>
-                                </div>
-                            </li>
-                        </ul>
+                            </div>
+                            <h3>Ofertas exclusivas</h3>
+                            <p>Receba descontos especiais e seja o primeiro a saber sobre promoções.</p>
+                        </div>
                     </div>
                 </div>
             </div>
