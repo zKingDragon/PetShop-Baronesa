@@ -406,7 +406,7 @@ function initBuyNowButtons() {
       const productId = button.getAttribute("data-id")
 
       // Cria a mensagem para o WhatsApp
-      const message = `Olá! Tenho interesse no produto:\n\n*${productName}*\nPreço: R$ ${parseFloat(productPrice).toFixed(2)}\nCódigo: ${productId}\n\nGostaria de mais informações e finalizar a compra.`
+      const message = `Olá! Tenho interesse no produto:\n\n*${productName}*\nGostaria de mais informações e finalizar a compra.`
       
       // Número do WhatsApp do Pet Shop (substitua pelo número real)
       const whatsappNumber = "551334559994" // Formato: código do país + DDD + número
@@ -774,21 +774,24 @@ function showError(message) {
  * @param {string} type - Tipo da mensagem ('success' ou 'error')
  */
 function showToast(message, type = "success") {
-  // Verifica se já existe um toast
-  let toast = document.querySelector(".toast")
-
-  if (!toast) {
-    // Cria um novo elemento de toast
-    toast = document.createElement("div")
-    toast.className = "toast"
-    document.body.appendChild(toast)
+  // Remove qualquer toast existente
+  const existingToast = document.querySelector(".toast")
+  if (existingToast) {
+    existingToast.remove()
   }
 
-  // Define a classe baseada no tipo
+  // Cria um novo elemento de toast
+  const toast = document.createElement("div")
   toast.className = `toast ${type === "error" ? "toast-error" : "toast-success"}`
-
-  // Define a mensagem e mostra o toast
   toast.textContent = message
+  
+  // Adiciona ao body
+  document.body.appendChild(toast)
+
+  // Força reflow para garantir que a transição funcione
+  toast.offsetHeight
+
+  // Mostra o toast
   toast.classList.add("show")
 
   // Esconde o toast após 3 segundos

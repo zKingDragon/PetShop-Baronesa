@@ -262,7 +262,7 @@ async function login(email, password) {
         
         return true
     } catch (error) {
-        console.error('Erro ao fazer login:', error)
+        console.error('Erro ao fazer login: Confira as informações inseridas ou entre usando o Google', error)
         if (loginError) {
             loginError.textContent = "Erro ao fazer login: " + (error.message || "Tente novamente.")
             loginError.style.display = "block"

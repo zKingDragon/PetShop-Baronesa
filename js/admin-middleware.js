@@ -120,12 +120,22 @@ class AdminMiddleware {
      * Wait for auth system to be available
      */
     async waitForAuthSystem() {
+        console.log('AdminMiddleware: Waiting for auth system...');
         let retryCount = 0;
-        const maxRetries = 100; // 10 seconds max wait
+        const maxRetries = 150; // 15 seconds max wait
         
         return new Promise((resolve) => {
             const checkAuth = () => {
-                if (typeof window.auth !== 'undefined' || retryCount >= maxRetries) {
+                // Check if Firebase is loaded
+                const firebaseReady = window.firebase && window.firebase.auth;
+                
+                // Check if our auth system is loaded
+                const authReady = typeof window.auth !== 'undefined';
+                
+                console.log(`AdminMiddleware: Check ${retryCount + 1}/${maxRetries} - Firebase: ${firebaseReady}, Auth: ${authReady}`);
+                
+                if ((firebaseReady || authReady) || retryCount >= maxRetries) {
+                    console.log('AdminMiddleware: Auth system ready or timeout reached');
                     resolve();
                     return;
                 }

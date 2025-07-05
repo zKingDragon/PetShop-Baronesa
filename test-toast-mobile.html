@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Toast Mobile - Pet Shop Baronesa</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .test-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .test-button:active {
+            opacity: 0.7;
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .btn-error {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-info {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        h1 {
+            text-align: center;
+            color: #374151;
+            margin-bottom: 30px;
+        }
+        .instructions {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste de Toast Mobile</h1>
+        
+        <div class="instructions">
+            <strong>Instruções:</strong><br>
+            Clique nos botões abaixo para testar os toasts em diferentes dispositivos. 
+            No mobile, os toasts devem aparecer centralizados na parte inferior da tela.
+        </div>
+
+        <button class="test-button btn-success" onclick="showToast('✅ Produto adicionado ao carrinho!', 'success')">
+            Toast de Sucesso
+        </button>
+
+        <button class="test-button btn-error" onclick="showToast('❌ Erro ao processar pedido', 'error')">
+            Toast de Erro
+        </button>
+
+        <button class="test-button btn-info" onclick="showToast('ℹ️ Informações importantes sobre o produto', 'info')">
+            Toast de Info
+        </button>
+
+        <button class="test-button btn-warning" onclick="showToast('⚠️ Atenção: estoque limitado', 'warning')">
+            Toast de Warning
+        </button>
+
+        <button class="test-button btn-success" onclick="testMultiple()">
+            Testar Múltiplos Toasts
+        </button>
+    </div>
+
+    <!-- Sistema de Toast -->
+    <script src="js/toast.js"></script>
+    
+    <script>
+        function testMultiple() {
+            showToast('Primeiro toast', 'success', 2000);
+            setTimeout(() => showToast('Segundo toast', 'info', 2000), 500);
+            setTimeout(() => showToast('Terceiro toast', 'warning', 2000), 1000);
+        }
+
+        // Teste automático ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                showToast('🎉 Página carregada! Sistema de toast funcionando.', 'success');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
