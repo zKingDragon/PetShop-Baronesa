@@ -2,22 +2,30 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inicializa a transição de página
   initPageTransitions();
   
-  // Tenta carregar primeiro pelo caminho direto, se falhar tenta pela pasta
-  let headerReference = "header.html";
-  fetch(headerReference)
+  // Detecta o caminho correto baseado na localização atual
+  const isInHtmlFolder = window.location.pathname.includes('/html/');
+  const headerPath = isInHtmlFolder ? "header.html" : "html/header.html";
+  const footerPath = isInHtmlFolder ? "footer.html" : "html/footer.html";
+  
+  // Carrega o header
+  fetch(headerPath)
     .then(res => {
       if (!res.ok) {
-        // Se não encontrar, tenta o caminho com a pasta
-        headerReference = "html/header.html";
-        return fetch(headerReference);
+        throw new Error(`Header not found at ${headerPath}`);
       }
-      return res;
+      return res.text();
     })
-    .then(res => res.text())
     .then(data => {
       const header = document.getElementById("header");
       if (header) {
         header.innerHTML = data;
+        
+        // Dispara evento personalizado para indicar que o header foi carregado
+        document.dispatchEvent(new CustomEvent('headerLoaded'));
+        
+        // Corrige os links do header
+        fixHeaderLinks();
+        
         initMobileMenu(); // Inicializa o menu mobile após carregar o header
         initSearchEvents(); // Inicializa eventos de pesquisa após carregar o header
         initSmoothNavigation(); // Inicializa navegação suave
@@ -31,21 +39,22 @@ document.addEventListener("DOMContentLoaded", () => {
         if (window.uiPermissionManager) {
           window.uiPermissionManager.init();
         }
+        
+        console.log('Header carregado e inicializado');
       }
+    })
+    .catch(error => {
+      console.warn('Erro ao carregar header:', error);
     });
 
   // Carrega o footer
-  let footerReference = "footer.html";
-  fetch(footerReference)
+  fetch(footerPath)
     .then(res => {
       if (!res.ok) {
-        // Se não encontrar, tenta o caminho com a pasta
-        footerReference = "html/footer.html";
-        return fetch(footerReference);
+        throw new Error(`Footer not found at ${footerPath}`);
       }
-      return res;
+      return res.text();
     })
-    .then(res => res.text())
     .then(data => {
       const footer = document.getElementById("footer");
       if (footer) {
@@ -591,3 +600,68 @@ window.GlobalSearch = {
   initSearchEvents,
   navigateToPage
 };
+
+/**
+ * Corrige os links do header após carregamento
+ */
+function fixHeaderLinks() {
+  // Detecta se estamos na raiz ou em subpasta
+  const currentPath = window.location.pathname;
+  const isInRoot = !currentPath.includes('/html/');
+  const pathPrefix = isInRoot ? 'html/' : '';
+  const assetPrefix = isInRoot ? '' : '../';
+  
+  console.log('🔗 Corrigindo links do header para:', isInRoot ? 'página raiz' : 'subpasta html');
+  
+  // Aguarda um pouco para garantir que o header foi totalmente carregado
+  setTimeout(() => {
+    // Atualiza logo
+    const homeLink = document.querySelector('.header-home-link');
+    if (homeLink) {
+      homeLink.href = isInRoot ? 'index.html' : '../index.html';
+      console.log('✅ Logo link:', homeLink.href);
+    }
+    
+    // Atualiza imagem do logo
+    const logoImg = document.querySelector('.header-logo-img');
+    if (logoImg) {
+      logoImg.src = assetPrefix + 'assets/images/gerais/iconeBaronesa.png';
+      console.log('✅ Logo img:', logoImg.src);
+    }
+    
+    // Atualiza todos os links com data-page
+    const headerLinks = document.querySelectorAll('.header-link[data-page]');
+    console.log('🔍 Links encontrados:', headerLinks.length);
+    
+    headerLinks.forEach((link, index) => {
+      const page = link.getAttribute('data-page');
+      if (page) {
+        const newHref = pathPrefix + page + '.html';
+        link.href = newHref;
+        
+        // Remove event listeners antigos para evitar duplicatas
+        const newLink = link.cloneNode(true);
+        link.parentNode.replaceChild(newLink, link);
+        
+        // Adiciona event listener para garantir navegação
+        newLink.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          if (href && href !== '#') {
+            console.log('🔄 Navegando para:', href);
+            window.location.href = href;
+          } else {
+            e.preventDefault();
+            console.warn('❌ Link inválido:', href);
+          }
+        });
+        
+        console.log(`✅ Link ${page} configurado:`, newHref);
+      }
+    });
+    
+    console.log('✅ Todos os links do header foram corrigidos');
+  }, 200);
+}
+
+// Corrige os links do header ao carregar a página
+document.addEventListener('headerLoaded', fixHeaderLinks);

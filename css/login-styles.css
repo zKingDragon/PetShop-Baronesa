@@ -247,7 +247,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(76, 175, 80, 0.9);
+    background: rgba(239, 247, 239, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -294,56 +294,7 @@
     box-shadow: 0 5px 15px rgba(66, 133, 244, 0.2);
 }
 
-/* Contas de demonstração */
-.demo-accounts {
-    margin: 2rem 0;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px;
-    border: 1px solid #e0e0e0;
-}
 
-.demo-accounts h3 {
-    color: #333;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.demo-accounts h3 i {
-    color: #34d399;
-}
-
-.demo-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.demo-btn {
-    background: white;
-    border: 1px solid #ddd;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
-}
-
-.demo-btn:hover {
-    background: #f8f9fa;
-    border-color: #34d399;
-    transform: translateX(5px);
-}
-
-.demo-btn i {
-    color: #34d399;
-}
 
 /* Seção de cadastro */
 .signup-section {
@@ -409,9 +360,11 @@
     bottom: 0;
     z-index: 2;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
     padding: 2rem;
+    text-align: center;
 }
 
 .welcome-content {
@@ -458,77 +411,6 @@
 .feature-item i {
     color: #2ee6a2;
     font-size: 1.1rem;
-}
-
-/* Benefícios */
-.benefits-card {
-    animation: fadeInUp 0.8s ease-out 0.8s both;
-}
-
-.benefits-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.benefits-header h2 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 0.5rem;
-}
-
-.benefits-header h2 i {
-    color: #FFD700;
-    animation: pulse 2s infinite;
-}
-
-.benefits-header p {
-    color: #666;
-    margin: 0;
-}
-
-.benefit-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: 1px solid #f0f0f0;
-}
-
-.benefit-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-    border-color: #34d399;
-}
-
-.benefit-icon {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #34d399, #2ee6a2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
-
-.benefit-content h3 {
-    color: #333;
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-}
-
-.benefit-content p {
-    color: #666;
-    margin: 0;
-    line-height: 1.5;
 }
 
 /* Alertas */

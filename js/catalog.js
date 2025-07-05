@@ -41,21 +41,34 @@ let isLoading = false
  */
 async function initializeServices() {
   try {
-    // Initialize Firebase
-    const { db, auth } = await window.FirebaseConfig.initializeFirebase()
+    // Aguarda os serviços estarem disponíveis
+    await waitForServices();
 
-    // Initialize services
-    window.ProductsService.initialize(db, auth)
-    window.AuthService.initialize(auth)
+    // Os serviços já são instâncias globais e se inicializam automaticamente
+    productsService = window.ProductsService;
+    authService = window.AuthService;
 
-    productsService = window.ProductsService
-    authService = window.AuthService
-
-    console.log("Services initialized successfully")
+    console.log("Services initialized successfully");
   } catch (error) {
-    console.error("Error initializing services:", error)
-    showError("Erro ao conectar com o banco de dados. Alguns recursos podem não funcionar corretamente.")
+    console.error("Error initializing services:", error);
+    showError("Erro ao conectar com o banco de dados. Alguns recursos podem não funcionar corretamente.");
   }
+}
+
+/**
+ * Aguarda os serviços estarem disponíveis
+ */
+async function waitForServices() {
+  return new Promise((resolve) => {
+    const checkServices = () => {
+      if (window.ProductsService) {
+        resolve();
+      } else {
+        setTimeout(checkServices, 100);
+      }
+    };
+    checkServices();
+  });
 }
 
 /**
@@ -1087,5 +1100,68 @@ window.CatalogSearch = {
   }
 };
 
-document.addEventListener("DOMContentLoaded", initCatalog)
+/**
+ * Retorna produtos de exemplo para fallback
+ */
+function getSampleProducts() {
+  return [
+    {
+      id: 'sample-1',
+      name: 'Ração Premium para Cães',
+      description: 'Ração de alta qualidade para cães adultos',
+      price: 89.90,
+      image: '../assets/images/produtos/cachorroGoldenRacao.jpg',
+      category: 'Cachorros',
+      type: 'Alimentação',
+      priceRange: '50-100',
+      createdAt: new Date()
+    },
+    {
+      id: 'sample-2',
+      name: 'Ração para Gatos Castrados',
+      description: 'Ração especial para gatos castrados',
+      price: 75.50,
+      image: '../assets/images/produtos/gatoCastradoRacao.jpg',
+      category: 'Gatos',
+      type: 'Alimentação',
+      priceRange: '50-100',
+      createdAt: new Date()
+    },
+    {
+      id: 'sample-3',
+      name: 'Brinquedo Interativo para Cães',
+      description: 'Brinquedo que estimula a inteligência do seu cão',
+      price: 45.00,
+      image: '../assets/images/produtos/brinquedoInterativoCao.webp',
+      category: 'Cachorros',
+      type: 'Brinquedos',
+      priceRange: '0-50',
+      createdAt: new Date()
+    },
+    {
+      id: 'sample-4',
+      name: 'Areia Sanitária para Gatos',
+      description: 'Areia absorvente com controle de odor',
+      price: 35.90,
+      image: '../assets/images/produtos/areiaGato.png',
+      category: 'Gatos',
+      type: 'Higiene',
+      priceRange: '0-50',
+      createdAt: new Date()
+    },
+    {
+      id: 'sample-5',
+      name: 'Comedouro para Gatos',
+      description: 'Comedouro anticolabamento para gatos',
+      price: 28.50,
+      image: '../assets/images/produtos/comedouroParaGatos.webp',
+      category: 'Gatos',
+      type: 'Acessórios',
+      priceRange: '0-50',
+      createdAt: new Date()
+    }
+  ];
+}
+
+// ...existing code...
 })();

@@ -80,19 +80,21 @@ class FooterPermissionManager {
             }
 
             // Check Firebase auth if available
-            if (window.firebase && window.firebase.auth) {
-                const user = window.firebase.auth().currentUser;
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+                const user = firebase.auth().currentUser;
                 if (user) {
                     await this.handleAuthStateChange(user);
                     return;
                 }
             }
 
-            // Check using global auth system
-            const currentUser = window.auth?.getCurrentUser();
-            if (currentUser) {
-                await this.handleAuthStateChange(currentUser);
-                return;
+            // Check using global auth system (if available)
+            if (window.auth && typeof window.auth.currentUser !== 'undefined') {
+                const currentUser = window.auth.currentUser;
+                if (currentUser) {
+                    await this.handleAuthStateChange(currentUser);
+                    return;
+                }
             }
 
             // No authenticated user
@@ -395,12 +397,12 @@ class FooterPermissionManager {
 document.addEventListener('DOMContentLoaded', async () => {
     window.footerPermissionManager = new FooterPermissionManager();
     
-    // Wait for auth system to be available
+    // Wait for Firebase to be available
     let retryCount = 0;
     const maxRetries = 50; // 5 seconds max wait
     
     const waitForAuth = async () => {
-        if (typeof window.auth !== 'undefined' || retryCount >= maxRetries) {
+        if ((typeof firebase !== 'undefined' && firebase.auth) || retryCount >= maxRetries) {
             await window.footerPermissionManager.init();
             return;
         }

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Email Já Cadastrado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .form-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste - Alerta de Email Já Cadastrado</h1>
+    
+    <div class="form-card">
+        <h3>Simular Erro de Email Já Cadastrado</h3>
+        <button class="test-btn" onclick="testEmailExistsAlert()">
+            Testar Alerta de Email Já Cadastrado
+        </button>
+        
+        <div id="test-container" class="cadastro-form-card">
+            <!-- Aqui aparecerá o alerta -->
+        </div>
+    </div>
+
+    <script>
+        // Simular as funções que existem no cadastro.js
+        function testEmailExistsAlert() {
+            const message = "Este email já está cadastrado no sistema.";
+            
+            // Remove alertas anteriores
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning email-exists-alert';
+            alert.setAttribute('role', 'alert');
+            
+            alert.innerHTML = `
+              <div class="alert-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="alert-text">
+                  <strong>Email já cadastrado</strong>
+                  <p>${message}</p>
+                  <p>Você já possui uma conta com este email. Deseja fazer login?</p>
+                </div>
+              </div>
+              <div class="alert-actions">
+                <button type="button" class="btn-secondary" onclick="hideEmailAlert()">
+                  Cancelar
+                </button>
+                <button type="button" class="btn-primary" onclick="testGoToLogin()">
+                  Ir para Login
+                </button>
+              </div>
+            `;
+
+            // Inserir no container de teste
+            const container = document.getElementById('test-container');
+            if (container) {
+              container.appendChild(alert);
+            }
+        }
+
+        function hideEmailAlert() {
+            const alert = document.querySelector('.email-exists-alert');
+            if (alert) {
+                alert.remove();
+            }
+            console.log('Alerta ocultado');
+        }
+
+        function testGoToLogin() {
+            alert('Redirecionaria para: ./login.html?email=test@example.com');
+            hideEmailAlert();
+        }
+    </script>
+
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Estilos do alerta -->
+    <style>
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #856404;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .alert-content i {
+            font-size: 1.25rem;
+            margin-top: 2px;
+            color: #f39c12;
+        }
+        
+        .alert-text {
+            flex: 1;
+        }
+        
+        .alert-text strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 1.1rem;
+        }
+        
+        .alert-text p {
+            margin: 4px 0;
+            line-height: 1.4;
+        }
+        
+        .alert-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        
+        .alert-actions .btn-secondary,
+        .alert-actions .btn-primary {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .alert-actions .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .alert-actions .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .alert-actions .btn-primary {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .alert-actions .btn-primary:hover {
+            background-color: #007bff;
+            transform: translateY(-1px);
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</body>
+</html>

@@ -3,22 +3,23 @@
     <div class="container">
         <div class="header-content">
             <!-- Logo -->
-            <a href="../index.html" class="logo">
+            <a href="#" class="logo header-home-link">
         <div class="logo-circle">
-      <img src="../assets/images/gerais/iconeBaronesa.png" alt="Pet Shop Baronesa" width="40" height="40">
+      <img src="#" alt="Pet Shop Baronesa" width="40" height="40" class="header-logo-img">
        </div>
   <span class="logo-text" style="display: inline;">Pet Shop Baronesa</span>
             </a>
          <nav class="nav-desktop">
              <ul>
-               <li><a href="../html/catalogo.html">Catálogo</a></li>
-               <li><a href="../html/banho-tosa.html">Banho & Tosa</a></li>
-             <!--  <li><a href="../html/dicas.html">Dicas</a></li> !-->
-               <li><a href="../html/promocoes.html">Promoções</a></li>
-               <div class="user-actions">
-                    <a href="../html/carrinho.html" class="cart-icon active">
+               <li><a href="#" class="header-link" data-page="catalogo">Catálogo</a></li>
+               <li><a href="#" class="header-link" data-page="banho-tosa">Banho & Tosa</a></li>
+             <!--  <li><a href="#" class="header-link" data-page="dicas">Dicas</a></li> !-->
+               <li><a href="#" class="header-link" data-page="promocoes">Promoções</a></li>
+               <li class="user-actions">
+                    <a href="#" class="cart-icon active header-link" data-page="carrinho">
                         <i class="fas fa-shopping-cart"></i>
                     </a>
+               </li>
              </ul>
          </nav>
 
@@ -33,35 +34,11 @@
 
             <!-- Botão Cadastre-se -->
             <div class="auth-buttons">
-                <a href="../html/login.html" class="btn-secondary">Entrar</a>
-                <a href="../html/cadastro.html" class="btn-primary btn-signup">Cadastre-se</a>
+                <a href="#" class="btn-primary btn-signup header-link" data-page="cadastro">Cadastre-se</a>
             </div>
             
-            <!-- User Dropdown (inicialmente oculto) -->
-            <div class="user-dropdown" style="display: none;">
-                <div class="user-dropdown-toggle">
-                    <span class="user-name" id="headerUserName">Usuário</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="user-dropdown-menu">
-                    <a href="#" class="dropdown-item user-only">
-                        <i class="fas fa-user"></i> Minha Conta
-                    </a>
-                    <a href="../html/carrinho.html" class="dropdown-item user-only">
-                        <i class="fas fa-shopping-cart"></i> Meu Carrinho
-                    </a>
-                    <a href="../html/promocoes.html" class="dropdown-item user-only">
-                        <i class="fas fa-tag"></i> Promoções
-                    </a>
-                    <a href="../html/admin.html" class="dropdown-item admin-only">
-                        <i class="fas fa-cog"></i> Painel Admin
-                    </a>
-                    <hr class="dropdown-divider">
-                    <a href="#" class="dropdown-item logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> Sair
-                    </a>
-                </div>
-            </div>
+            <!-- User Dropdown (será criado dinamicamente) -->
+            
             <!-- Botão Menu Mobile -->
             <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
                 <i class="fas fa-bars"></i>
@@ -78,16 +55,82 @@
             </form>
             <nav>
                 <ul>
-                    <li><a href="../html/catalogo.html">Catálogo</a></li>
-                    <li><a href="../html/banho-tosa.html">Banho & Tosa</a></li>
-                    <!-- <li><a href="../html/dicas.html">Dicas</a></li> !-->
-                    <li><a href="../html/promocoes.html">Promoções</a></li>
-                    <div class="user-actions">
-                        <a href="../html/carrinho.html" > 
-                        <i class="fas fa-shopping-cart"></i> Carrinho
-                    </a>
+                    <li><a href="#" class="header-link" data-page="catalogo">Catálogo</a></li>
+                    <li><a href="#" class="header-link" data-page="banho-tosa">Banho & Tosa</a></li>
+                    <!-- <li><a href="#" class="header-link" data-page="dicas">Dicas</a></li> !-->
+                    <li><a href="#" class="header-link" data-page="promocoes">Promoções</a></li>
+                    <li class="user-actions">
+                        <a href="#" class="header-link" data-page="carrinho"> 
+                            <i class="fas fa-shopping-cart"></i> Carrinho
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
     </div>
 </header>
+
+<script>
+// Script para ajustar caminhos dinamicamente após carregamento do header
+(function() {
+    'use strict';
+    
+    // Detecta se estamos na raiz ou em subpasta
+    const currentPath = window.location.pathname;
+    const isInRoot = !currentPath.includes('/html/');
+    const pathPrefix = isInRoot ? 'html/' : '';
+    const assetPrefix = isInRoot ? '' : '../';
+    
+    console.log('🔗 Configurando caminhos do header para:', isInRoot ? 'página raiz' : 'subpasta html');
+    
+    // Função para atualizar links imediatamente
+    function updateHeaderLinks() {
+        // Atualiza logo
+        const homeLink = document.querySelector('.header-home-link');
+        if (homeLink) {
+            homeLink.href = isInRoot ? 'index.html' : '../index.html';
+            console.log('✅ Logo link configurado:', homeLink.href);
+        }
+        
+        // Atualiza imagem do logo
+        const logoImg = document.querySelector('.header-logo-img');
+        if (logoImg) {
+            logoImg.src = assetPrefix + 'assets/images/gerais/iconeBaronesa.png';
+            console.log('✅ Logo img configurada:', logoImg.src);
+        }
+        
+        // Configura todos os links com data-page usando event listeners
+        const headerLinks = document.querySelectorAll('.header-link[data-page]');
+        console.log('🔍 Configurando', headerLinks.length, 'links do header');
+        
+        headerLinks.forEach(link => {
+            const page = link.getAttribute('data-page');
+            if (page) {
+                // Remove event listeners antigos
+                link.removeAttribute('href');
+                
+                // Adiciona novo event listener
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetUrl = pathPrefix + page + '.html';
+                    console.log(`🔄 Navegando para: ${page} -> ${targetUrl}`);
+                    window.location.href = targetUrl;
+                });
+                
+                // Adiciona cursor pointer
+                link.style.cursor = 'pointer';
+                
+                console.log(`✅ Link ${page} configurado para: ${pathPrefix + page}.html`);
+            }
+        });
+    }
+    
+    // Executa imediatamente
+    updateHeaderLinks();
+    
+    // Também executa após um delay para garantir
+    setTimeout(updateHeaderLinks, 100);
+    
+    console.log('✅ Header navigation configured successfully');
+})();
+</script>

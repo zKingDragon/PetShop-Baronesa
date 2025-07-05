@@ -50,11 +50,11 @@ function initCadastroForm() {
     cadastroForm.addEventListener("submit", async (e) => {
       e.preventDefault()
 
-      const name = document.getElementById("name").value
+      const name = document.getElementById("nome").value
       const email = document.getElementById("email").value
-      const phone = document.getElementById("phone").value
-      const password = document.getElementById("password").value
-      const confirmPassword = document.getElementById("confirmPassword").value
+      const phone = document.getElementById("telefone").value
+      const password = document.getElementById("senha").value
+      const confirmPassword = document.getElementById("confirmarSenha").value
 
       if (password !== confirmPassword) {
         alert("As senhas não coincidem. Por favor, verifique.")
@@ -195,11 +195,11 @@ function initPasswordToggles() {
       const passwordInput = document.getElementById(targetId)
 
       // Alternar tipo de input entre password e text
-      if (passwordInput.type === "password") {
+      if (passwordInput.type === "senha") {
         passwordInput.type = "text"
         this.innerHTML = '<i class="fas fa-eye-slash"></i>'
       } else {
-        passwordInput.type = "password"
+        passwordInput.type = "senha"
         this.innerHTML = '<i class="fas fa-eye"></i>'
       }
     })

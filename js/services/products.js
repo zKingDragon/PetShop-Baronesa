@@ -377,9 +377,32 @@ class ProductsService {
   }
 }
 
-const productsService = new ProductsService()
-window.ProductsService = productsService
+// Cria instância global do ProductsService
+const productsService = new ProductsService();
 
+// Inicializa automaticamente com Firebase quando disponível
+if (typeof firebase !== 'undefined' && firebase.firestore) {
+  productsService.db = firebase.firestore();
+} else {
+  // Aguarda Firebase estar disponível
+  const checkFirebase = () => {
+    if (typeof firebase !== 'undefined' && firebase.firestore) {
+      productsService.db = firebase.firestore();
+      console.log('ProductsService initialized with Firebase');
+    } else {
+      setTimeout(checkFirebase, 100);
+    }
+  };
+  checkFirebase();
+}
+
+// Disponibiliza globalmente
+window.ProductsService = productsService;
+
+// Para compatibilidade, também disponibiliza a classe
+window.ProductsServiceClass = ProductsService;
+
+console.log('ProductsService initialized and available globally');
 
 // Para importar e usar corretamente em outro arquivo:
 // import productsService from './services/products.js' // ajuste o caminho conforme necessário

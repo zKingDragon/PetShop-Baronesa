@@ -3,18 +3,40 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Inicializa Firebase
-  try {
-    const { auth } = await window.FirebaseConfig.initializeFirebase()
-    window.AuthService.initialize(auth)
-    
-    // Se já estiver logado, redireciona
-    if (window.AuthService.isAuthenticated()) {
-      window.location.href = '../index.html'
-      return
+  console.log('🔄 Inicializando página de login...');
+  
+  // Aguarda Firebase estar disponível (já inicializado globalmente)
+  await waitForFirebase()
+  console.log('✅ Firebase disponível para login');
+
+  // Aguarda um pouco mais para garantir que todos os listeners estão prontos
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // Verifica se já está logado
+  const currentUser = firebase.auth().currentUser;
+  if (currentUser) {
+    console.log('✅ Usuário já logado, redirecionando...', currentUser.uid);
+    const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
+    window.location.href = returnUrl
+    return
+  }
+
+  console.log('👤 Usuário não logado, configurando formulário...');
+
+  // Pré-preenche o email se veio da página de cadastro
+  const urlParams = new URLSearchParams(window.location.search);
+  const prefilledEmail = urlParams.get('email');
+  if (prefilledEmail) {
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+      emailInput.value = prefilledEmail;
+      // Foca no campo de senha para facilitar o login
+      const passwordInput = document.getElementById('password');
+      if (passwordInput) {
+        setTimeout(() => passwordInput.focus(), 100);
+      }
+      console.log('📧 Email pré-preenchido:', prefilledEmail);
     }
-  } catch (error) {
-    console.error('Erro ao inicializar Firebase:', error)
   }
 
   // Elementos do DOM
@@ -23,6 +45,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loginBtn = document.getElementById('loginBtn')
   const demoBtns = document.querySelectorAll('.demo-btn')
   const togglePasswordBtns = document.querySelectorAll('.toggle-password')
+
+  /**
+   * Aguarda Firebase estar disponível
+   */
+  async function waitForFirebase() {
+    return new Promise((resolve) => {
+      const checkFirebase = () => {
+        if (typeof firebase !== 'undefined' && 
+            firebase.auth && 
+            firebase.firestore &&
+            firebase.apps &&
+            firebase.apps.length > 0) {
+          console.log('✅ Firebase completamente carregado');
+          resolve();
+        } else {
+          console.log('⏳ Aguardando Firebase...');
+          setTimeout(checkFirebase, 100);
+        }
+      };
+      checkFirebase();
+    });
+  }
 
   // Event listeners
   if (loginForm) {
@@ -55,15 +99,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     hideError()
 
     try {
-      await window.AuthService.signInWithEmailAndPassword(email, password)
+      console.log('Tentando fazer login com:', email);
+      
+      // Login direto com Firebase
+      const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
+      const user = userCredential.user
+      
+      console.log('✅ Login realizado com sucesso:', user.uid);
       
       // Sucesso - redireciona para a página anterior ou home
       const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
       window.location.href = returnUrl
       
     } catch (error) {
-      console.error('Erro no login:', error)
-      showError('Email ou senha incorretos. Tente novamente.')
+      console.error('❌ Erro no login:', error)
+      
+      let errorMessage = 'Email ou senha incorretos. Tente novamente.'
+      
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'Usuário não encontrado. Verifique o email ou cadastre-se.'
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Senha incorreta. Tente novamente.'
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Email inválido. Verifique o formato.'
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'Conta desabilitada. Entre em contato com o suporte.'
+          break;
+        default:
+          errorMessage = `Erro: ${error.message}`
+      }
+      
+      showError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -83,25 +153,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     hideError()
 
     try {
-      await window.AuthService.signInWithEmailAndPassword(email, password)
+      console.log('Tentando login demo com:', email);
+      
+      const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
+      console.log('✅ Login demo realizado:', userCredential.user.uid);
       
       // Sucesso - redireciona
       const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
       window.location.href = returnUrl
       
     } catch (error) {
-      console.error('Erro no login de demonstração:', error)
+      console.error('❌ Erro no login de demonstração:', error)
       
       // Se a conta de demo não existir, cria automaticamente
-      if (error.message.includes('user-not-found')) {
+      if (error.code === 'auth/user-not-found') {
         try {
+          console.log('🔧 Criando conta demo automaticamente...');
           await createDemoAccount(email, password)
-          await window.AuthService.signInWithEmailAndPassword(email, password)
+          
+          const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
+          console.log('✅ Login após criação demo:', userCredential.user.uid);
           
           const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
           window.location.href = returnUrl
         } catch (createError) {
-          console.error('Erro ao criar conta de demonstração:', createError)
+          console.error('❌ Erro ao criar conta de demonstração:', createError)
           showError('Erro ao criar conta de demonstração. Tente novamente.')
         }
       } else {
@@ -116,26 +192,66 @@ document.addEventListener('DOMContentLoaded', async () => {
    * Cria conta de demonstração
    */
   async function createDemoAccount(email, password) {
-    const displayName = email.includes('admin') ? 'Administrador' : 'Usuário Demonstração'
-    await window.AuthService.createUserWithEmailAndPassword(email, password, displayName)
+    try {
+      const displayName = email.includes('admin') ? 'Administrador Demo' : 'Usuário Demo'
+      
+      // Criar usuário no Firebase Auth
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password)
+      const user = userCredential.user
+      
+      // Atualizar perfil
+      await user.updateProfile({
+        displayName: displayName
+      })
+      
+      // Salvar dados no Firestore
+      const userData = {
+        name: displayName,
+        email: email,
+        type: email.includes('admin') ? 'admin' : 'user',
+        Type: email.includes('admin') ? 'admin' : 'user',
+        uid: user.uid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }
+      
+      await firebase.firestore().collection("usuarios").doc(user.uid).set(userData)
+      console.log('✅ Conta demo criada e salva:', user.uid);
+      
+    } catch (error) {
+      console.error('❌ Erro ao criar conta demo:', error);
+      throw error;
+    }
   }
 
   /**
-   * Toggle visibilidade da senha
+   * Funcionalidade de mostrar/ocultar senha
    */
   function togglePasswordVisibility(e) {
-    const targetId = e.currentTarget.dataset.target
-    const targetInput = document.getElementById(targetId)
-    const icon = e.currentTarget.querySelector('i')
+    e.preventDefault();
     
-    if (targetInput.type === 'password') {
-      targetInput.type = 'text'
-      icon.classList.remove('fa-eye')
-      icon.classList.add('fa-eye-slash')
+    const targetId = e.target.closest('.toggle-password').getAttribute('data-target');
+    let targetInput;
+    
+    // Mapear o ID correto do input
+    if (targetId === 'password') {
+      targetInput = document.getElementById('password');
     } else {
-      targetInput.type = 'password'
-      icon.classList.remove('fa-eye-slash')
-      icon.classList.add('fa-eye')
+      targetInput = document.getElementById(targetId);
+    }
+    
+    const icon = e.target.closest('.toggle-password').querySelector('i');
+    
+    if (targetInput) {
+      if (targetInput.type === 'password') {
+        targetInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        targetInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
     }
   }
 

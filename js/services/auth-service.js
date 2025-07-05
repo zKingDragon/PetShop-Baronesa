@@ -237,7 +237,23 @@ class AuthService {
 }
 
 // Create and export a singleton instance
-const authService = new AuthService()
+const authService = new AuthService();
+
+// Inicializa automaticamente com Firebase quando disponível
+if (typeof firebase !== 'undefined' && firebase.auth) {
+  authService.initialize(firebase.auth());
+} else {
+  // Aguarda Firebase estar disponível
+  const checkFirebase = () => {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      authService.initialize(firebase.auth());
+      console.log('AuthService initialized automatically');
+    } else {
+      setTimeout(checkFirebase, 100);
+    }
+  };
+  checkFirebase();
+}
 
 // Export for use in other modules
-window.AuthService = authService
+window.AuthService = authService;

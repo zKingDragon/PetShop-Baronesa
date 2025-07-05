@@ -638,6 +638,72 @@
     border-color: #ffeaa7;
 }
 
+/* Alertas com ações */
+.alert-warning {
+  background-color: #fff3cd;
+  border-color: #ffecb5;
+  color: #856404;
+}
+
+.alert-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.alert-content i {
+  font-size: 1.25rem;
+  margin-top: 2px;
+}
+
+.alert-text {
+  flex: 1;
+}
+
+.alert-text strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.alert-text p {
+  margin: 4px 0;
+}
+
+.alert-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.alert-actions .btn-secondary,
+.alert-actions .btn-primary {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.alert-actions .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.alert-actions .btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.alert-actions .btn-primary {
+  background-color: var(--emerald-green);
+  color: white;
+}
+
+.alert-actions .btn-primary:hover {
+  background-color: var(--petroleum-blue);
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .page-title {

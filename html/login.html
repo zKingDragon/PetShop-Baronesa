@@ -71,18 +71,7 @@
                                     <div class="input-border"></div>
                                 </div>
                             </div>
-                            
-                            <div class="form-options">
-                                <label class="remember-me">
-                                    <input type="checkbox" id="rememberMe" name="rememberMe">
-                                    <span class="checkmark"></span>
-                                    <span>Lembrar de mim</span>
-                                </label>
-                                <a href="#" class="forgot-password">
-                                    <i class="fas fa-key"></i>
-                                    Esqueci minha senha
-                                </a>
-                            </div>
+
                             
                             <button type="submit" class="btn-primary btn-block btn-animated" id="loginBtn">
                                 <span class="btn-text">
@@ -104,24 +93,7 @@
                             <i class="fab fa-google"></i> 
                             <span>Entrar com Google</span>
                         </button>
-                        
-                        <div class="demo-accounts">
-                            <h3>
-                                <i class="fas fa-play-circle"></i>
-                                Contas de demonstração:
-                            </h3>
-                            <div class="demo-buttons">
-                                <button type="button" class="demo-btn btn-outline" data-email="user@petshop.com" data-password="user123">
-                                    <i class="fas fa-user"></i> 
-                                    <span>Entrar como Usuário</span>
-                                </button>
-                                <button type="button" class="demo-btn btn-outline" data-email="admin@petshop.com" data-password="admin123">
-                                    <i class="fas fa-crown"></i> 
-                                    <span>Entrar como Admin</span>
-                                </button>
-                            </div>
-                        </div>
-                        
+
                         <div class="signup-section">
                             <p class="signup-link">
                                 Não tem uma conta? 
@@ -133,89 +105,7 @@
                         </div>
                     </div>
                     
-                    <div class="login-image">
-                        <div class="image-container">
-                            <div class="image-background">
-                                <img src="../assets/images/cadastro/petsFelizes.avif" alt="Pets felizes">
-                            </div>
-                            <div class="image-overlay">
-                                <div class="welcome-content">
-                                    <h2>
-                                        <i class="fas fa-heart"></i>
-                                        Bem-vindo de volta!
-                                    </h2>
-                                    <p>Entre na sua conta e aproveite benefícios exclusivos, ofertas especiais e muito mais para o seu pet.</p>
-                                    <div class="features-list">
-                                        <div class="feature-item">
-                                            <i class="fas fa-check-circle"></i>
-                                            <span>Compras mais rápidas</span>
-                                        </div>
-                                        <div class="feature-item">
-                                            <i class="fas fa-check-circle"></i>
-                                            <span>Ofertas exclusivas</span>
-                                        </div>
-                                        <div class="feature-item">
-                                            <i class="fas fa-check-circle"></i>
-                                            <span>Histórico de pedidos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 
-                <div class="benefits-card">
-                    <div class="benefits-header">
-                        <h2>
-                            <i class="fas fa-star"></i>
-                            Benefícios de ter uma conta
-                        </h2>
-                        <p>Descubra todas as vantagens exclusivas</p>
-                    </div>
-                    <div class="benefits-grid">
-                        <div class="benefit-item">
-                            <div class="benefit-icon">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                            <div class="benefit-content">
-                                <h3>Compras mais rápidas</h3>
-                                <p>Finalize suas compras com apenas alguns cliques usando seus dados salvos.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="benefit-item">
-                            <div class="benefit-icon">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <div class="benefit-content">
-                                <h3>Lista de favoritos</h3>
-                                <p>Salve seus produtos favoritos para comprar depois ou acompanhar promoções.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="benefit-item">
-                            <div class="benefit-icon">
-                                <i class="fas fa-history"></i>
-                            </div>
-                            <div class="benefit-content">
-                                <h3>Histórico de pedidos</h3>
-                                <p>Acompanhe todos os seus pedidos e refaça compras anteriores facilmente.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="benefit-item">
-                            <div class="benefit-icon">
-                                <i class="fas fa-percent"></i>
-                            </div>
-                            <div class="benefit-content">
-                                <h3>Ofertas exclusivas</h3>
-                                <p>Receba descontos especiais e seja o primeiro a saber sobre promoções.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
     </main>
 
@@ -227,13 +117,17 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-    <!-- Scripts -->
+    <!-- Firebase Configuration (deve ser carregado primeiro) -->
     <script src="../js/firebase-config.js"></script>
-    <script src="../js/services/auth-service.js"></script>
+    
+    <!-- Scripts principais -->
+    <script src="../js/header-auth.js"></script>
+    <script src="../js/footer-permissions.js"></script>
     <script src="../js/main.js"></script>
     <script src="../js/cart.js"></script>
     <script src="../js/auth.js"></script>
+    
+    <!-- Script de login (sem auth-service.js e login-enhanced.js) -->
     <script src="../js/login.js"></script>
-    <script src="../js/login-enhanced.js"></script>
 </body>
 </html>

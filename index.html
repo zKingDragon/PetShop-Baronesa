@@ -254,15 +254,84 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-    <!-- Scripts -->
-    <script src="js/path-config.js"></script>
+    <!-- Scripts essenciais em ordem correta -->
     <script src="js/firebase-config.js"></script>
+    <script src="js/services/auth-service.js"></script>
+    
+    <!-- Carregar main.js primeiro para setup do header/footer -->
+    <script src="js/main.js"></script>
+    
+    <!-- Depois carregar sistemas de autenticação -->
     <script src="js/auth.js"></script>
     <script src="js/header-auth.js"></script>
     <script src="js/footer-permissions.js"></script>
-    <script src="js/index-permissions.js"></script>
-    <script src="js/services/auth-service.js"></script>
-    <script src="js/main.js"></script>
+    
+    <!-- Scripts complementares -->
     <script src="js/carousel.js"></script>
+    
+    <script>
+        // Inicialização específica para a página inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏠 Index page DOM loaded');
+            
+            // Aguarda um pouco mais para garantir que todos os sistemas estejam carregados
+            setTimeout(function() {
+                console.log('🔍 Index page: Verificando sistemas...');
+                
+                // Verifica Firebase
+                if (typeof firebase !== 'undefined') {
+                    console.log('✅ Firebase carregado na index');
+                } else {
+                    console.error('❌ Firebase não carregado na index');
+                }
+                
+                // Verifica Auth Service
+                if (window.auth) {
+                    console.log('✅ Auth service carregado na index');
+                } else {
+                    console.error('❌ Auth service não carregado na index');
+                }
+                
+                // Verifica Header Auth
+                if (window.headerAuth) {
+                    console.log('✅ Header auth carregado na index');
+                    // Força uma atualização do header
+                    setTimeout(() => {
+                        console.log('🔄 Forçando atualização do header na index...');
+                        window.headerAuth.updateHeaderUI();
+                    }, 500);
+                } else {
+                    console.error('❌ Header auth não carregado na index');
+                }
+                
+                // Verifica se há usuário logado
+                if (typeof firebase !== 'undefined' && firebase.auth) {
+                    const currentUser = firebase.auth().currentUser;
+                    if (currentUser) {
+                        console.log('👤 Usuário logado na index:', currentUser.email);
+                    } else {
+                        console.log('👤 Nenhum usuário logado na index');
+                    }
+                }
+                
+                // Verifica elementos do header
+                setTimeout(() => {
+                    const signupBtn = document.querySelector('.btn-signup');
+                    const userDropdowns = document.querySelectorAll('.user-dropdown');
+                    
+                    console.log('🔘 Botão cadastro encontrado:', !!signupBtn);
+                    console.log('📋 Dropdowns de usuário encontrados:', userDropdowns.length);
+                    
+                    if (userDropdowns.length > 1) {
+                        console.warn('⚠️ Múltiplos dropdowns encontrados, removendo extras...');
+                        for (let i = 1; i < userDropdowns.length; i++) {
+                            userDropdowns[i].remove();
+                        }
+                    }
+                }, 1000);
+                
+            }, 2000); // Aguarda 2 segundos para tudo carregar
+        });
+    </script>
 </body>
 </html>
