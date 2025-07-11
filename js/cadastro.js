@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Animação de entrada dos elementos
   const animateElements = document.querySelectorAll('.form-group, .benefit-item, .feature-item');
-  
+
   // Observer para animações
   const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   async function handleCadastro(e) {
     e.preventDefault()
-    
+
     const formData = {
       name: nameInput.value.trim(),
       email: emailInput.value.trim(),
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       password: passwordInput.value,
       confirmPassword: confirmPasswordInput.value
     }
-    
+
     // Validações
     if (!validateForm(formData)) {
       return
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       console.log('Iniciando cadastro no Firebase...', formData);
-      
+
       // ETAPA 1: Criar usuário no Firebase Auth
       const userCredential = await firebase.auth().createUserWithEmailAndPassword(formData.email, formData.password)
       const user = userCredential.user
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // ETAPA 3: Salvar no Firestore
       console.log('📝 Salvando dados no Firestore...');
-      
+
       const userData = {
         name: formData.name,
         email: formData.email,
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       try {
         await firebase.firestore().collection("usuarios").doc(user.uid).set(userData);
         console.log('✅ Dados salvos no Firestore');
-        
+
         // ETAPA 4: Verificar se os dados foram salvos
         const savedDoc = await firebase.firestore().collection("usuarios").doc(user.uid).get();
         if (savedDoc.exists) {
@@ -139,28 +139,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Não falhamos aqui pois o usuário já foi criado no Auth
         // O Firestore pode ser atualizado posteriormente
       }
-      
+
       // ETAPA 5: Sucesso
       showAlert('Conta criada com sucesso! Redirecionando...', 'success')
-      
+
       // Aguardar e redirecionar
       setTimeout(() => {
         // Limpar cache
         if (window.auth && window.auth.clearUserTypeCache) {
           window.auth.clearUserTypeCache();
         }
-        
+
         // Redirecionar
         const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
         window.location.href = returnUrl
       }, 2000)
-      
+
     } catch (error) {
       console.error('❌ Erro completo no cadastro:', error);
-      
+
       let errorMessage = 'Erro ao criar conta. Tente novamente.'
       let showLoginOption = false;
-      
+
       switch (error.code) {
         case 'auth/email-already-in-use':
           errorMessage = 'Este email já está cadastrado no sistema.'
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             errorMessage = `Erro: ${error.message}`
           }
       }
-      
+
       if (showLoginOption) {
         console.log('🔄 Mostrando alerta de email já cadastrado...');
         showEmailExistsAlert(errorMessage);
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function setLoading(isLoading) {
     const btnText = cadastroBtn.querySelector('.btn-text');
     const btnLoader = cadastroBtn.querySelector('.btn-loader');
-    
+
     if (btnText && btnLoader) {
       if (isLoading) {
         btnText.style.display = 'none';
@@ -276,10 +276,10 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   function togglePasswordVisibility(e) {
     e.preventDefault();
-    
+
     const targetId = e.target.closest('.toggle-password').getAttribute('data-target');
     let targetInput;
-    
+
     if (targetId === 'password') {
       targetInput = passwordInput;
     } else if (targetId === 'confirmPassword') {
@@ -287,9 +287,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       targetInput = document.getElementById(targetId);
     }
-    
+
     const icon = e.target.closest('.toggle-password').querySelector('i');
-    
+
     if (targetInput) {
       if (targetInput.type === 'password') {
         targetInput.type = 'text';
@@ -308,12 +308,12 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   function formatPhone(e) {
     let value = e.target.value.replace(/\D/g, '');
-    
+
     if (value.length <= 11) {
       value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
       value = value.replace(/(\d)(\d{4})$/, '$1-$2');
     }
-    
+
     e.target.value = value;
   }
 
@@ -323,11 +323,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function handleGoogleLogin() {
     try {
       setLoading(true);
-      
+
       const provider = new firebase.auth.GoogleAuthProvider();
       const result = await firebase.auth().signInWithPopup(provider);
       const user = result.user;
-      
+
       // Salvar dados do usuário do Google no Firestore
       await firebase.firestore().collection("usuarios").doc(user.uid).set({
         name: user.displayName,
@@ -338,14 +338,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
-      
+
       showAlert('Login com Google realizado com sucesso!', 'success');
-      
+
       setTimeout(() => {
         const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html';
         window.location.href = returnUrl;
       }, 1500);
-      
+
     } catch (error) {
       console.error('Erro no login com Google:', error);
       showAlert('Erro ao fazer login com Google', 'error');
@@ -371,17 +371,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   function validateName(name) {
       return name.trim().length >= 2 && /^[a-zA-ZÀ-ÿ\s]+$/.test(name.trim());
   }
-  
+
   function validateEmail(email) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
   }
-  
+
   function validatePhone(phone) {
       const cleanPhone = phone.replace(/\D/g, '');
       return cleanPhone.length >= 10;
   }
-  
+
   function validatePassword(password) {
       return {
           length: password.length >= 8,
@@ -395,25 +395,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Remove alertas anteriores
       const existingAlerts = document.querySelectorAll('.alert');
       existingAlerts.forEach(alert => alert.remove());
-      
+
       const alert = document.createElement('div');
       alert.className = `alert alert-${type}`;
-      
-      const icon = type === 'success' ? 'fa-check-circle' : 
-                  type === 'error' ? 'fa-exclamation-triangle' : 
+
+      const icon = type === 'success' ? 'fa-check-circle' :
+                  type === 'error' ? 'fa-exclamation-triangle' :
                   'fa-info-circle';
-      
+
       alert.innerHTML = `
           <i class="fas ${icon}"></i>
           <span>${message}</span>
       `;
-      
+
       // Inserir no início do formulário
       const formCard = document.querySelector('.cadastro-form-card');
       if (formCard) {
           formCard.insertBefore(alert, formCard.firstChild);
       }
-      
+
       // Ocultar após 5 segundos
       setTimeout(() => {
           alert.remove();
@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   function showEmailExistsAlert(message) {
     console.log('📧 Exibindo alerta de email já cadastrado:', message);
-    
+
     // Remove alertas anteriores
     const existingAlerts = document.querySelectorAll('.alert');
     existingAlerts.forEach(alert => alert.remove());
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const alert = document.createElement('div');
     alert.className = 'alert alert-warning email-exists-alert';
     alert.setAttribute('role', 'alert');
-    
+
     alert.innerHTML = `
       <div class="alert-content">
         <i class="fas fa-exclamation-triangle"></i>
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (formCard) {
       formCard.insertBefore(alert, formCard.firstChild);
     }
-    
+
     // Auto-hide after 10 seconds if no action
     setTimeout(() => {
       if (document.querySelector('.email-exists-alert')) {
@@ -509,19 +509,19 @@ style.textContent = `
         font-weight: 500;
         animation: slideIn 0.3s ease-out;
     }
-    
+
     .alert-success {
         background: #d4edda;
         color: #155724;
         border: 1px solid #c3e6cb;
     }
-    
+
     .alert-error {
         background: #f8d7da;
         color: #721c24;
         border: 1px solid #f5c6cb;
     }
-    
+
     .alert-warning {
         background: #fff3cd;
         border: 1px solid #ffecb5;
@@ -529,41 +529,41 @@ style.textContent = `
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .alert-content {
         display: flex;
         align-items: flex-start;
         gap: 12px;
         margin-bottom: 12px;
     }
-    
+
     .alert-content i {
         font-size: 1.25rem;
         margin-top: 2px;
         color: #f39c12;
     }
-    
+
     .alert-text {
         flex: 1;
     }
-    
+
     .alert-text strong {
         display: block;
         margin-bottom: 4px;
         font-size: 1.1rem;
     }
-    
+
     .alert-text p {
         margin: 4px 0;
         line-height: 1.4;
     }
-    
+
     .alert-actions {
         display: flex;
         gap: 12px;
         justify-content: flex-end;
     }
-    
+
     .alert-actions .btn-secondary,
     .alert-actions .btn-primary {
         padding: 8px 16px;
@@ -574,26 +574,26 @@ style.textContent = `
         transition: all 0.3s ease;
         font-size: 14px;
     }
-    
+
     .alert-actions .btn-secondary {
         background-color: #6c757d;
         color: white;
     }
-    
+
     .alert-actions .btn-secondary:hover {
         background-color: #5a6268;
     }
-    
+
     .alert-actions .btn-primary {
         background-color: var(--emerald-green, #28a745);
         color: white;
     }
-    
+
     .alert-actions .btn-primary:hover {
         background-color: var(--petroleum-blue, #007bff);
         transform: translateY(-1px);
     }
-    
+
     .toggle-password {
         position: absolute;
         right: 12px;
@@ -608,21 +608,21 @@ style.textContent = `
         transition: all 0.3s ease;
         z-index: 2;
     }
-    
+
     .toggle-password:hover {
         background: rgba(0, 0, 0, 0.05);
         color: #333;
     }
-    
+
     .form-group {
         position: relative;
     }
-    
+
     .form-group input[type="password"],
     .form-group input[type="text"] {
         padding-right: 45px !important;
     }
-    
+
     @keyframes slideIn {
         from {
             opacity: 0;
