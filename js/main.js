@@ -217,7 +217,7 @@ function initPageTransitions() {
   if (loader) {
     setTimeout(() => {
       loader.classList.add('hidden');
-      setTimeout(() => loader.remove(), 400);
+      setTimeout(() => loader.remove(), 2000);
     }, 200);
   }
 }
@@ -522,11 +522,7 @@ class UIPermissionManager {
         nav.appendChild(adminItem)
       }
 
-      // Adiciona logout
-      const logoutItem = document.createElement('li')
-      logoutItem.className = 'mobile-user-item'
-      logoutItem.innerHTML = `<a href="#" id="mobileLogoutBtn"><i class="fas fa-sign-out-alt"></i> Sair (${this.userDisplayName})</a>`
-      nav.appendChild(logoutItem)
+
 
       // Evento de logout mobile
       const mobileLogoutBtn = document.getElementById('mobileLogoutBtn')
@@ -577,17 +573,7 @@ class UIPermissionManager {
     return true // Páginas públicas
   }
 
-  /**
-   * Redireciona usuário se não tiver permissão
-   */
-  async checkPagePermission() {
-    const currentPath = window.location.pathname
-    
-    if (!await this.hasPagePermission(currentPath)) {
-      alert('Você não tem permissão para acessar esta página.')
-      window.location.href = '../index.html'
-    }
-  }
+ 
 }
 
 // Instância global do gerenciador de permissões

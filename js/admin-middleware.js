@@ -195,9 +195,9 @@ class AdminMiddleware {
             }
 
             // Check user type directly
-            if (this.currentUser && typeof window.auth !== 'undefined' && window.auth.checkUserType) {
-                const userType = await window.auth.checkUserType(this.currentUser.uid);
-                return userType === 'admin';
+            if (this.currentUser && typeof window.auth !== 'undefined' && window.auth.checktype) {
+                const type = await window.auth.checktype(this.currentUser.uid);
+                return type === 'admin';
             }
 
             // Fallback to localStorage check
@@ -248,9 +248,9 @@ class AdminMiddleware {
         if (!user) return 'guest';
         
         try {
-            if (typeof window.auth !== 'undefined' && window.auth.checkUserType) {
-                const userType = await window.auth.checkUserType(user.uid);
-                return userType === 'admin' ? 'admin' : 'user';
+            if (typeof window.auth !== 'undefined' && window.auth.checktype) {
+                const type = await window.auth.checktype(user.uid);
+                return type === 'admin' ? 'admin' : 'user';
             }
             return 'user';
         } catch (error) {

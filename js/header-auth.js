@@ -22,17 +22,32 @@ function initHeaderAuth() {
         
         // Escuta mudanças no estado de autenticação
         document.addEventListener('authStateChanged', (e) => {
-            updateHeaderUI();
+            console.log('🔄 Auth state changed event recebido');
+            setTimeout(() => updateHeaderUI(), 500);
         });
         
         // Escuta mudanças do Firebase Auth diretamente
         if (typeof firebase !== 'undefined' && firebase.auth) {
             firebase.auth().onAuthStateChanged((user) => {
-                console.log('Firebase Auth state changed:', user ? 'logged in' : 'logged out');
-                updateHeaderUI();
+                console.log('🔄 Firebase Auth state changed:', user ? user.email : 'logged out');
+                setTimeout(() => updateHeaderUI(), 500);
             });
         }
-    }, 1000); // Aumenta o tempo para dar tempo ao header carregar completamente
+        
+        // Listener adicional para mudanças de DOM
+        const observer = new MutationObserver(() => {
+            if (firebase.auth().currentUser && !userDropdown.style.display) {
+                console.log('🔄 DOM mudou, re-verificando header...');
+                updateHeaderUI();
+            }
+        });
+        
+        observer.observe(document.body, { 
+            childList: true, 
+            subtree: true 
+        });
+        
+    }, 1000);
 }
 
 /**
@@ -157,6 +172,30 @@ function setupDropdownEvents() {
             }
         });
     }
+
+    // Evento para o link de promoções
+    const promoLink = userDropdown.querySelector('.dropdown-item.user-only[href*="promocoes.html"]');
+    if (promoLink) {
+        promoLink.addEventListener('click', function(e) {
+            // Verifica se está logado
+            let isLoggedIn = false;
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+                isLoggedIn = !!firebase.auth().currentUser;
+            }
+            if (!isLoggedIn) {
+                e.preventDefault();
+                // Detecta se estamos na raiz ou pasta html
+                const currentPath = window.location.pathname;
+                const isInRoot = !currentPath.includes('/html/');
+                if (isInRoot) {
+                    window.location.href = 'html/promo-bloqueado.html';
+                } else {
+                    window.location.href = 'promo-bloqueado.html';
+                }
+            }
+            // Se logado, segue para promocoes normalmente
+        });
+    }
     
     // Fecha dropdown ao clicar fora
     document.addEventListener('click', (e) => {
@@ -171,6 +210,8 @@ function setupDropdownEvents() {
  */
 async function updateHeaderUI() {
     try {
+        console.log('🔄 Iniciando atualização do header UI...');
+        
         // Verifica se está logado usando Firebase diretamente
         let isLoggedIn = false;
         let currentUser = null;
@@ -180,10 +221,19 @@ async function updateHeaderUI() {
             isLoggedIn = !!currentUser;
         }
         
+        console.log('👤 Status de login:', isLoggedIn, currentUser?.email);
+        
         if (isLoggedIn) {
             // Usuário logado - mostrar dropdown
-            if (signupButton) signupButton.style.display = 'none';
-            if (userDropdown) userDropdown.style.display = 'block';
+            console.log('✅ Mostrando dropdown de usuário');
+            if (signupButton) {
+                signupButton.style.display = 'none';
+                console.log('✅ Botão cadastro ocultado');
+            }
+            if (userDropdown) {
+                userDropdown.style.display = 'block';
+                console.log('✅ Dropdown mostrado');
+            }
             
             // Atualizar nome do usuário
             await updateUserName();
@@ -192,8 +242,15 @@ async function updateHeaderUI() {
             await updateUserLinks();
         } else {
             // Usuário não logado - mostrar botão de cadastro
-            if (signupButton) signupButton.style.display = 'block';
-            if (userDropdown) userDropdown.style.display = 'none';
+            console.log('❌ Mostrando botão de cadastro');
+            if (signupButton) {
+                signupButton.style.display = 'block';
+                console.log('✅ Botão cadastro mostrado');
+            }
+            if (userDropdown) {
+                userDropdown.style.display = 'none';
+                console.log('✅ Dropdown ocultado');
+            }
         }
     } catch (error) {
         console.error('Erro ao atualizar UI do header:', error);
@@ -223,7 +280,7 @@ async function updateUserName() {
         try {
             if (typeof firebase !== 'undefined' && firebase.firestore) {
                 const db = firebase.firestore();
-                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userDoc = await db.collection('usuarios').doc(user.uid).get();
                 if (userDoc.exists) {
                     userType = userDoc.data().userType || 'user';
                 }
@@ -258,17 +315,28 @@ async function updateUserLinks() {
     if (!userDropdown) return;
     
     try {
-        // Busca o tipo de usuário no Firestore
+        // Busca o tipo de usuário usando o sistema global primeiro
         let userType = 'user';
         
-        if (typeof firebase !== 'undefined' && firebase.auth && firebase.firestore) {
+        // Primeiro tenta usar o sistema global window.auth
+        if (typeof window.auth !== 'undefined' && window.auth.checkUserType) {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                userType = await window.auth.checkUserType(user.uid);
+                console.log('🔑 Tipo obtido via window.auth:', userType);
+            }
+        } else if (typeof firebase !== 'undefined' && firebase.auth && firebase.firestore) {
+            // Fallback para busca direta
             const user = firebase.auth().currentUser;
             if (user) {
                 try {
                     const db = firebase.firestore();
-                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    // Corrigido: coleção 'Usuarios' e campo 'type'
+                    const userDoc = await db.collection('Usuarios').doc(user.uid).get();
                     if (userDoc.exists) {
-                        userType = userDoc.data().userType || 'user';
+                        const userData = userDoc.data();
+                        userType = userData.type || userData.Type || 'user';
+                        console.log('🔑 Tipo obtido via Firestore direto:', userType);
                     }
                 } catch (error) {
                     console.warn('Erro ao buscar tipo de usuário:', error);
@@ -282,24 +350,89 @@ async function updateUserLinks() {
             link.style.display = userType === 'admin' ? 'block' : 'none';
         });
         
-        // Links já estão com caminhos corretos baseados na detecção de localização
-        // Não precisa mais ajustar caminhos aqui pois foi feito na criação do dropdown
+        // Adiciona indicador visual se for admin
+        if (userType === 'admin') {
+            addAdminBadge();
+        } else {
+            removeAdminBadge();
+        }
+        
+        console.log('✅ Links atualizados para tipo:', userType);
         
     } catch (error) {
         console.error('Erro ao atualizar links do usuário:', error);
     }
 }
 
+/**
+ * Adiciona badge de admin ao nome do usuário
+ */
+function addAdminBadge() {
+    if (!userNameDisplay) return;
+    
+    // Remove badge existente
+    removeAdminBadge();
+    
+    // Adiciona novo badge
+    const badge = document.createElement('span');
+    badge.className = 'admin-badge';
+    badge.innerHTML = ' <i class="fas fa-shield-alt" style="color: #28a745; margin-left: 5px;"></i>';
+    userNameDisplay.appendChild(badge);
+}
+
+/**
+ * Remove badge de admin
+ */
+function removeAdminBadge() {
+    if (!userNameDisplay) return;
+    
+    const existingBadge = userNameDisplay.querySelector('.admin-badge');
+    if (existingBadge) {
+        existingBadge.remove();
+    }
+}
+
 // Inicializa quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
-    // Aguarda o main.js carregar o header primeiro
-    setTimeout(() => {
-        initHeaderAuth();
-    }, 1500);
+    console.log('🏁 DOM carregado, iniciando header auth...');
+    
+    // Função para aguardar Firebase estar pronto
+    function waitForFirebase() {
+        return new Promise((resolve) => {
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            const check = () => {
+                if (typeof firebase !== 'undefined' && firebase.auth && typeof window.auth !== 'undefined') {
+                    console.log('✅ Firebase e auth prontos');
+                    resolve();
+                    return;
+                }
+                
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    console.warn('⚠️ Timeout aguardando Firebase, continuando...');
+                    resolve();
+                    return;
+                }
+                
+                setTimeout(check, 100);
+            };
+            check();
+        });
+    }
+    
+    // Aguarda Firebase estar pronto antes de inicializar
+    waitForFirebase().then(() => {
+        setTimeout(() => {
+            initHeaderAuth();
+        }, 1000);
+    });
 });
 
 // Também tenta inicializar quando o header é carregado via fetch
 document.addEventListener('headerLoaded', function() {
+    console.log('🎯 Header carregado via fetch');
     setTimeout(() => {
         initHeaderAuth();
     }, 500);

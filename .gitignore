@@ -1,5 +1,14 @@
+# Node.js
 node_modules/
+*.log
+
+# Arquivos de ambiente
 .env
+*.secret
+
+# Firebase
 .firebase/
 .firebaserc
-*.log
+
+# Ambiente de desenvolvimento local
+.dev/

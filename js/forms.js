@@ -76,8 +76,8 @@ function initCadastroForm() {
           displayName: name
         })
 
-        // Salva dados adicionais na coleção "Usuarios" (com "U" maiúsculo)
-        await firebase.firestore().collection("Usuarios").doc(user.uid).set({
+        // Salva dados adicionais na coleção "usuarios" (com "U" maiúsculo)
+        await firebase.firestore().collection("usuarios").doc(user.uid).set({
           name: name,
           email: email,
           phone: phone,

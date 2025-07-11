@@ -182,7 +182,7 @@ async function updateUserType(uid, newType) {
 
         // Atualizar no Firestore
         if (typeof db !== 'undefined' && db) {
-            await db.collection('Usuarios').doc(uid).update({
+            await db.collection('usuarios').doc(uid).update({
                 type: newType,
                 Type: newType, // Garantir compatibilidade com ambos os nomes
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()

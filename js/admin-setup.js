@@ -19,7 +19,7 @@ async function createAdmin() {
         console.log('Criando admin para usuário:', currentUser.email);
 
         // Atualizar o documento do usuário no Firestore
-        await firebase.firestore().collection('Usuarios').doc(currentUser.uid).update({
+        await firebase.firestore().collection('usuarios').doc(currentUser.uid).update({
             type: 'admin',
             Type: 'admin',
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()

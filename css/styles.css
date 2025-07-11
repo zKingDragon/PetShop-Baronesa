@@ -141,6 +141,22 @@ img {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
+  gap: 1rem;
+  min-height: 60px;
+}
+
+.header-content .logo {
+  flex-shrink: 0;
+}
+
+.header-content .auth-buttons {
+  flex-shrink: 0;
+}
+
+.header-content .search-form {
+  flex: 1;
+  max-width: 300px;
+  margin: 0 1rem;
 }
 
 .logo {
@@ -166,6 +182,111 @@ img {
   font-size: 1.25rem;
 }
 
+/* Responsividade do Header */
+@media (max-width: 768px) {
+  .header-content {
+    padding: 0.75rem 0;
+    gap: 0.5rem;
+  }
+  
+  .header-content .search-form {
+    display: none;
+  }
+  
+  .logo-circle {
+    width: 35px;
+    height: 35px;
+    margin-right: 0.5rem;
+  }
+  
+  .logo-text {
+    font-size: 1.1rem;
+  }
+  
+  .btn-signup {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .user-dropdown-toggle {
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    padding: 0.5rem 0;
+    gap: 0.3rem;
+  }
+  
+  .logo-circle {
+    width: 30px;
+    height: 30px;
+    margin-right: 0.4rem;
+  }
+  
+  .logo-text {
+    font-size: 1rem;
+  }
+  
+  .btn-signup {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .user-dropdown-toggle {
+    max-width: 120px;
+  }
+}
+
+/* Telas muito pequenas (320px ou menos) */
+@media (max-width: 320px) {
+  .header-content {
+    padding: 0.4rem 0;
+    gap: 0.2rem;
+  }
+  
+  .logo-circle {
+    width: 25px;
+    height: 25px;
+    margin-right: 0.3rem;
+  }
+  
+  .logo-text {
+    font-size: 0.9rem;
+  }
+  
+  .btn-signup {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .user-dropdown-toggle {
+    max-width: 100px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .menu-toggle {
+    font-size: 1.2rem;
+  }
+}
+
+/* Responsividade para tablets em modo paisagem */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .header-content {
+    padding: 0.75rem 0;
+  }
+  
+  .logo-circle {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .logo-text {
+    font-size: 1.1rem;
+  }
+}
 .nav-desktop {
   display: none;
 }
@@ -228,11 +349,7 @@ img {
   display: inline-block;
 }
 
-@media (max-width: 768px) {
-  .btn-signup {
-    display: none !important;
-  }
-}
+
 
 .menu-toggle {
   background: none;
@@ -240,9 +357,10 @@ img {
   color: var(--petroleum-blue);
   font-size: 1.5rem;
   cursor: pointer;
+  margin-left: 1rem;
 }
 
-@media (min-width: 767px){
+@media (min-width: 770px){
   .menu-toggle {
     display: none;
   }
@@ -1760,6 +1878,19 @@ img {
 }
 
 /* Loading spinner */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
 .loading-spinner {
   display: flex;
   flex-direction: column;
@@ -1823,6 +1954,8 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 10px;
+
 }
 
 .cart-icon.active {
@@ -1883,6 +2016,16 @@ img {
   align-items: center;
   gap: 0.5rem;
   transition: background-color 0.3s ease;
+  margin-left: 10px;
+  max-width: 180px;
+}
+
+.user-dropdown-toggle .user-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
 }
 
 .user-dropdown-toggle:hover {
@@ -1922,10 +2065,49 @@ img {
   border-top: 1px solid var(--light-beige);
 }
 
-@media (min-width: 768px) {
-  .user-dropdown {
-    display: none;
+/* Responsividade do dropdown de usuário */
+@media (max-width: 768px) {
+  .user-dropdown-toggle {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+    margin-left: 0.5rem;
   }
+  
+  .user-dropdown-menu {
+    width: 10rem;
+    right: -1rem;
+  }
+  
+  .user-dropdown-menu .dropdown-item {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-dropdown-toggle {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .user-dropdown-menu {
+    width: 9rem;
+    right: -0.5rem;
+  }
+  
+  .user-dropdown-menu .dropdown-item {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .user-dropdown-toggle .user-name {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
   
 
 /* Login */
@@ -3119,5 +3301,4 @@ img {
   .product-actions {
     flex-direction: column;
   }
-}
 }
