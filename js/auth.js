@@ -28,24 +28,24 @@ const loginError = document.getElementById("loginError")
  */
 async function checkUserType(uid) {
     if (!uid) return 'guest'
-    
+
     try {
         // Verificar cache primeiro
-        if (userTypeCache && cacheTimestamp && 
+        if (userTypeCache && cacheTimestamp &&
             Date.now() - cacheTimestamp < CACHE_DURATION) {
             console.log('Usando cache para tipo de usuário:', userTypeCache)
             return userTypeCache
         }
 
         console.log('Verificando tipo de usuário no banco de dados para UID:', uid)
-        
+
         // Tentativa 1: Verificar no Firestore
         if (typeof db !== 'undefined' && db) {
             const userDoc = await db.collection('Usuarios').doc(uid).get()
             if (userDoc.exists) {
                 const userData = userDoc.data()
                 const userType = userData.type || userData.Type || 'user'
-                
+
                 // Atualizar cache
                 userTypeCache = userType
                 cacheTimestamp = Date.now()
@@ -54,7 +54,7 @@ async function checkUserType(uid) {
                     timestamp: cacheTimestamp,
                     uid: uid
                 }))
-                
+
                 console.log('Tipo de usuário encontrado no Firestore:', userType)
                 return userType
             }
@@ -89,11 +89,11 @@ function getCurrentUser() {
         if (typeof auth !== 'undefined' && auth && auth.currentUser) {
             return auth.currentUser
         }
-        
+
         if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
             return firebase.auth().currentUser
         }
-        
+
         return null
     } catch (error) {
         console.error('Erro ao obter usuário atual:', error)
@@ -239,18 +239,18 @@ function getAuthUser() {
 async function login(email, password) {
     try {
         console.log('Tentando fazer login com:', email)
-        
+
         // Garantir que o Firebase está inicializado
         if (typeof initializeFirebase === 'function') {
             await initializeFirebase()
         }
-        
+
         const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
-        
+
         // Verificar tipo de usuário no banco de dados
         const userType = await checkUserType(userCredential.user.uid)
         console.log('Login realizado com sucesso. Tipo de usuário:', userType)
-        
+
         // Salvar dados de autenticação
         const authData = {
             uid: userCredential.user.uid,
@@ -259,7 +259,7 @@ async function login(email, password) {
             type: userType
         }
         localStorage.setItem(AUTH_KEY, JSON.stringify(authData))
-        
+
         return true
     } catch (error) {
         console.error('Erro ao fazer login: Confira as informações inseridas ou entre usando o Google', error)
@@ -280,17 +280,17 @@ async function logout() {
     try {
         // Limpar cache de tipo de usuário
         clearUserTypeCache()
-        
+
         // Fazer logout do Firebase
         if (typeof firebase !== 'undefined' && firebase.auth) {
             await firebase.auth().signOut()
         }
-        
+
         // Limpar dados locais
         localStorage.removeItem(AUTH_KEY)
-        
+
         console.log('Logout realizado com sucesso')
-        
+
         // Atualizar UI
         updateAuthUI()
 
@@ -298,7 +298,7 @@ async function logout() {
         if (PROTECTED_PAGES.some((page) => window.location.pathname.endsWith(page))) {
             window.location.href = "../index.html"
         }
-        
+
         // Notifica o footer sobre o logout
         notifyAuthStateChange(null)
     } catch (error) {
@@ -329,13 +329,13 @@ async function updateAuthUI() {
         try {
             const userType = await getCurrentUserType()
             const displayName = await getUserDisplayName()
-            
+
             if (authButtons) authButtons.style.display = "none"
             if (userMenu) {
                 userMenu.style.display = "block"
                 if (userNameDisplay) {
                     userNameDisplay.textContent = displayName
-                    
+
                     // Adicionar indicador visual para admin
                     if (userType === 'admin') {
                         userNameDisplay.innerHTML = `<i class="fas fa-crown" style="color: gold; margin-right: 5px;"></i>${displayName}`
@@ -349,7 +349,7 @@ async function updateAuthUI() {
         if (authButtons) authButtons.style.display = "flex"
         if (userMenu) userMenu.style.display = "none"
     }
-    
+
     // Notifica o footer sobre a mudança de estado
     notifyAuthStateChange(user)
 }
@@ -366,13 +366,13 @@ async function getUserDisplayName() {
         }
 
         const userType = await getCurrentUserType()
-        
+
         if (userType === 'admin') {
             return 'Administrador'
         }
 
-        return currentUser.displayName || 
-               currentUser.email?.split('@')[0] || 
+        return currentUser.displayName ||
+               currentUser.email?.split('@')[0] ||
                'Usuário'
     } catch (error) {
         console.error('Erro ao obter nome de exibição:', error)
@@ -394,7 +394,7 @@ async function checkProtectedPage() {
             window.location.href = "login.html"
             return
         }
-        
+
         // Se é uma página de admin, verificar se o usuário é admin
         if (currentPath.endsWith('/admin.html')) {
             const isUserAdmin = await isAdmin()
@@ -415,7 +415,7 @@ async function loginWithGoogle() {
         if (typeof initializeFirebase === 'function') {
             await initializeFirebase()
         }
-        
+
         if (!firebase || !firebase.auth) {
             throw new Error("Firebase não está disponível")
         }
@@ -424,11 +424,11 @@ async function loginWithGoogle() {
         const provider = new firebase.auth.GoogleAuthProvider()
 
         const result = await auth.signInWithPopup(provider)
-        
+
         // Verificar tipo de usuário no banco de dados
         const userType = await checkUserType(result.user.uid)
         console.log('Login com Google realizado. Tipo de usuário:', userType)
-        
+
         // Salvar dados de autenticação
         const authData = {
             uid: result.user.uid,
@@ -437,7 +437,7 @@ async function loginWithGoogle() {
             type: userType
         }
         localStorage.setItem(AUTH_KEY, JSON.stringify(authData))
-        
+
         // Redirecionar baseado no tipo de usuário
         if (userType === 'admin') {
             window.location.href = "admin.html"
@@ -461,11 +461,11 @@ function setupAuthStateListener() {
     if (typeof firebase !== 'undefined' && firebase.auth) {
         firebase.auth().onAuthStateChanged(async (user) => {
             console.log('Estado de autenticação alterado:', user ? user.email : 'não logado')
-            
+
             if (user) {
                 // Usuário logado - verificar tipo no banco de dados
                 const userType = await checkUserType(user.uid)
-                
+
                 // Salvar dados de autenticação
                 const authData = {
                     uid: user.uid,
@@ -479,10 +479,10 @@ function setupAuthStateListener() {
                 localStorage.removeItem(AUTH_KEY)
                 clearUserTypeCache()
             }
-            
+
             // Atualizar UI
             await updateAuthUI()
-            
+
             // Notificar componentes
             notifyAuthStateChange(user)
         })
@@ -497,7 +497,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             await initializeFirebase()
             setupAuthStateListener()
         }
-        
+
         // Atualiza a UI com base no estado de autenticação
         await updateAuthUI()
 

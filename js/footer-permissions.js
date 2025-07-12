@@ -9,7 +9,7 @@ class FooterPermissionManager {
         this.currentUser = null;
         this.userRole = 'guest'; // guest, user, admin
         this.isInitialized = false;
-        
+
         this.init();
     }
 
@@ -111,7 +111,7 @@ class FooterPermissionManager {
      */
     async handleAuthStateChange(user) {
         this.currentUser = user;
-        
+
         if (user) {
             // User is logged in - get role from database
             this.userRole = await this.determineUserRole(user);
@@ -132,7 +132,7 @@ class FooterPermissionManager {
      */
     async determineUserRole(user) {
         if (!user) return 'guest';
-        
+
         try {
             // Use the global auth system to check user type
             if (typeof window.auth !== 'undefined' && window.auth.checkUserType) {
@@ -162,12 +162,12 @@ class FooterPermissionManager {
         const footerUserName = document.getElementById('footerUserName');
         if (footerUserName) {
             let displayName = user.displayName || user.name || user.email || 'Usuário';
-            
+
             // Add admin indicator if user is admin
             if (this.userRole === 'admin') {
                 displayName = `<i class="fas fa-crown" style="color: gold; margin-right: 5px;"></i>${displayName}`;
             }
-            
+
             footerUserName.innerHTML = displayName;
         }
     }
@@ -246,18 +246,18 @@ class FooterPermissionManager {
 
             // Remove from localStorage
             localStorage.removeItem('petshop_baronesa_auth');
-            
+
             // Update UI
             await this.handleAuthStateChange(null);
-            
+
             // Redirect to home if on protected page
             const protectedPages = ['/admin.html', '/promocoes.html'];
             const currentPath = window.location.pathname;
-            
+
             if (protectedPages.some(page => currentPath.endsWith(page))) {
                 window.location.href = '../index.html';
             }
-            
+
             // Show success message
             this.showNotification('Logout realizado com sucesso!', 'success');
         } catch (error) {
@@ -286,20 +286,20 @@ class FooterPermissionManager {
         const notification = document.createElement('div');
         notification.className = `footer-notification footer-notification-${type}`;
         notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 
-                                type === 'error' ? 'exclamation-triangle' : 
+            <i class="fas fa-${type === 'success' ? 'check-circle' :
+                                type === 'error' ? 'exclamation-triangle' :
                                 'info-circle'}"></i>
             <span>${message}</span>
         `;
-        
+
         // Add to page
         document.body.appendChild(notification);
-        
+
         // Show notification
         setTimeout(() => {
             notification.classList.add('show');
         }, 100);
-        
+
         // Remove after delay
         setTimeout(() => {
             notification.classList.remove('show');
@@ -329,7 +329,7 @@ class FooterPermissionManager {
         if (this.currentUser) {
             this.userRole = await this.determineUserRole(this.currentUser);
         }
-        
+
         switch (permission) {
             case 'guest':
                 return this.userRole === 'guest';
@@ -364,7 +364,7 @@ class FooterPermissionManager {
      */
     async getUserType() {
         if (!this.currentUser) return 'guest';
-        
+
         try {
             if (typeof window.auth !== 'undefined' && window.auth.checkUserType) {
                 return await window.auth.checkUserType(this.currentUser.uid);
@@ -396,21 +396,21 @@ class FooterPermissionManager {
 // Initialize footer permission manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     window.footerPermissionManager = new FooterPermissionManager();
-    
+
     // Wait for Firebase to be available
     let retryCount = 0;
     const maxRetries = 50; // 5 seconds max wait
-    
+
     const waitForAuth = async () => {
         if ((typeof firebase !== 'undefined' && firebase.auth) || retryCount >= maxRetries) {
             await window.footerPermissionManager.init();
             return;
         }
-        
+
         retryCount++;
         setTimeout(waitForAuth, 100);
     };
-    
+
     await waitForAuth();
 });
 

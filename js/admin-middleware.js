@@ -14,7 +14,7 @@ class AdminMiddleware {
             '/html/admin.html',
             'admin.html'
         ];
-        
+
         this.init();
     }
 
@@ -24,12 +24,12 @@ class AdminMiddleware {
     async init() {
         try {
             console.log('Initializing admin middleware...');
-            
+
             // Check if we're on a protected page
             if (this.isProtectedRoute()) {
                 await this.checkPageAccess();
             }
-            
+
             this.setupEventListeners();
             this.isInitialized = true;
             console.log('Admin middleware initialized');
@@ -76,8 +76,8 @@ class AdminMiddleware {
      */
     isProtectedRoute() {
         const currentPath = window.location.pathname;
-        return this.protectedRoutes.some(route => 
-            currentPath.endsWith(route) || 
+        return this.protectedRoutes.some(route =>
+            currentPath.endsWith(route) ||
             currentPath.includes(route)
         );
     }
@@ -88,10 +88,10 @@ class AdminMiddleware {
     async checkPageAccess() {
         try {
             console.log('Checking page access...');
-            
+
             // Wait for auth system to be available
             await this.waitForAuthSystem();
-            
+
             // Check if user is authenticated
             const isAuthenticated = this.isUserAuthenticated();
             if (!isAuthenticated) {
@@ -123,27 +123,27 @@ class AdminMiddleware {
         console.log('AdminMiddleware: Waiting for auth system...');
         let retryCount = 0;
         const maxRetries = 150; // 15 seconds max wait
-        
+
         return new Promise((resolve) => {
             const checkAuth = () => {
                 // Check if Firebase is loaded
                 const firebaseReady = window.firebase && window.firebase.auth;
-                
+
                 // Check if our auth system is loaded
                 const authReady = typeof window.auth !== 'undefined';
-                
+
                 console.log(`AdminMiddleware: Check ${retryCount + 1}/${maxRetries} - Firebase: ${firebaseReady}, Auth: ${authReady}`);
-                
+
                 if ((firebaseReady || authReady) || retryCount >= maxRetries) {
                     console.log('AdminMiddleware: Auth system ready or timeout reached');
                     resolve();
                     return;
                 }
-                
+
                 retryCount++;
                 setTimeout(checkAuth, 100);
             };
-            
+
             checkAuth();
         });
     }
@@ -224,7 +224,7 @@ class AdminMiddleware {
      */
     async handleAuthStateChange(user) {
         this.currentUser = user;
-        
+
         if (user) {
             // User is logged in - check role
             this.userRole = await this.determineUserRole(user);
@@ -246,7 +246,7 @@ class AdminMiddleware {
      */
     async determineUserRole(user) {
         if (!user) return 'guest';
-        
+
         try {
             if (typeof window.auth !== 'undefined' && window.auth.checktype) {
                 const type = await window.auth.checktype(user.uid);
@@ -265,14 +265,14 @@ class AdminMiddleware {
     redirectToLogin() {
         // Store the current page for redirect after login
         sessionStorage.setItem('redirect_after_login', window.location.pathname);
-        
+
         // Determine login page path
-        const loginPath = window.location.pathname.includes('/html/') ? 
+        const loginPath = window.location.pathname.includes('/html/') ?
             'login.html' : 'html/login.html';
-        
+
         // Show loading message
         this.showLoadingMessage('Redirecionando para login...');
-        
+
         // Redirect after brief delay
         setTimeout(() => {
             window.location.href = loginPath;
@@ -289,7 +289,7 @@ class AdminMiddleware {
             'Você não tem permissão para acessar esta página. Apenas administradores podem acessar o painel administrativo.',
             () => {
                 // Redirect to home page
-                window.location.href = window.location.pathname.includes('/html/') ? 
+                window.location.href = window.location.pathname.includes('/html/') ?
                     '../index.html' : 'index.html';
             }
         );
@@ -301,10 +301,10 @@ class AdminMiddleware {
     handleAccessGranted() {
         // Remove any loading screens
         this.hideLoadingMessage();
-        
+
         // Show success message briefly
         this.showSuccessMessage('Acesso autorizado como administrador');
-        
+
         // Initialize admin page features
         this.initializeAdminFeatures();
     }
@@ -315,7 +315,7 @@ class AdminMiddleware {
      */
     handleError(error) {
         console.error('Admin middleware error:', error);
-        
+
         this.showErrorMessage(
             'Erro de Sistema',
             'Ocorreu um erro ao verificar suas permissões. Por favor, tente novamente ou faça login novamente.',
@@ -341,7 +341,7 @@ class AdminMiddleware {
                 </div>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -378,7 +378,7 @@ class AdminMiddleware {
                 100% { transform: rotate(360deg); }
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(loadingDiv);
     }
@@ -416,7 +416,7 @@ class AdminMiddleware {
                 </div>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -460,10 +460,10 @@ class AdminMiddleware {
                 background: #c82333;
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(errorDiv);
-        
+
         // Set callback
         if (onClose) {
             errorDiv.querySelector('.admin-error-button').onClose = onClose;
@@ -483,7 +483,7 @@ class AdminMiddleware {
                 <span>${message}</span>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -502,10 +502,10 @@ class AdminMiddleware {
                 gap: 0.5rem;
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(successDiv);
-        
+
         // Remove after 3 seconds
         setTimeout(() => {
             successDiv.remove();
@@ -518,7 +518,7 @@ class AdminMiddleware {
     initializeAdminFeatures() {
         // Add admin-specific event listeners
         this.setupAdminEventListeners();
-        
+
         // Initialize admin UI enhancements
         this.enhanceAdminUI();
     }
@@ -592,7 +592,7 @@ class AdminMiddleware {
                 </button>
             </div>
         `;
-        
+
         document.body.appendChild(quickActions);
     }
 
@@ -672,7 +672,7 @@ class AdminMiddleware {
         try {
             const isAuth = this.isUserAuthenticated();
             if (!isAuth) return false;
-            
+
             const isAdmin = await this.isUserAdmin();
             return isAdmin;
         } catch (error) {
