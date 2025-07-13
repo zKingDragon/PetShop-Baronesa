@@ -75,7 +75,7 @@ function initializeTabs() {
  */
 function switchTab(tabId) {
     currentTab = tabId;
-    
+
     // Atualizar botões de aba
     tabButtons.forEach(button => {
         button.classList.remove('active');
@@ -130,11 +130,11 @@ function handleAddItemClick() {
  */
 function showTipModal(tip = null) {
     editingTipId = tip ? tip.id : null;
-    
+
     // Atualizar título do modal
     const modalTitle = document.getElementById('tipModalTitle');
     modalTitle.textContent = tip ? 'Editar Dica' : 'Adicionar Dica';
-    
+
     // Limpar formulário ou preencher com dados existentes
     if (tip) {
         fillTipForm(tip);
@@ -143,7 +143,7 @@ function showTipModal(tip = null) {
         document.getElementById('tipDate').value = new Date().toISOString().split('T')[0];
         updateTipImagePreview();
     }
-    
+
     // Mostrar modal
     tipModal.style.display = 'block';
     document.body.classList.add('modal-open');
@@ -172,7 +172,7 @@ function fillTipForm(tip) {
     document.getElementById('tipSummary').value = tip.summary || '';
     document.getElementById('tipContent').value = tip.content || '';
     document.getElementById('tipTags').value = tip.tags ? tip.tags.join(', ') : '';
-    
+
     updateTipImagePreview();
 }
 
@@ -182,7 +182,7 @@ function fillTipForm(tip) {
 function updateTipImagePreview() {
     const imageUrl = document.getElementById('tipImage').value;
     const preview = document.getElementById('tipImagePreview');
-    
+
     if (imageUrl) {
         // Resolver caminho da imagem
         const resolvedPath = typeof resolvePath === 'function' ? resolvePath(imageUrl) : imageUrl;
@@ -202,7 +202,7 @@ function updateTipImagePreview() {
  */
 async function saveTip() {
     const formData = new FormData(tipForm);
-    
+
     const tipData = {
         title: formData.get('title'),
         category: formData.get('category'),
@@ -232,7 +232,7 @@ async function saveTip() {
             // Atualizar interface
             await loadTips();
             closeTipModal();
-            
+
             // Mostrar notificação
             showToast(editingTipId ? 'Dica atualizada com sucesso!' : 'Dica adicionada com sucesso!', 'success');
         } else {
@@ -253,14 +253,14 @@ async function saveTip() {
  */
 async function loadTips() {
     showTipsLoading();
-    
+
     try {
         // Aguardar inicialização do serviço
         await tipsService.initialize();
-        
+
         // Obter dicas do serviço
         tips = tipsService.getAllTips();
-        
+
         applyTipFilters();
         updateTipStatistics();
     } catch (error) {
@@ -323,35 +323,35 @@ function generateSampleTips() {
  */
 function applyTipFilters() {
     let filtered = [...tips];
-    
+
     // Filtro por busca
     const searchTerm = tipsSearchInput?.value.toLowerCase() || '';
     if (searchTerm) {
-        filtered = filtered.filter(tip => 
+        filtered = filtered.filter(tip =>
             tip.title.toLowerCase().includes(searchTerm) ||
             tip.summary.toLowerCase().includes(searchTerm) ||
             tip.tags.some(tag => tag.toLowerCase().includes(searchTerm))
         );
     }
-    
+
     // Filtro por categoria
     const selectedCategories = Array.from(tipCategoryFilters || [])
         .filter(filter => filter.checked)
         .map(filter => filter.value);
-    
+
     if (selectedCategories.length > 0) {
         filtered = filtered.filter(tip => selectedCategories.includes(tip.category));
     }
-    
+
     // Filtro por status
     const selectedStatuses = Array.from(statusFilters || [])
         .filter(filter => filter.checked)
         .map(filter => filter.value);
-    
+
     if (selectedStatuses.length > 0) {
         filtered = filtered.filter(tip => selectedStatuses.includes(tip.status));
     }
-    
+
     filteredTips = filtered;
     renderTips();
     updateTipFilteredCount();
@@ -362,15 +362,15 @@ function applyTipFilters() {
  */
 function renderTips() {
     if (!adminTipsGrid) return;
-    
+
     if (filteredTips.length === 0) {
         adminTipsGrid.innerHTML = '';
         noTipsMessage.style.display = 'block';
         return;
     }
-    
+
     noTipsMessage.style.display = 'none';
-    
+
     adminTipsGrid.innerHTML = filteredTips.map(tip => `
         <div class="tip-card">
             <div class="tip-card-header">
@@ -395,7 +395,7 @@ function renderTips() {
                         <i class="fas fa-edit"></i> Editar
                     </button>
                     <button class="btn btn-outline-warning" onclick="toggleTipStatus('${tip.id}')">
-                        <i class="fas fa-eye${tip.status === 'published' ? '-slash' : ''}"></i> 
+                        <i class="fas fa-eye${tip.status === 'published' ? '-slash' : ''}"></i>
                         ${tip.status === 'published' ? 'Despublicar' : 'Publicar'}
                     </button>
                     <button class="btn btn-danger" onclick="deleteTip('${tip.id}')">
@@ -419,7 +419,7 @@ function updateTipStatistics() {
         weekAgo.setDate(weekAgo.getDate() - 7);
         return tipDate >= weekAgo;
     }).length;
-    
+
     if (totalTipsCount) totalTipsCount.textContent = total;
     if (publishedTipsCount) publishedTipsCount.textContent = published;
     if (recentTipsCount) recentTipsCount.textContent = recent;
@@ -452,11 +452,11 @@ function editTip(tipId) {
 async function toggleTipStatus(tipId) {
     try {
         const result = await tipsService.toggleTipStatus(tipId);
-        
+
         if (result) {
             // Atualizar interface
             await loadTips();
-            
+
             const action = result.status === 'published' ? 'publicada' : 'despublicada';
             showToast(`Dica ${action} com sucesso!`, 'success');
         } else {
@@ -478,12 +478,12 @@ function deleteTip(tipId) {
         document.getElementById('deleteTipName').textContent = tip.title;
         deleteTipModal.style.display = 'block';
         document.body.classList.add('modal-open');
-        
+
         // Configurar confirmação
         confirmDeleteTipBtn.onclick = async () => {
             try {
                 const success = await tipsService.deleteTip(tipId);
-                
+
                 if (success) {
                     await loadTips();
                     closeDeleteTipModal();
@@ -538,15 +538,15 @@ function formatDate(dateString) {
  */
 function clearTipFilters() {
     if (tipsSearchInput) tipsSearchInput.value = '';
-    
+
     // Limpar filtros de categoria
     tipCategoryFilters.forEach(filter => filter.checked = false);
     document.getElementById('allTipCategories').checked = true;
-    
+
     // Limpar filtros de status
     statusFilters.forEach(filter => filter.checked = false);
     document.getElementById('allStatus').checked = true;
-    
+
     applyTipFilters();
 }
 
@@ -563,40 +563,40 @@ function initializeTipEventListeners() {
             saveTip();
         });
     }
-    
+
     // Modal de exclusão
     if (closeDeleteTipModalBtn) closeDeleteTipModalBtn.addEventListener('click', closeDeleteTipModal);
     if (cancelDeleteTipBtn) cancelDeleteTipBtn.addEventListener('click', closeDeleteTipModal);
-    
+
     // Preview da imagem
     const tipImageInput = document.getElementById('tipImage');
     if (tipImageInput) {
         tipImageInput.addEventListener('input', updateTipImagePreview);
     }
-    
+
     // Filtros
     if (tipsSearchInput) {
         tipsSearchInput.addEventListener('input', applyTipFilters);
     }
-    
+
     tipCategoryFilters.forEach(filter => {
         filter.addEventListener('change', applyTipFilters);
     });
-    
+
     statusFilters.forEach(filter => {
         filter.addEventListener('change', applyTipFilters);
     });
-    
+
     if (clearTipsFiltersBtn) {
         clearTipsFiltersBtn.addEventListener('click', clearTipFilters);
     }
-    
+
     // Botão de adicionar primeira dica
     const addFirstTipBtn = document.getElementById('addFirstTipBtn');
     if (addFirstTipBtn) {
         addFirstTipBtn.addEventListener('click', () => showTipModal());
     }
-    
+
     // Filtros "Todos"
     const allTipCategories = document.getElementById('allTipCategories');
     if (allTipCategories) {
@@ -607,7 +607,7 @@ function initializeTipEventListeners() {
             applyTipFilters();
         });
     }
-    
+
     const allStatus = document.getElementById('allStatus');
     if (allStatus) {
         allStatus.addEventListener('change', function() {
@@ -644,9 +644,9 @@ function showToast(message, type = 'info') {
             z-index: 10000;
             animation: slideIn 0.3s ease;
         `;
-        
+
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.remove();
         }, 3000);
