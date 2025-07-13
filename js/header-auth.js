@@ -172,30 +172,6 @@ function setupDropdownEvents() {
             }
         });
     }
-
-    // Evento para o link de promoções
-    const promoLink = userDropdown.querySelector('.dropdown-item.user-only[href*="promocoes.html"]');
-    if (promoLink) {
-        promoLink.addEventListener('click', function(e) {
-            // Verifica se está logado
-            let isLoggedIn = false;
-            if (typeof firebase !== 'undefined' && firebase.auth) {
-                isLoggedIn = !!firebase.auth().currentUser;
-            }
-            if (!isLoggedIn) {
-                e.preventDefault();
-                // Detecta se estamos na raiz ou pasta html
-                const currentPath = window.location.pathname;
-                const isInRoot = !currentPath.includes('/html/');
-                if (isInRoot) {
-                    window.location.href = 'html/promo-bloqueado.html';
-                } else {
-                    window.location.href = 'promo-bloqueado.html';
-                }
-            }
-            // Se logado, segue para promocoes normalmente
-        });
-    }
     
     // Fecha dropdown ao clicar fora
     document.addEventListener('click', (e) => {
@@ -204,7 +180,6 @@ function setupDropdownEvents() {
         }
     });
 }
-
 /**
  * Atualiza a UI do header baseado no estado de autenticação
  */
@@ -311,54 +286,58 @@ async function updateUserName() {
 /**
  * Atualiza os links do dropdown baseado no tipo de usuário
  */
+
+// Função robusta para buscar o tipo do usuário
+async function getUserType(user) {
+    // Tenta buscar pelo sistema global, se existir
+    if (typeof window.auth !== 'undefined' && window.auth.checkUserType) {
+        try {
+            return await window.auth.checkUserType(user.uid);
+        } catch (e) {
+            console.warn('Erro no window.auth.checkUserType:', e);
+        }
+    }
+    // Busca direto no Firestore
+    if (typeof firebase !== 'undefined' && firebase.firestore) {
+        try {
+            const db = firebase.firestore();
+            // Tente ambas as coleções e campos
+            let userDoc = await db.collection('ios').doc(user.uid).get();
+            if (!userDoc.exists) {
+                userDoc = await db.collection('usuarios').doc(user.uid).get();
+            }
+            if (userDoc.exists) {
+                const data = userDoc.data();
+                return data.type || data.userType || data.Type || 'user';
+            }
+        } catch (e) {
+            console.warn('Erro ao buscar tipo no Firestore:', e);
+        }
+    }
+    return 'user';
+}
+
+// Atualiza os links do dropdown baseado no tipo de usuário
 async function updateUserLinks() {
     if (!userDropdown) return;
-    
     try {
-        // Busca o tipo de usuário usando o sistema global primeiro
         let userType = 'user';
-        
-        // Primeiro tenta usar o sistema global window.auth
-        if (typeof window.auth !== 'undefined' && window.auth.checkUserType) {
-            const user = firebase.auth().currentUser;
-            if (user) {
-                userType = await window.auth.checkUserType(user.uid);
-                console.log('🔑 Tipo obtido via window.auth:', userType);
-            }
-        } else if (typeof firebase !== 'undefined' && firebase.auth && firebase.firestore) {
-            // Fallback para busca direta
-            const user = firebase.auth().currentUser;
-            if (user) {
-                try {
-                    const db = firebase.firestore();
-                    // Corrigido: coleção 'Usuarios' e campo 'type'
-                    const userDoc = await db.collection('Usuarios').doc(user.uid).get();
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        userType = userData.type || userData.Type || 'user';
-                        console.log('🔑 Tipo obtido via Firestore direto:', userType);
-                    }
-                } catch (error) {
-                    console.warn('Erro ao buscar tipo de usuário:', error);
-                }
-            }
+        const user = firebase.auth().currentUser;
+        if (user) {
+            userType = await getUserType(user);
         }
-        
         // Controla visibilidade dos links admin
         const adminLinks = userDropdown.querySelectorAll('.admin-only');
         adminLinks.forEach(link => {
             link.style.display = userType === 'admin' ? 'block' : 'none';
         });
-        
         // Adiciona indicador visual se for admin
         if (userType === 'admin') {
             addAdminBadge();
         } else {
             removeAdminBadge();
         }
-        
         console.log('✅ Links atualizados para tipo:', userType);
-        
     } catch (error) {
         console.error('Erro ao atualizar links do usuário:', error);
     }
@@ -437,7 +416,6 @@ document.addEventListener('headerLoaded', function() {
         initHeaderAuth();
     }, 500);
 });
-
 // Exporta para uso global
 window.headerAuth = {
     updateHeaderUI,

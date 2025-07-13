@@ -6,7 +6,6 @@
 // Constantes
 const AUTH_KEY = "petshop_baronesa_auth"
 const USER_TYPE_CACHE_KEY = "petshop_user_type"
-const PROTECTED_PAGES = ["/promocoes.html", "/admin.html"]
 
 // Cache para performance
 let userTypeCache = null
@@ -41,7 +40,7 @@ async function checkUserType(uid) {
         
         // Tentativa 1: Verificar no Firestore
         if (typeof db !== 'undefined' && db) {
-            const userDoc = await db.collection('Usuarios').doc(uid).get()
+            const userDoc = await db.collection('usuarios').doc(uid).get()
             if (userDoc.exists) {
                 const userData = userDoc.data()
                 const userType = userData.type || userData.Type || 'user'
@@ -262,12 +261,12 @@ async function login(email, password) {
         
         return true
     } catch (error) {
-        console.error('Erro ao fazer login: Confira as informações inseridas ou entre usando o Google', error)
+        console.error('Erro ao fazer login: Confira as informações inseridas ou entre usando o Google')
         if (loginError) {
-            loginError.textContent = "Erro ao fazer login: " + (error.message || "Tente novamente.")
+            loginError.textContent = "Erro ao fazer login: Confira as informações inseridas ou entre usando o Google "  || "Tente novamente."
             loginError.style.display = "block"
         } else {
-            alert("Erro ao fazer login: " + (error.message || "Tente novamente."))
+            alert("Erro ao fazer login: Confira as informações inseridas ou entre usando o Google" || "Tente novamente.")
         }
         return false
     }
@@ -380,33 +379,6 @@ async function getUserDisplayName() {
     }
 }
 
-/**
- * Verifica se a página atual é protegida e redireciona se necessário
- */
-async function checkProtectedPage() {
-    const currentPath = window.location.pathname
-
-    if (PROTECTED_PAGES.some((page) => currentPath.endsWith(page))) {
-        if (!isAuthenticated()) {
-            // Salva a página que o usuário tentou acessar
-            sessionStorage.setItem("redirect_after_login", currentPath)
-            // Redireciona para a página de login
-            window.location.href = "login.html"
-            return
-        }
-        
-        // Se é uma página de admin, verificar se o usuário é admin
-        if (currentPath.endsWith('/admin.html')) {
-            const isUserAdmin = await isAdmin()
-            if (!isUserAdmin) {
-                console.warn('Acesso negado: usuário não é admin')
-                alert('Acesso negado. Você precisa ser um administrador para acessar esta página.')
-                window.location.href = "../index.html"
-                return
-            }
-        }
-    }
-}
 
 // Função para login com Google usando Firebase Auth
 async function loginWithGoogle() {
@@ -501,8 +473,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Atualiza a UI com base no estado de autenticação
         await updateAuthUI()
 
-        // Verifica se a página é protegida
-        await checkProtectedPage()
 
         // Configura o botão de logout
         if (logoutButton) {

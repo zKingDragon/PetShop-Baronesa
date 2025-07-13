@@ -558,22 +558,29 @@ class UIPermissionManager {
     }
   }
 
+  
   /**
-   * Verifica se o usuário tem permissão para acessar uma página
+   * Verifica e aplica permissão de acesso à página atual
    */
-  async hasPagePermission(page) {
-    if (page.includes('admin')) {
-      return this.currentRole === 'admin'
+  async checkPagePermission() {
+    const currentPath = window.location.pathname;
+    const pageName = currentPath.split('/').pop() || '';
+    // Corrigido: método correto é checkPagePermission, não hasPagePermission
+    // Se quiser lógica customizada, implemente aqui. Exemplo:
+    let hasPermission = true;
+    if (pageName.includes('admin')) {
+      hasPermission = this.currentRole === 'admin';
+    } else if (pageName.includes('promocoes')) {
+      hasPermission = this.currentRole === 'admin' || this.currentRole === 'user';
     }
-    
-    if (page.includes('promocoes')) {
-      return this.currentRole === 'user' || this.currentRole === 'admin'
+    if (!hasPermission) {
+      // Redireciona para página de bloqueio
+      if (pageName.includes('admin')) {
+        window.location.href = '../index.html';
+      } else if (pageName.includes('promocoes')) {
+      }
     }
-    
-    return true // Páginas públicas
   }
-
- 
 }
 
 // Instância global do gerenciador de permissões
@@ -624,13 +631,22 @@ function fixHeaderLinks() {
       if (page) {
         const newHref = pathPrefix + page + '.html';
         link.href = newHref;
-        
+
         // Remove event listeners antigos para evitar duplicatas
         const newLink = link.cloneNode(true);
         link.parentNode.replaceChild(newLink, link);
-        
+
         // Adiciona event listener para garantir navegação
         newLink.addEventListener('click', function(e) {
+          // Controle especial para promoções
+          if (page === 'promocoes') {
+            let isLoggedIn = false;
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+              isLoggedIn = !!firebase.auth().currentUser;
+
+              return;
+            }
+          }
           const href = this.getAttribute('href');
           if (href && href !== '#') {
             console.log('🔄 Navegando para:', href);
@@ -640,7 +656,7 @@ function fixHeaderLinks() {
             console.warn('❌ Link inválido:', href);
           }
         });
-        
+
         console.log(`✅ Link ${page} configurado:`, newHref);
       }
     });

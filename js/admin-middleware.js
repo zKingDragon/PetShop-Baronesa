@@ -191,12 +191,15 @@ class AdminMiddleware {
         try {
             // Use global auth system if available
             if (typeof window.auth !== 'undefined' && window.auth.isAdmin) {
-                return await window.auth.isAdmin();
+                const result = await window.auth.isAdmin();
+                console.log('[isUserAdmin] window.auth.isAdmin() =>', result);
+                return result;
             }
 
             // Check user type directly
             if (this.currentUser && typeof window.auth !== 'undefined' && window.auth.checktype) {
                 const type = await window.auth.checktype(this.currentUser.uid);
+                console.log('[isUserAdmin] window.auth.checktype:', this.currentUser.uid, '=>', type);
                 return type === 'admin';
             }
 
@@ -205,12 +208,14 @@ class AdminMiddleware {
             if (authData) {
                 try {
                     const userData = JSON.parse(authData);
+                    console.log('[isUserAdmin] localStorage type:', userData.type);
                     return userData.type === 'admin';
                 } catch (error) {
                     console.error('Error parsing auth data:', error);
                 }
             }
 
+            console.log('[isUserAdmin] No admin detected');
             return false;
         } catch (error) {
             console.error('Error checking admin status:', error);
@@ -289,42 +294,12 @@ class AdminMiddleware {
             'Você não tem permissão para acessar esta página. Apenas administradores podem acessar o painel administrativo.',
             () => {
                 // Redirect to home page
-                window.location.href = window.location.pathname.includes('/html/') ? 
-                    '../index.html' : 'index.html';
+ 
             }
         );
     }
 
-    /**
-     * Handle access granted
-     */
-    handleAccessGranted() {
-        // Remove any loading screens
-        this.hideLoadingMessage();
-        
-        // Show success message briefly
-        this.showSuccessMessage('Acesso autorizado como administrador');
-        
-        // Initialize admin page features
-        this.initializeAdminFeatures();
-    }
 
-    /**
-     * Handle errors
-     * @param {Error} error - Error object
-     */
-    handleError(error) {
-        console.error('Admin middleware error:', error);
-        
-        this.showErrorMessage(
-            'Erro de Sistema',
-            'Ocorreu um erro ao verificar suas permissões. Por favor, tente novamente ou faça login novamente.',
-            () => {
-                // Redirect to login
-                this.redirectToLogin();
-            }
-        );
-    }
 
     /**
      * Show loading message
