@@ -1,6 +1,6 @@
 /**
  * Sistema de autenticação do header
- * Gerencia a alternância entre botões de cadastro e dropdown de usuário
+ * Gerencia entre botões de login e dropdown de usuário
  */
 (function() {
 'use strict';
@@ -9,7 +9,7 @@
 let headerAuthButtons = null;
 let userDropdown = null;
 let userNameDisplay = null;
-let signupButton = null;
+let loginButton = null;
 
 /**
  * Inicializa o sistema de autenticação do header
@@ -54,8 +54,8 @@ function initHeaderAuth() {
  * Configura os elementos do header
  */
 function setupHeaderElements() {
-    // Encontra o botão de cadastro
-    signupButton = document.querySelector('.btn-signup');
+    // Encontra o botão de login
+    loginButton = document.querySelector('.btn-login');
     
     // Cria ou encontra o dropdown do usuário
     createUserDropdown();
@@ -95,9 +95,6 @@ function createUserDropdown() {
             </a>
             <a href="${pathPrefix}carrinho.html" class="dropdown-item user-only">
                 <i class="fas fa-shopping-cart"></i> Meu Carrinho
-            </a>
-            <a href="${pathPrefix}promocoes.html" class="dropdown-item user-only">
-                <i class="fas fa-tag"></i> Promoções
             </a>
             <a href="${pathPrefix}admin.html" class="dropdown-item admin-only">
                 <i class="fas fa-cog"></i> Painel Admin
@@ -201,9 +198,9 @@ async function updateHeaderUI() {
         if (isLoggedIn) {
             // Usuário logado - mostrar dropdown
             console.log('✅ Mostrando dropdown de usuário');
-            if (signupButton) {
-                signupButton.style.display = 'none';
-                console.log('✅ Botão cadastro ocultado');
+            if (loginButton) {
+                loginButton.style.display = 'none';
+                console.log('✅ Botão login ocultado');
             }
             if (userDropdown) {
                 userDropdown.style.display = 'block';
@@ -216,11 +213,11 @@ async function updateHeaderUI() {
             // Atualizar links baseado no tipo de usuário
             await updateUserLinks();
         } else {
-            // Usuário não logado - mostrar botão de cadastro
-            console.log('❌ Mostrando botão de cadastro');
-            if (signupButton) {
-                signupButton.style.display = 'block';
-                console.log('✅ Botão cadastro mostrado');
+            // Usuário não logado - mostrar botão de login
+            console.log('❌ Mostrando botão de login');
+            if (loginButton) {
+                loginButton.style.display = 'block';
+                console.log('✅ Botão login mostrado');
             }
             if (userDropdown) {
                 userDropdown.style.display = 'none';
@@ -251,13 +248,13 @@ async function updateUserName() {
         }
         
         // Busca o tipo de usuário no Firestore
-        let userType = 'user';
+        let userType = 'guest';
         try {
             if (typeof firebase !== 'undefined' && firebase.firestore) {
                 const db = firebase.firestore();
                 const userDoc = await db.collection('usuarios').doc(user.uid).get();
                 if (userDoc.exists) {
-                    userType = userDoc.data().userType || 'user';
+                    userType = userDoc.data().userType || 'guest';
                 }
             }
         } catch (error) {
@@ -308,20 +305,20 @@ async function getUserType(user) {
             }
             if (userDoc.exists) {
                 const data = userDoc.data();
-                return data.type || data.userType || data.Type || 'user';
+                return data.type || data.userType || data.Type || 'guest';
             }
         } catch (e) {
             console.warn('Erro ao buscar tipo no Firestore:', e);
         }
     }
-    return 'user';
+    return 'guest';
 }
 
 // Atualiza os links do dropdown baseado no tipo de usuário
 async function updateUserLinks() {
     if (!userDropdown) return;
     try {
-        let userType = 'user';
+        let userType = 'guest';
         const user = firebase.auth().currentUser;
         if (user) {
             userType = await getUserType(user);

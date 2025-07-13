@@ -30,6 +30,7 @@ const filterState = {
   categories: [],
   priceRanges: [],
   types: [],
+  promocional: false,
   search: "",
 }
 
@@ -97,11 +98,13 @@ async function loadProducts() {
       orderBy: "createdAt",
       orderDirection: "desc",
     })
-    // Adiciona priceRange para filtros de preço
+    // Adiciona priceRange para filtros de preço (considerando preço promocional)
     allProducts.forEach(p => {
-      if (p.price <= 50) p.priceRange = "0-50"
-      else if (p.price <= 100) p.priceRange = "50-100"
-      else if (p.price <= 150) p.priceRange = "100-150"
+      // Usa preço promocional se disponível, senão usa preço normal
+      const effectivePrice = p.promocional && p.precoPromo ? p.precoPromo : p.price
+      if (effectivePrice <= 50) p.priceRange = "0-50"
+      else if (effectivePrice <= 100) p.priceRange = "50-100"
+      else if (effectivePrice <= 150) p.priceRange = "100-150"
       else p.priceRange = "150+"
     })
 
@@ -171,6 +174,11 @@ async function filterProducts() {
         return false
       }
 
+      // Filtro promocional
+      if (filterState.promocional && !product.promocional) {
+        return false
+      }
+
       // Filtro de busca
       if (
         filterState.search &&
@@ -200,13 +208,16 @@ async function filterProducts() {
         if (filterState.types.length > 0 && !filterState.types.includes(product.type)) {
           return false
         }
+        if (filterState.promocional && !product.promocional) {
+          return false
+        }
         return true
       })
     }
 
     // Use Firestore filtering for better performance
     const hasFilters =
-      filterState.categories.length > 0 || filterState.types.length > 0 || filterState.priceRanges.length > 0
+      filterState.categories.length > 0 || filterState.types.length > 0 || filterState.priceRanges.length > 0 || filterState.promocional
 
     if (hasFilters) {
       // Converte faixas de preço para min/max
@@ -241,6 +252,7 @@ async function filterProducts() {
       const filters = {
         categories: filterState.categories.length > 0 ? filterState.categories : undefined,
         types: filterState.types.length > 0 ? filterState.types : undefined,
+        promocional: filterState.promocional ? true : undefined,
       }
       
       // Adiciona filtros de preço se houver
@@ -254,12 +266,16 @@ async function filterProducts() {
         return result.filter(product => {
           // Garante que o produto tem priceRange definido
           if (!product.priceRange) {
-            if (product.price <= 50) product.priceRange = "0-50"
-            else if (product.price <= 100) product.priceRange = "50-100"
-            else if (product.price <= 150) product.priceRange = "100-150"
+            // Usa preço promocional se disponível, senão usa preço normal
+            const effectivePrice = product.promocional && product.precoPromo ? product.precoPromo : product.price
+            if (effectivePrice <= 50) product.priceRange = "0-50"
+            else if (effectivePrice <= 100) product.priceRange = "50-100"
+            else if (effectivePrice <= 150) product.priceRange = "100-150"
             else product.priceRange = "150+"
           }
-          return filterState.priceRanges.includes(product.priceRange)
+          const matchesPrice = filterState.priceRanges.includes(product.priceRange)
+          const matchesPromo = filterState.promocional ? product.promocional : true
+          return matchesPrice && matchesPromo
         })
       }
       
@@ -279,6 +295,9 @@ async function filterProducts() {
         return false
       }
       if (filterState.types.length > 0 && !filterState.types.includes(product.type)) {
+        return false
+      }
+      if (filterState.promocional && !product.promocional) {
         return false
       }
       if (
@@ -325,22 +344,40 @@ function renderProducts(products) {
   products.forEach((product) => {
     const productElement = document.createElement("div")
     productElement.className = "product-card"
+    
+    // Construir o HTML do preço
+    let priceHTML = ""
+    if (product.promocional && product.precoPromo) {
+      priceHTML = `
+        <div class="product-price-promo">
+          <span class="product-price-original">R$ ${product.price.toFixed(2)}</span>
+          <span class="product-price-discount">R$ ${product.precoPromo.toFixed(2)}</span>
+        </div>
+      `
+    } else {
+      priceHTML = `<span class="product-price">R$ ${product.price.toFixed(2)}</span>`
+    }
+    
+    // Preço para os botões (usar preço promocional se disponível)
+    const effectivePrice = product.promocional && product.precoPromo ? product.precoPromo : product.price
+    
     productElement.innerHTML = `
       <div class="product-image">
         <img src="${product.image}" alt="${product.name}" loading="lazy">
         <div class="product-category">${product.category}</div>
+        ${product.promocional ? '<div class="product-promo-badge">PROMOÇÃO</div>' : ''}
       </div>
       <div class="product-info">
         <h3>${product.name}</h3>
         <p>${product.description}</p>
         <div class="product-footer">
-          <span class="product-price">R$ ${product.price.toFixed(2)}</span>
+          ${priceHTML}
         </div>
         <div class="product-buttons">
-          <button class="btn-primary add-to-cart-btn btn-top" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-image="${product.image}">
+          <button class="btn-primary add-to-cart-btn btn-top" data-id="${product.id}" data-name="${product.name}" data-price="${effectivePrice}" data-image="${product.image}">
             <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
           </button>
-          <button class="btn-whatsapp buy-now-btn btn-bottom" data-name="${product.name}" data-price="${product.price}" data-id="${product.id}">
+          <button class="btn-whatsapp buy-now-btn btn-bottom" data-name="${product.name}" data-price="${effectivePrice}" data-id="${product.id}">
             <i class="fab fa-whatsapp"></i> Comprar Agora
           </button>
         </div>
@@ -445,6 +482,10 @@ function updateFilterState() {
     filterState.types.push(checkbox.value)
   })
 
+  // Atualiza filtro promocional
+  const promocionalCheckbox = document.querySelector('input[name="promocional"]:checked')
+  filterState.promocional = promocionalCheckbox ? true : false
+
   // Atualiza termo de busca
   filterState.search = searchInput ? searchInput.value : ""
   if (!filterState.search && searchInputMobile) {
@@ -497,6 +538,7 @@ function updateActiveFilters() {
     filterState.categories.length > 0 ||
     filterState.priceRanges.length > 0 ||
     filterState.types.length > 0 ||
+    filterState.promocional ||
     filterState.search
 
   if (!hasActiveFilters) {
@@ -566,6 +608,20 @@ function updateActiveFilters() {
 
     activeFiltersContainer.appendChild(filterTag)
   })
+
+  // Adiciona filtro promocional
+  if (filterState.promocional) {
+    const filterTag = createFilterTag("Apenas promoções", () => {
+      // Remove filtro promocional
+      const checkbox = document.querySelector('input[name="promocional"]')
+      if (checkbox) checkbox.checked = false
+
+      filterState.promocional = false
+      applyFilters()
+    })
+
+    activeFiltersContainer.appendChild(filterTag)
+  }
 
   // Adiciona filtro de termo de busca
   if (filterState.search) {
@@ -643,6 +699,11 @@ function clearAllFilters() {
     checkbox.checked = false
   })
 
+  const promocionalCheckboxes = document.querySelectorAll('input[name="promocional"]')
+  promocionalCheckboxes.forEach((checkbox) => {
+    checkbox.checked = false
+  })
+
   // Desmarca o checkbox "Todos os produtos"
   const allProductsCheckbox = document.getElementById("all-products-checkbox")
   if (allProductsCheckbox) allProductsCheckbox.checked = false
@@ -655,6 +716,7 @@ function clearAllFilters() {
   filterState.categories = []
   filterState.priceRanges = []
   filterState.types = []
+  filterState.promocional = false
   filterState.search = ""
 
   // Aplica filtros (o que mostrará todos os produtos)
@@ -669,7 +731,7 @@ function clearAllFilters() {
  */
 function clearAllFiltersAndActivateAllBtn() {
   // Desmarca todos os checkboxes
-  document.querySelectorAll('input[name="category"], input[name="priceRanges"], input[name="type"]').forEach(cb => cb.checked = false)
+  document.querySelectorAll('input[name="category"], input[name="priceRanges"], input[name="type"], input[name="promocional"]').forEach(cb => cb.checked = false)
 
   // Limpa campos de busca
   if (searchInput) searchInput.value = ""
@@ -679,6 +741,7 @@ function clearAllFiltersAndActivateAllBtn() {
   filterState.categories = []
   filterState.priceRanges = []
   filterState.types = []
+  filterState.promocional = false
   filterState.search = ""
 
   // Ativa botão "Todos os produtos"
@@ -884,13 +947,24 @@ function initEventListeners() {
     })
   })
 
+  const promocionalCheckboxes = document.querySelectorAll('input[name="promocional"]')
+  promocionalCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      // Remove destaque do botão "Todos os produtos"
+      const btnTodos = document.getElementById("btn-todos-produtos")
+      if (btnTodos) btnTodos.classList.remove("ativo")
+      updateFilterState()
+      applyFilters()
+    })
+  })
+
   // Checkbox "Todos os produtos"
   const allProductsCheckbox = document.getElementById("all-products-checkbox")
   if (allProductsCheckbox) {
     allProductsCheckbox.addEventListener("change", function () {
       if (this.checked) {
         // Desmarca todos os outros filtros
-        document.querySelectorAll('input[name="category"], input[name="priceRanges"], input[name="type"]').forEach(cb => cb.checked = false)
+        document.querySelectorAll('input[name="category"], input[name="priceRanges"], input[name="type"], input[name="promocional"]').forEach(cb => cb.checked = false)
         // Limpa busca
         if (searchInput) searchInput.value = ""
         if (searchInputMobile) searchInputMobile.value = ""
@@ -898,6 +972,7 @@ function initEventListeners() {
         filterState.categories = []
         filterState.priceRanges = []
         filterState.types = []
+        filterState.promocional = false
         filterState.search = ""
         // Mostra todos os produtos
         applyFilters()

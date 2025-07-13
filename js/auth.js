@@ -6,6 +6,7 @@
 // Constantes
 const AUTH_KEY = "petshop_baronesa_auth"
 const USER_TYPE_CACHE_KEY = "petshop_user_type"
+const PROTECTED_PAGES = ["admin.html", "/admin.html", "/html/admin.html"]
 
 // Cache para performance
 let userTypeCache = null
@@ -23,7 +24,7 @@ const loginError = document.getElementById("loginError")
 /**
  * Verifica o tipo de usuário no banco de dados
  * @param {string} uid - UID do usuário
- * @returns {Promise<string>} - Tipo do usuário: 'user', 'admin', ou 'guest'
+ * @returns {Promise<string>} - Tipo do usuário: 'admin' ou 'guest'
  */
 async function checkUserType(uid) {
     if (!uid) return 'guest'
@@ -43,7 +44,7 @@ async function checkUserType(uid) {
             const userDoc = await db.collection('usuarios').doc(uid).get()
             if (userDoc.exists) {
                 const userData = userDoc.data()
-                const userType = userData.type || userData.Type || 'user'
+                const userType = userData.type || userData.Type || 'admin'
                 
                 // Atualizar cache
                 userTypeCache = userType
@@ -71,11 +72,11 @@ async function checkUserType(uid) {
             }
         }
 
-        console.warn('Usuário não encontrado no banco de dados, usando tipo padrão: user')
-        return 'user' // Default para user se não encontrar
+        console.warn('Usuário não encontrado no banco de dados, default para admin')
+        return 'admin' // Default para admin se não encontrar (apenas admins terão conta)
     } catch (error) {
         console.error('Erro ao verificar tipo de usuário:', error)
-        return 'user' // Default para user em caso de erro
+        return 'admin' // Default para admin em caso de erro
     }
 }
 
@@ -139,29 +140,9 @@ async function isAdmin(user = null) {
 }
 
 /**
- * Verifica se o usuário é user comum
- * @param {Object} user - Usuário (opcional, usa o atual se não fornecido)
- * @returns {Promise<boolean>} - True se for user
- */
-async function isUser(user = null) {
-    try {
-        const currentUser = user || getCurrentUser()
-        if (!currentUser) {
-            return false
-        }
-
-        const userType = await checkUserType(currentUser.uid)
-        return userType === 'user'
-    } catch (error) {
-        console.error('Erro ao verificar se é user:', error)
-        return false
-    }
-}
-
-/**
  * Atualiza o tipo de usuário no banco de dados (apenas para admins)
  * @param {string} uid - UID do usuário
- * @param {string} newType - Novo tipo ('user' ou 'admin')
+ * @param {string} newType - Novo tipo (apenas 'admin')
  * @returns {Promise<boolean>} - True se atualizado com sucesso
  */
 async function updateUserType(uid, newType) {
@@ -172,9 +153,9 @@ async function updateUserType(uid, newType) {
             throw new Error('Apenas administradores podem alterar tipos de usuário')
         }
 
-        // Validar o novo tipo
-        if (!['user', 'admin'].includes(newType)) {
-            throw new Error('Tipo de usuário inválido. Use "user" ou "admin"')
+        // Validar o novo tipo (apenas admin é permitido)
+        if (newType !== 'admin') {
+            throw new Error('Tipo de usuário inválido. Apenas "admin" é permitido')
         }
 
         console.log(`Atualizando tipo de usuário ${uid} para: ${newType}`)
@@ -364,18 +345,11 @@ async function getUserDisplayName() {
             return 'Visitante'
         }
 
-        const userType = await getCurrentUserType()
-        
-        if (userType === 'admin') {
-            return 'Administrador'
-        }
-
-        return currentUser.displayName || 
-               currentUser.email?.split('@')[0] || 
-               'Usuário'
+        // Apenas admins têm conta, então se está logado é admin
+        return 'Administrador'
     } catch (error) {
         console.error('Erro ao obter nome de exibição:', error)
-        return 'Usuário'
+        return 'Administrador'
     }
 }
 
@@ -410,12 +384,8 @@ async function loginWithGoogle() {
         }
         localStorage.setItem(AUTH_KEY, JSON.stringify(authData))
         
-        // Redirecionar baseado no tipo de usuário
-        if (userType === 'admin') {
-            window.location.href = "admin.html"
-        } else {
-            window.location.href = "index.html"
-        }
+        // Redirecionar sempre para admin (apenas admins fazem login)
+        window.location.href = "admin.html"
     } catch (error) {
         console.error('Erro ao fazer login com Google:', error)
         // Mostra mensagem de erro
@@ -499,13 +469,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                         sessionStorage.removeItem("redirect_after_login")
                         window.location.href = redirectPath
                     } else {
-                        // Redirecionar baseado no tipo de usuário
-                        const userType = await getCurrentUserType()
-                        if (userType === 'admin') {
-                            window.location.href = "admin.html"
-                        } else {
-                            window.location.href = "index.html"
-                        }
+                        // Redirecionar sempre para admin (apenas admins fazem login)
+                        window.location.href = "admin.html"
                     }
                 } else {
                     // Mostra mensagem de erro
@@ -553,7 +518,6 @@ window.auth = {
     getCurrentUser,
     getCurrentUserType,
     isAdmin,
-    isUser,
     updateUserType,
     clearUserTypeCache,
     login,

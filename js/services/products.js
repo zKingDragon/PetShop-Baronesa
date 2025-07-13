@@ -48,6 +48,8 @@ class ProductsService {
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       slug: data.slug || this.generateSlug(data.nomeProduto || ""),
+      promocional: data.promocional || false,
+      precoPromo: data.precoPromo ? parseFloat(data.precoPromo) : null,
     }
   }
 
@@ -100,6 +102,8 @@ class ProductsService {
         categoria: productData.category,
         tipoProduto: productData.type,
         slug,
+        promocional: productData.promocional || false,
+        precoPromo: productData.precoPromo || null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }
@@ -130,6 +134,8 @@ class ProductsService {
         categoria: updateData.category,
         tipoProduto: updateData.type,
         slug,
+        promocional: updateData.promocional || false,
+        precoPromo: updateData.precoPromo || null,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }
       await this.db.collection(this.collection).doc(productId).update(updateWithTimestamp)
@@ -237,6 +243,10 @@ class ProductsService {
       } else if (filters.type) {
         query = query.where("tipoProduto", "==", filters.type)
       }
+      // Filtro promocional
+      if (filters.promocional) {
+        query = query.where("promocional", "==", true)
+      }
       // Faixa de preço
       if (filters.minPrice !== undefined) {
         query = query.where("Preco", ">=", filters.minPrice)
@@ -274,6 +284,21 @@ class ProductsService {
     // Validate price
     if (typeof productData.price !== "number" || productData.price < 0) {
       throw new Error("Preço deve ser um número válido maior ou igual a zero")
+    }
+
+    // Validate promotional price if provided
+    if (productData.precoPromo !== undefined && productData.precoPromo !== null) {
+      if (typeof productData.precoPromo !== "number" || productData.precoPromo < 0) {
+        throw new Error("Preço promocional deve ser um número válido maior ou igual a zero")
+      }
+      if (productData.precoPromo >= productData.price) {
+        throw new Error("Preço promocional deve ser menor que o preço normal")
+      }
+    }
+
+    // Validate promotional field
+    if (productData.promocional !== undefined && typeof productData.promocional !== "boolean") {
+      throw new Error("Campo promocional deve ser verdadeiro ou falso")
     }
 
     // Validate category

@@ -208,8 +208,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const userData = {
         name: displayName,
         email: email,
-        type: email.includes('admin') ? 'admin' : 'user',
-        Type: email.includes('admin') ? 'admin' : 'user',
+        type: email.includes('admin') ? 'admin' : 'guest',
+        Type: email.includes('admin') ? 'admin' : 'guest',
         uid: user.uid,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()

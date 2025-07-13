@@ -441,7 +441,7 @@ class UserManagement {
                     uid: doc.id,
                     name: userData.name || userData.displayName || 'N/A',
                     email: userData.email || 'N/A',
-                    type: userData.type || userData.Type || 'user',
+                    type: userData.type || userData.Type || 'guest',
                     lastLogin: userData.lastLogin || userData.lastSignInTime || null,
                     createdAt: userData.createdAt || userData.creationTime || null,
                     ...userData
@@ -526,7 +526,7 @@ class UserManagement {
                 throw new Error('Usuário não encontrado');
             }
 
-            const newType = user.type === 'admin' ? 'user' : 'admin';
+            const newType = user.type === 'admin' ? 'guest' : 'admin';
             const confirmMessage = `Tem certeza que deseja ${newType === 'admin' ? 'promover' : 'remover'} ${user.name} ${newType === 'admin' ? 'para administrador' : 'de administrador'}?`;
             
             if (confirm(confirmMessage)) {
@@ -754,7 +754,7 @@ class UserManagement {
      */
     async bulkDemoteUsers(userIds) {
         for (const userId of userIds) {
-            await this.updateUserType(userId, 'user');
+            await this.updateUserType(userId, 'guest');
         }
         this.showSuccess(`${userIds.length} usuários removidos de administrador com sucesso!`);
     }
@@ -829,12 +829,12 @@ class UserManagement {
     getUserStats() {
         const totalUsers = this.users.length;
         const adminCount = this.users.filter(u => u.type === 'admin').length;
-        const userCount = this.users.filter(u => u.type === 'user').length;
+        const guestCount = this.users.filter(u => u.type === 'guest').length;
         
         return {
             total: totalUsers,
             admins: adminCount,
-            users: userCount
+            guests: guestCount
         };
     }
 

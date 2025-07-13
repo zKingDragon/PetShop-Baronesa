@@ -248,8 +248,8 @@ class AdminPanel {
     const imageUrl = product.image || "assets/images/placeholder.png"
     const price = typeof product.price === "number" ? product.price.toFixed(2) : "0.00"
     // Promoção
-    const onSale = !!product.onSale && product.salePrice && product.salePrice < product.price
-    const salePrice = onSale ? Number(product.salePrice).toFixed(2) : null
+    const onSale = !!product.promocional && product.precoPromo && product.precoPromo < product.price
+    const salePrice = onSale ? Number(product.precoPromo).toFixed(2) : null
 
     return `
       <div class="admin-product-card" data-product-id="${product.id}">
@@ -447,8 +447,8 @@ class AdminPanel {
       document.getElementById("productImage").value = product.image || ""
       document.getElementById("productDescription").value = product.description || ""
       // Promoção
-      document.getElementById("productOnSale").checked = !!product.onSale
-      document.getElementById("productSalePrice").value = product.salePrice || ""
+      document.getElementById("productOnSale").checked = !!product.promocional
+      document.getElementById("productSalePrice").value = product.precoPromo || ""
 
       this.updateImagePreview(product.image)
 
@@ -510,8 +510,8 @@ class AdminPanel {
         price: Number.parseFloat(formData.get("price")),
         image: formData.get("image").trim() || "assets/images/placeholder.png",
         description: formData.get("description").trim(),
-        onSale: onSale,
-        salePrice: onSale && salePriceRaw ? salePrice : null,
+        promocional: onSale,
+        precoPromo: onSale && salePriceRaw ? salePrice : null,
       }
 
       // Validate required fields
@@ -523,7 +523,7 @@ class AdminPanel {
         throw new Error("Preço deve ser um número válido maior ou igual a zero")
       }
 
-      if (productData.onSale && (isNaN(productData.salePrice) || productData.salePrice <= 0 || productData.salePrice >= productData.price)) {
+      if (productData.promocional && (isNaN(productData.precoPromo) || productData.precoPromo <= 0 || productData.precoPromo >= productData.price)) {
         throw new Error("O preço promocional deve ser menor que o preço original e maior que zero")
       }
 

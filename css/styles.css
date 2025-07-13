@@ -846,6 +846,19 @@ img {
   font-weight: 600;
 }
 
+.product-promo-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background-color: #ef4444;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 10;
+}
+
 .product-info {
   padding: 1rem;
   flex-grow: 1;
@@ -871,6 +884,26 @@ img {
   display: flex;
   align-items: baseline;
   margin-bottom: 1rem;
+}
+
+.product-price-promo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.product-price-original {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  margin-bottom: 0.25rem;
+}
+
+.product-price-discount {
+  font-weight: 700;
+  color: var(--emerald-dark);
+  font-size: 1.25rem;
 }
 
 .current-price {
@@ -1220,15 +1253,27 @@ img {
 
 /* Filtros ativos */
 .active-filters {
+  position: absolute;
+  top: 15%;
   display: none;
   flex-wrap: wrap;
   gap: 0.5rem;
+  margin-top: 15rem;
   margin: 1rem 0;
   padding: 0.75rem;
   background-color: #f9fafb;
   border-radius: var(--border-radius);
 }
-
+@media (max-width: 1024px) {
+  .active-filters {
+    position: static;
+    top: auto;
+    left: 0;
+    right: 0;
+    margin-top: 0;
+    width: 100%;
+  }
+}
 .filter-tag {
   display: flex;
   align-items: center;

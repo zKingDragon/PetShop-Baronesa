@@ -137,7 +137,7 @@ class AuthService {
 
   /**
    * Gets user role
-   * @returns {Promise<string>} - User role: 'guest', 'user', or 'admin'
+   * @returns {Promise<string>} - User role: 'guest' or 'admin'
    */
   async getUserRole() {
     if (!this.currentUser) {
@@ -149,23 +149,23 @@ class AuthService {
       if (idTokenResult.claims.admin) {
         return 'admin'
       }
-      return 'user'
+      return 'guest'
     } catch (error) {
       console.error("Error getting user role:", error)
-      return 'user'
+      return 'guest'
     }
   }
 
   /**
    * Checks if user has required role
-   * @param {string} requiredRole - Required role: 'user' or 'admin'
+   * @param {string} requiredRole - Required role: 'guest' or 'admin'
    * @returns {Promise<boolean>} - True if user has required role
    */
   async hasRole(requiredRole) {
     const userRole = await this.getUserRole()
     
     if (requiredRole === 'user') {
-      return userRole === 'user' || userRole === 'admin'
+      return userRole === 'admin' // Only admin can access user-restricted content
     }
     
     if (requiredRole === 'admin') {

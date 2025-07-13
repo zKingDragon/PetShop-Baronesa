@@ -137,20 +137,20 @@ class FooterPermissionManager {
             // Use the global auth system to check user type
             if (typeof window.auth !== 'undefined' && window.auth.checkUserType) {
                 const userType = await window.auth.checkUserType(user.uid);
-                return userType === 'admin' ? 'admin' : 'user';
+                return userType === 'admin' ? 'admin' : 'guest';
             }
 
             // Fallback to getCurrentUserType if available
             if (typeof window.auth !== 'undefined' && window.auth.getCurrentUserType) {
                 const userType = await window.auth.getCurrentUserType();
-                return userType === 'admin' ? 'admin' : 'user';
+                return userType === 'admin' ? 'admin' : 'guest';
             }
 
-            console.warn('Auth system not available, defaulting to user role');
-            return 'user';
+            console.warn('Auth system not available, defaulting to guest role');
+            return 'guest';
         } catch (error) {
             console.error('Error determining user role:', error);
-            return 'user';
+            return 'guest';
         }
     }
 
@@ -194,9 +194,6 @@ class FooterPermissionManager {
         switch (this.userRole) {
             case 'guest':
                 this.showElements('.guest-only');
-                break;
-            case 'user':
-                this.showElements('.user-only');
                 break;
             case 'admin':
                 this.showElements('.user-only');
@@ -251,7 +248,7 @@ class FooterPermissionManager {
             await this.handleAuthStateChange(null);
             
             // Redirect to home if on protected page
-            const protectedPages = ['/admin.html', '/promocoes.html'];
+            const protectedPages = ['/admin.html'];
             const currentPath = window.location.pathname;
             
             if (protectedPages.some(page => currentPath.endsWith(page))) {
@@ -334,7 +331,7 @@ class FooterPermissionManager {
             case 'guest':
                 return this.userRole === 'guest';
             case 'user':
-                return this.userRole === 'user' || this.userRole === 'admin';
+                return this.userRole === 'admin'; // Only admins can access user-only elements now
             case 'admin':
                 return this.userRole === 'admin';
             default:
@@ -369,10 +366,10 @@ class FooterPermissionManager {
             if (typeof window.auth !== 'undefined' && window.auth.checkUserType) {
                 return await window.auth.checkUserType(this.currentUser.uid);
             }
-            return 'user';
+            return 'guest';
         } catch (error) {
             console.error('Error getting user type:', error);
-            return 'user';
+            return 'guest';
         }
     }
 

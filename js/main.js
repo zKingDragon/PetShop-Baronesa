@@ -358,7 +358,7 @@ class UIPermissionManager {
    * Atualiza o cabeçalho com base no papel do usuário
    */
   updateHeader() {
-    const signupBtn = document.querySelector('.btn-signup')
+    const loginBtn = document.querySelector('.btn-login')
     const userDropdown = document.querySelector('.user-dropdown')
     
     // Remove elementos existentes
@@ -367,22 +367,20 @@ class UIPermissionManager {
     }
 
     if (this.currentRole === 'guest') {
-      // Mostra botão de cadastro para visitantes
-      if (signupBtn) {
-        signupBtn.style.display = 'inline-block'
-        signupBtn.textContent = 'Cadastre-se'
-        signupBtn.href = '../html/cadastro.html'
+      // Mostra o botão de login para admins
+      if (loginBtn) {
+        loginBtn.style.display = 'inline-block'
       }
     } else {
-      // Esconde botão de cadastro e mostra dropdown do usuário
-      if (signupBtn) {
-        signupBtn.style.display = 'none'
+      // Admin logado - mostra dropdown
+      if (loginBtn) {
+        loginBtn.style.display = 'none'
       }
       
       this.createUserDropdown()
     }
 
-    // Gerencia visibilidade do botão de promoções
+    // Gerencia visibilidade do botão de promoções (removido)
     this.updatePromotionsButton()
     
     // Gerencia botões de admin
@@ -449,18 +447,11 @@ class UIPermissionManager {
   }
 
   /**
-   * Atualiza visibilidade do botão de promoções
+   * Atualiza visibilidade do botão de promoções (removido - não há mais página de promoções)
    */
   updatePromotionsButton() {
-    const promotionsLink = document.querySelector('a[href*="promocoes"]')
-    
-    if (promotionsLink) {
-      if (this.currentRole === 'guest') {
-        promotionsLink.style.display = 'none'
-      } else {
-        promotionsLink.style.display = 'block'
-      }
-    }
+    // Função removida - não há mais página de promoções separada
+    // Promoções agora são exibidas diretamente no catálogo
   }
 
   /**
@@ -501,28 +492,12 @@ class UIPermissionManager {
     const nav = mobileMenu.querySelector('nav ul')
     if (!nav) return
 
-    if (this.currentRole === 'guest') {
-      // Adiciona link de cadastro no menu mobile
-      const signupItem = document.createElement('li')
-      signupItem.className = 'mobile-user-item'
-      signupItem.innerHTML = '<a href="../html/cadastro.html">Cadastre-se</a>'
-      nav.appendChild(signupItem)
-    } else {
-      // Adiciona promoções se for usuário ou admin
-      const promotionsItem = document.createElement('li')
-      promotionsItem.className = 'mobile-user-item'
-      promotionsItem.innerHTML = '<a href="../html/promocoes.html">Promoções</a>'
-      nav.appendChild(promotionsItem)
-
-      // Adiciona admin se for admin
-      if (this.currentRole === 'admin') {
-        const adminItem = document.createElement('li')
-        adminItem.className = 'mobile-user-item'
-        adminItem.innerHTML = '<a href="../html/admin.html">Admin</a>'
-        nav.appendChild(adminItem)
-      }
-
-
+    if (this.currentRole === 'admin') {
+      // Adiciona admin no menu mobile
+      const adminItem = document.createElement('li')
+      adminItem.className = 'mobile-user-item'
+      adminItem.innerHTML = '<a href="../html/admin.html">Admin</a>'
+      nav.appendChild(adminItem)
 
       // Evento de logout mobile
       const mobileLogoutBtn = document.getElementById('mobileLogoutBtn')
@@ -530,6 +505,12 @@ class UIPermissionManager {
         e.preventDefault()
         await this.logout()
       })
+    } else {
+      // Adiciona login no menu mobile para guests
+      const loginItem = document.createElement('li')
+      loginItem.className = 'mobile-user-item'
+      loginItem.innerHTML = '<a href="../html/login.html">Login Admin</a>'
+      nav.appendChild(loginItem)
     }
   }
 
@@ -542,8 +523,8 @@ class UIPermissionManager {
         await this.authService.signOut()
       }
       
-      // Redireciona para home se estiver em página protegida
-      const protectedPages = ['/admin.html', '/promocoes.html']
+      // Redireciona para home se estiver em página protegida (apenas admin)
+      const protectedPages = ['/admin.html']
       const currentPath = window.location.pathname
       
       if (protectedPages.some(page => currentPath.includes(page))) {
@@ -565,19 +546,17 @@ class UIPermissionManager {
   async checkPagePermission() {
     const currentPath = window.location.pathname;
     const pageName = currentPath.split('/').pop() || '';
-    // Corrigido: método correto é checkPagePermission, não hasPagePermission
-    // Se quiser lógica customizada, implemente aqui. Exemplo:
+    
     let hasPermission = true;
     if (pageName.includes('admin')) {
       hasPermission = this.currentRole === 'admin';
-    } else if (pageName.includes('promocoes')) {
-      hasPermission = this.currentRole === 'admin' || this.currentRole === 'user';
     }
+    // Removido verificação de promoções pois não há mais página de promoções
+    
     if (!hasPermission) {
       // Redireciona para página de bloqueio
       if (pageName.includes('admin')) {
         window.location.href = '../index.html';
-      } else if (pageName.includes('promocoes')) {
       }
     }
   }
@@ -638,15 +617,7 @@ function fixHeaderLinks() {
 
         // Adiciona event listener para garantir navegação
         newLink.addEventListener('click', function(e) {
-          // Controle especial para promoções
-          if (page === 'promocoes') {
-            let isLoggedIn = false;
-            if (typeof firebase !== 'undefined' && firebase.auth) {
-              isLoggedIn = !!firebase.auth().currentUser;
-
-              return;
-            }
-          }
+          // Removido controle especial para promoções (não há mais página de promoções)
           const href = this.getAttribute('href');
           if (href && href !== '#') {
             console.log('🔄 Navegando para:', href);

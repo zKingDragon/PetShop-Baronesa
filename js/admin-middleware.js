@@ -197,9 +197,9 @@ class AdminMiddleware {
             }
 
             // Check user type directly
-            if (this.currentUser && typeof window.auth !== 'undefined' && window.auth.checktype) {
-                const type = await window.auth.checktype(this.currentUser.uid);
-                console.log('[isUserAdmin] window.auth.checktype:', this.currentUser.uid, '=>', type);
+            if (this.currentUser && typeof window.auth !== 'undefined' && window.auth.checkUserType) {
+                const type = await window.auth.checkUserType(this.currentUser.uid);
+                console.log('[isUserAdmin] window.auth.checkUserType:', this.currentUser.uid, '=>', type);
                 return type === 'admin';
             }
 
