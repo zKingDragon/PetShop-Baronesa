@@ -19,13 +19,13 @@ function initHeaderAuth() {
     setTimeout(() => {
         setupHeaderElements();
         updateHeaderUI();
-        
+
         // Escuta mudanças no estado de autenticação
         document.addEventListener('authStateChanged', (e) => {
             console.log('🔄 Auth state changed event recebido');
             setTimeout(() => updateHeaderUI(), 500);
         });
-        
+
         // Escuta mudanças do Firebase Auth diretamente
         if (typeof firebase !== 'undefined' && firebase.auth) {
             firebase.auth().onAuthStateChanged((user) => {
@@ -33,7 +33,7 @@ function initHeaderAuth() {
                 setTimeout(() => updateHeaderUI(), 500);
             });
         }
-        
+
         // Listener adicional para mudanças de DOM
         const observer = new MutationObserver(() => {
             if (firebase.auth().currentUser && !userDropdown.style.display) {
@@ -41,12 +41,12 @@ function initHeaderAuth() {
                 updateHeaderUI();
             }
         });
-        
-        observer.observe(document.body, { 
-            childList: true, 
-            subtree: true 
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
         });
-        
+
     }, 1000);
 }
 
@@ -56,10 +56,10 @@ function initHeaderAuth() {
 function setupHeaderElements() {
     // Encontra o botão de login
     loginButton = document.querySelector('.btn-login');
-    
+
     // Cria ou encontra o dropdown do usuário
     createUserDropdown();
-    
+
     // Configura eventos do dropdown
     setupDropdownEvents();
 }
@@ -73,17 +73,17 @@ function createUserDropdown() {
     if (existingDropdown) {
         existingDropdown.remove();
     }
-    
+
     // Detecta se estamos na raiz ou na pasta html para ajustar caminhos
     const currentPath = window.location.pathname;
     const isInRoot = !currentPath.includes('/html/');
     const pathPrefix = isInRoot ? 'html/' : '';
-    
+
     // Cria o dropdown
     userDropdown = document.createElement('div');
     userDropdown.className = 'user-dropdown';
     userDropdown.style.display = 'none';
-    
+
     userDropdown.innerHTML = `
         <div class="user-dropdown-toggle">
             <span class="user-name" id="headerUserName">Usuário</span>
@@ -105,11 +105,11 @@ function createUserDropdown() {
             </a>
         </div>
     `;
-    
+
     // Insere o dropdown no header de forma mais segura
     const headerContent = document.querySelector('.header-content');
     const authButtons = document.querySelector('.auth-buttons');
-    
+
     if (headerContent && authButtons) {
         // Insere antes dos botões de autenticação
         headerContent.insertBefore(userDropdown, authButtons);
@@ -120,7 +120,7 @@ function createUserDropdown() {
             header.appendChild(userDropdown);
         }
     }
-    
+
     userNameDisplay = document.getElementById('headerUserName');
     console.log('User dropdown created for:', isInRoot ? 'root page' : 'html subfolder');
 }
@@ -130,7 +130,7 @@ function createUserDropdown() {
  */
 function setupDropdownEvents() {
     if (!userDropdown) return;
-    
+
     // Toggle do dropdown
     const dropdownToggle = userDropdown.querySelector('.user-dropdown-toggle');
     if (dropdownToggle) {
@@ -139,7 +139,7 @@ function setupDropdownEvents() {
             userDropdown.classList.toggle('active');
         });
     }
-    
+
     // Evento de logout
     const logoutBtn = userDropdown.querySelector('.logout-btn');
     if (logoutBtn) {
@@ -151,11 +151,11 @@ function setupDropdownEvents() {
                     console.log('Logout realizado com sucesso');
                     // Dispara evento personalizado
                     document.dispatchEvent(new CustomEvent('authStateChanged'));
-                    
+
                     // Redireciona para a página inicial baseado na localização atual
                     const currentPath = window.location.pathname;
                     const isInRoot = !currentPath.includes('/html/');
-                    
+
                     if (isInRoot) {
                         // Já estamos na raiz, apenas recarrega
                         window.location.reload();
@@ -169,7 +169,7 @@ function setupDropdownEvents() {
             }
         });
     }
-    
+
     // Fecha dropdown ao clicar fora
     document.addEventListener('click', (e) => {
         if (!userDropdown.contains(e.target)) {
@@ -183,18 +183,18 @@ function setupDropdownEvents() {
 async function updateHeaderUI() {
     try {
         console.log('🔄 Iniciando atualização do header UI...');
-        
+
         // Verifica se está logado usando Firebase diretamente
         let isLoggedIn = false;
         let currentUser = null;
-        
+
         if (typeof firebase !== 'undefined' && firebase.auth) {
             currentUser = firebase.auth().currentUser;
             isLoggedIn = !!currentUser;
         }
-        
+
         console.log('👤 Status de login:', isLoggedIn, currentUser?.email);
-        
+
         if (isLoggedIn) {
             // Usuário logado - mostrar dropdown
             console.log('✅ Mostrando dropdown de usuário');
@@ -206,10 +206,10 @@ async function updateHeaderUI() {
                 userDropdown.style.display = 'block';
                 console.log('✅ Dropdown mostrado');
             }
-            
+
             // Atualizar nome do usuário
             await updateUserName();
-            
+
             // Atualizar links baseado no tipo de usuário
             await updateUserLinks();
         } else {
@@ -234,19 +234,19 @@ async function updateHeaderUI() {
  */
 async function updateUserName() {
     if (!userNameDisplay) return;
-    
+
     try {
         // Verifica se há usuário logado usando Firebase diretamente
         let user = null;
         if (typeof firebase !== 'undefined' && firebase.auth) {
             user = firebase.auth().currentUser;
         }
-        
+
         if (!user) {
             userNameDisplay.textContent = 'Usuário';
             return;
         }
-        
+
         // Busca o tipo de usuário no Firestore
         let userType = 'guest';
         try {
@@ -260,14 +260,14 @@ async function updateUserName() {
         } catch (error) {
             console.warn('Erro ao buscar tipo de usuário:', error);
         }
-        
+
         let displayName = user.displayName || user.email?.split('@')[0] || 'Usuário';
-        
+
         // Pega apenas o primeiro nome
         if (displayName.includes(' ')) {
             displayName = displayName.split(' ')[0];
         }
-        
+
         // Adiciona ícone para admin
         if (userType === 'admin') {
             userNameDisplay.innerHTML = `<i class="fas fa-crown" style="color: gold; margin-right: 5px;"></i>${displayName}`;
@@ -345,10 +345,10 @@ async function updateUserLinks() {
  */
 function addAdminBadge() {
     if (!userNameDisplay) return;
-    
+
     // Remove badge existente
     removeAdminBadge();
-    
+
     // Adiciona novo badge
     const badge = document.createElement('span');
     badge.className = 'admin-badge';
@@ -361,7 +361,7 @@ function addAdminBadge() {
  */
 function removeAdminBadge() {
     if (!userNameDisplay) return;
-    
+
     const existingBadge = userNameDisplay.querySelector('.admin-badge');
     if (existingBadge) {
         existingBadge.remove();
@@ -371,33 +371,33 @@ function removeAdminBadge() {
 // Inicializa quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🏁 DOM carregado, iniciando header auth...');
-    
+
     // Função para aguardar Firebase estar pronto
     function waitForFirebase() {
         return new Promise((resolve) => {
             let attempts = 0;
             const maxAttempts = 50;
-            
+
             const check = () => {
                 if (typeof firebase !== 'undefined' && firebase.auth && typeof window.auth !== 'undefined') {
                     console.log('✅ Firebase e auth prontos');
                     resolve();
                     return;
                 }
-                
+
                 attempts++;
                 if (attempts >= maxAttempts) {
                     console.warn('⚠️ Timeout aguardando Firebase, continuando...');
                     resolve();
                     return;
                 }
-                
+
                 setTimeout(check, 100);
             };
             check();
         });
     }
-    
+
     // Aguarda Firebase estar pronto antes de inicializar
     waitForFirebase().then(() => {
         setTimeout(() => {

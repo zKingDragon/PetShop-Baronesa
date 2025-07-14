@@ -51,7 +51,7 @@
 </head>
 <body>
     <h1>Teste de Filtros de Preço Promocional</h1>
-    
+
     <div class="test-section">
         <h2>Simulação de Produtos</h2>
         <div class="filter-controls">
@@ -61,7 +61,7 @@
             <label><input type="checkbox" id="priceFilter100-150"> Preço: R$ 100-150</label>
             <label><input type="checkbox" id="priceFilter150+"> Preço: R$ 150+</label>
         </div>
-        
+
         <div id="products-container">
             <!-- Produtos serão inseridos aqui -->
         </div>
@@ -131,13 +131,13 @@
         function renderProducts(products) {
             const container = document.getElementById('products-container');
             container.innerHTML = '';
-            
+
             products.forEach(product => {
                 const effectivePrice = product.promocional && product.precoPromo ? product.precoPromo : product.price;
                 const priceHTML = product.promocional && product.precoPromo ?
                     `<span class="price-original">R$ ${product.price.toFixed(2)}</span> <span class="price-promo">R$ ${product.precoPromo.toFixed(2)}</span>` :
                     `<span>R$ ${product.price.toFixed(2)}</span>`;
-                
+
                 const div = document.createElement('div');
                 div.className = `product-card ${product.promocional ? 'promocional' : ''}`;
                 div.innerHTML = `
@@ -159,19 +159,19 @@
                 document.getElementById('priceFilter100-150').checked ? '100-150' : null,
                 document.getElementById('priceFilter150+').checked ? '150+' : null
             ].filter(Boolean);
-            
+
             let filtered = processedProducts;
-            
+
             // Filtro promocional
             if (promocionalFilter) {
                 filtered = filtered.filter(product => product.promocional);
             }
-            
+
             // Filtro de preço
             if (priceFilters.length > 0) {
                 filtered = filtered.filter(product => priceFilters.includes(product.priceRange));
             }
-            
+
             renderProducts(filtered);
         }
 

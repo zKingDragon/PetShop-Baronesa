@@ -27,7 +27,7 @@ async function createAdmin() {
 
         console.log('✅ Usuário promovido a admin com sucesso!');
         console.log('Faça logout e login novamente para aplicar as permissões.');
-        
+
         return true;
     } catch (error) {
         console.error('❌ Erro ao criar admin:', error.message);

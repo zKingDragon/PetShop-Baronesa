@@ -26,7 +26,7 @@
 - Dropdown: 180px máximo
 
 ### **Tablets (768px - 1024px)**
-- Logo: 35px × 35px  
+- Logo: 35px × 35px
 - Texto: 1.1rem
 - Dropdown: 140px máximo
 - Busca: Oculta
@@ -78,7 +78,7 @@
 
 O header agora é completamente responsivo e funciona perfeitamente em:
 - 📱 **Smartphones** (320px - 768px)
-- 📱 **Tablets** (768px - 1024px)  
+- 📱 **Tablets** (768px - 1024px)
 - 💻 **Desktops** (1024px+)
 - 🔄 **Orientações** (retrato e paisagem)
 

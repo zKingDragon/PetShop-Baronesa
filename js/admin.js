@@ -258,11 +258,11 @@ class AdminPanel {
           <div class="product-category">${product.category}</div>
           ${onSale ? `<div class="product-tag sale-tag">Promoção</div>` : ""}
         </div>
-        
+
         <div class="product-info">
           <h3>${product.name}</h3>
           <p class="product-description">${product.description}</p>
-          
+
           <div class="product-details">
             <div class="product-type">
               <i class="fas fa-tag"></i>
@@ -275,7 +275,7 @@ class AdminPanel {
               }
             </div>
           </div>
-          
+
           <div class="product-actions">
             <button class="btn-secondary btn-sm edit-product-btn" data-product-id="${product.id}">
               <i class="fas fa-edit"></i> Editar

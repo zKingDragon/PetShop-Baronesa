@@ -23,7 +23,7 @@ class TipsService {
                 // Fallback para localStorage se Firebase não estiver disponível
                 this.loadFromStorage();
             }
-            
+
             if (this.tips.length === 0) {
                 this.createSampleTips();
             }
@@ -41,7 +41,7 @@ class TipsService {
         try {
             const snapshot = await db.collection(this.collectionName).get();
             this.tips = [];
-            
+
             snapshot.forEach(doc => {
                 const data = doc.data();
                 this.tips.push({
@@ -56,7 +56,7 @@ class TipsService {
                     tags: data.tags || []
                 });
             });
-            
+
             console.log(`Carregadas ${this.tips.length} dicas do Firestore`);
         } catch (error) {
             console.error('Erro ao carregar dicas do Firestore:', error);
@@ -98,7 +98,7 @@ class TipsService {
                 // Documento existente, usar set()
                 await db.collection(this.collectionName).doc(tip.id).set(docData);
             }
-            
+
             console.log('Dica salva no Firestore:', tip.id);
             return tip;
         } catch (error) {
@@ -142,14 +142,14 @@ class TipsService {
                 summary: 'Dicas essenciais para tornar o banho do seu gato menos estressante para vocês dois.',
                 content: `
                     <p>O banho em gatos pode ser uma tarefa desafiadora, mas com as técnicas certas, pode ser uma experiência tranquila para você e seu felino.</p>
-                    
+
                     <h3>Preparação é fundamental</h3>
                     <ul>
                         <li>Corte as unhas do gato antes do banho</li>
                         <li>Escove bem o pelo para remover nós</li>
                         <li>Prepare todos os materiais antes de começar</li>
                     </ul>
-                    
+
                     <h3>Durante o banho</h3>
                     <ul>
                         <li>Use água morna, nunca quente</li>
@@ -157,7 +157,7 @@ class TipsService {
                         <li>Use shampoo específico para gatos</li>
                         <li>Mantenha a calma e fale suavemente</li>
                     </ul>
-                    
+
                     <h3>Após o banho</h3>
                     <ul>
                         <li>Seque bem com toalha macia</li>
@@ -179,7 +179,7 @@ class TipsService {
                 summary: 'Aprenda como cuidar adequadamente do seu cão na terceira idade para garantir qualidade de vida.',
                 content: `
                     <p>Cães idosos precisam de cuidados especiais para manter sua qualidade de vida e saúde em dia.</p>
-                    
+
                     <h3>Alimentação adequada</h3>
                     <ul>
                         <li>Ração específica para cães seniores</li>
@@ -187,7 +187,7 @@ class TipsService {
                         <li>Alimentos de fácil digestão</li>
                         <li>Suplementos conforme orientação veterinária</li>
                     </ul>
-                    
+
                     <h3>Exercícios adaptados</h3>
                     <ul>
                         <li>Caminhadas mais curtas e frequentes</li>
@@ -195,7 +195,7 @@ class TipsService {
                         <li>Natação é uma excelente opção</li>
                         <li>Mantenha a rotina de atividades</li>
                     </ul>
-                    
+
                     <h3>Cuidados médicos</h3>
                     <ul>
                         <li>Consultas veterinárias mais frequentes</li>
@@ -218,7 +218,7 @@ class TipsService {
                 summary: 'Guia completo sobre alimentação adequada para diferentes espécies de pássaros domésticos.',
                 content: `
                     <p>A alimentação adequada é fundamental para a saúde e bem-estar dos pássaros domésticos.</p>
-                    
+
                     <h3>Alimentos básicos</h3>
                     <ul>
                         <li>Mistura de sementes de qualidade</li>
@@ -226,7 +226,7 @@ class TipsService {
                         <li>Frutas frescas (maçã, banana, laranja)</li>
                         <li>Verduras folhosas (couve, almeirão)</li>
                     </ul>
-                    
+
                     <h3>Alimentos proibidos</h3>
                     <ul>
                         <li>Chocolate e cafeína</li>
@@ -234,7 +234,7 @@ class TipsService {
                         <li>Cebola e alho</li>
                         <li>Alimentos salgados ou doces</li>
                     </ul>
-                    
+
                     <h3>Dicas importantes</h3>
                     <ul>
                         <li>Água fresca sempre disponível</li>
@@ -257,7 +257,7 @@ class TipsService {
                 summary: 'Conhecimentos básicos de primeiros socorros que todo tutor deve saber.',
                 content: `
                     <p>Saber o básico de primeiros socorros pode salvar a vida do seu pet em situações de emergência.</p>
-                    
+
                     <h3>Sinais de emergência</h3>
                     <ul>
                         <li>Dificuldade para respirar</li>
@@ -266,7 +266,7 @@ class TipsService {
                         <li>Convulsões</li>
                         <li>Perda de consciência</li>
                     </ul>
-                    
+
                     <h3>Kit de primeiros socorros</h3>
                     <ul>
                         <li>Gaze e ataduras</li>
@@ -275,7 +275,7 @@ class TipsService {
                         <li>Termômetro</li>
                         <li>Solução fisiológica</li>
                     </ul>
-                    
+
                     <h3>Importante lembrar</h3>
                     <ul>
                         <li>Mantenha a calma</li>
@@ -335,7 +335,7 @@ class TipsService {
      */
     searchTips(term) {
         const searchTerm = term.toLowerCase();
-        return this.tips.filter(tip => 
+        return this.tips.filter(tip =>
             tip.title.toLowerCase().includes(searchTerm) ||
             tip.summary.toLowerCase().includes(searchTerm) ||
             tip.content.toLowerCase().includes(searchTerm) ||
@@ -462,7 +462,7 @@ class TipsService {
         const total = this.tips.length;
         const published = this.tips.filter(tip => tip.status === 'published').length;
         const draft = this.tips.filter(tip => tip.status === 'draft').length;
-        
+
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
         const recent = this.tips.filter(tip => {
