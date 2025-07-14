@@ -554,10 +554,7 @@ class UIPermissionManager {
     // Removido verificação de promoções pois não há mais página de promoções
     
     if (!hasPermission) {
-      // Redireciona para página de bloqueio
-      if (pageName.includes('admin')) {
-        window.location.href = '../index.html';
-      }
+
     }
   }
 }

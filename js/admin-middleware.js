@@ -87,31 +87,36 @@ class AdminMiddleware {
      */
     async checkPageAccess() {
         try {
-            console.log('Checking page access...');
+            console.log('[checkPageAccess] Checking page access...');
             
             // Wait for auth system to be available
             await this.waitForAuthSystem();
+            console.log('[checkPageAccess] Auth system ready');
             
             // Check if user is authenticated
             const isAuthenticated = this.isUserAuthenticated();
+            console.log('[checkPageAccess] Is authenticated:', isAuthenticated);
+            
             if (!isAuthenticated) {
-                console.warn('User not authenticated, redirecting to login');
+                console.warn('[checkPageAccess] User not authenticated, redirecting to login');
                 this.redirectToLogin();
                 return;
             }
 
             // Check if user has admin privileges
             const isAdmin = await this.isUserAdmin();
+            console.log('[checkPageAccess] Is admin:', isAdmin);
+            
             if (!isAdmin) {
-                console.warn('User is not admin, access denied');
+                console.warn('[checkPageAccess] User is not admin, access denied');
                 this.handleAccessDenied();
                 return;
             }
 
-            console.log('Access granted for admin user');
+            console.log('[checkPageAccess] Access granted for admin user');
             this.handleAccessGranted();
         } catch (error) {
-            console.error('Error checking page access:', error);
+            console.error('[checkPageAccess] Error checking page access:', error);
             this.handleError(error);
         }
     }
@@ -120,22 +125,25 @@ class AdminMiddleware {
      * Wait for auth system to be available
      */
     async waitForAuthSystem() {
-        console.log('AdminMiddleware: Waiting for auth system...');
+        console.log('[waitForAuthSystem] Waiting for auth system...');
         let retryCount = 0;
-        const maxRetries = 150; // 15 seconds max wait
+        const maxRetries = 50; // Reduzido para 5 segundos
         
         return new Promise((resolve) => {
             const checkAuth = () => {
-                // Check if Firebase is loaded
+                // Check if our auth functions are loaded (mais importante que Firebase)
+                const authFunctionsReady = typeof getCurrentUser === 'function' && 
+                                         typeof getCurrentUserType === 'function' && 
+                                         typeof isAdmin === 'function';
+                
+                // Check if Firebase is loaded (opcional para o teste)
                 const firebaseReady = window.firebase && window.firebase.auth;
                 
-                // Check if our auth system is loaded
-                const authReady = typeof window.auth !== 'undefined';
+                console.log(`[waitForAuthSystem] Check ${retryCount + 1}/${maxRetries} - Auth Functions: ${authFunctionsReady}, Firebase: ${firebaseReady}`);
                 
-                console.log(`AdminMiddleware: Check ${retryCount + 1}/${maxRetries} - Firebase: ${firebaseReady}, Auth: ${authReady}`);
-                
-                if ((firebaseReady || authReady) || retryCount >= maxRetries) {
-                    console.log('AdminMiddleware: Auth system ready or timeout reached');
+                // Continua se as funções auth estão prontas OU se atingiu o máximo de tentativas
+                if (authFunctionsReady || retryCount >= maxRetries) {
+                    console.log('[waitForAuthSystem] Auth system ready or timeout reached');
                     resolve();
                     return;
                 }
@@ -153,33 +161,45 @@ class AdminMiddleware {
      * @returns {boolean} - True if authenticated
      */
     isUserAuthenticated() {
-        // Check Firebase auth
+        console.log('[isUserAuthenticated] Checking authentication...');
+        
+        // Método 1: Use getCurrentUser function se disponível
+        if (typeof getCurrentUser === 'function') {
+            const user = getCurrentUser();
+            if (user) {
+                this.currentUser = user;
+                console.log('[isUserAuthenticated] ✅ User found via getCurrentUser:', user.email);
+                return true;
+            }
+        }
+
+        // Método 2: Check Firebase auth directly
         if (window.firebase && window.firebase.auth) {
             const user = window.firebase.auth().currentUser;
             if (user) {
                 this.currentUser = user;
+                console.log('[isUserAuthenticated] ✅ User found via Firebase:', user.email);
                 return true;
             }
         }
 
-        // Check global auth system
-        if (typeof window.auth !== 'undefined' && window.auth.isAuthenticated) {
-            return window.auth.isAuthenticated();
-        }
-
-        // Check localStorage
+        // Método 3: Check localStorage (fallback para teste)
         const authData = localStorage.getItem('petshop_baronesa_auth');
         if (authData) {
             try {
                 const userData = JSON.parse(authData);
-                this.currentUser = userData;
-                return true;
+                if (userData && userData.uid && userData.email) {
+                    this.currentUser = userData;
+                    console.log('[isUserAuthenticated] ✅ User found via localStorage:', userData.email);
+                    return true;
+                }
             } catch (error) {
-                console.error('Error parsing auth data:', error);
+                console.error('[isUserAuthenticated] Error parsing localStorage auth data:', error);
                 localStorage.removeItem('petshop_baronesa_auth');
             }
         }
 
+        console.log('[isUserAuthenticated] ❌ No authenticated user found');
         return false;
     }
 
@@ -189,17 +209,26 @@ class AdminMiddleware {
      */
     async isUserAdmin() {
         try {
-            // Use global auth system if available
-            if (typeof window.auth !== 'undefined' && window.auth.isAdmin) {
-                const result = await window.auth.isAdmin();
-                console.log('[isUserAdmin] window.auth.isAdmin() =>', result);
+            console.log('[isUserAdmin] Checking admin status...');
+            
+            // Use global isAdmin function if available
+            if (typeof isAdmin === 'function') {
+                const result = await isAdmin();
+                console.log('[isUserAdmin] isAdmin() =>', result);
                 return result;
             }
 
-            // Check user type directly
-            if (this.currentUser && typeof window.auth !== 'undefined' && window.auth.checkUserType) {
-                const type = await window.auth.checkUserType(this.currentUser.uid);
-                console.log('[isUserAdmin] window.auth.checkUserType:', this.currentUser.uid, '=>', type);
+            // Use getCurrentUserType function if available
+            if (typeof getCurrentUserType === 'function') {
+                const userType = await getCurrentUserType();
+                console.log('[isUserAdmin] getCurrentUserType() =>', userType);
+                return userType === 'admin';
+            }
+
+            // Check user type directly from current user
+            if (this.currentUser && typeof checkUserType === 'function') {
+                const type = await checkUserType(this.currentUser.uid);
+                console.log('[isUserAdmin] checkUserType:', this.currentUser.uid, '=>', type);
                 return type === 'admin';
             }
 
@@ -284,20 +313,7 @@ class AdminMiddleware {
         }, 1000);
     }
 
-    /**
-     * Handle access denied
-     */
-    handleAccessDenied() {
-        // Show error message
-        this.showErrorMessage(
-            'Acesso Negado',
-            'Você não tem permissão para acessar esta página. Apenas administradores podem acessar o painel administrativo.',
-            () => {
-                // Redirect to home page
- 
-            }
-        );
-    }
+
 
 
 
