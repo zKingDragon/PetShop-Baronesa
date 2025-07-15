@@ -453,64 +453,64 @@
     .filter-container {
         gap: 1.5rem;
     }
-    
+
     .category-filters {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .filter-btn {
         width: 100%;
         max-width: 200px;
         justify-content: center;
     }
-    
+
     .tip-card-short-header {
         height: 150px;
     }
-    
+
     .tip-card-short-body {
         padding: 1rem;
     }
-    
+
     .tip-card-short-title {
         font-size: 1.1rem;
     }
-    
+
     .tip-card {
         margin-bottom: 1rem;
     }
-    
+
     .tip-image {
         height: 180px;
     }
-    
+
     .tip-content {
         padding: 1rem;
     }
-    
+
     .tip-title {
         font-size: 1.1rem;
     }
-    
+
     .tip-meta {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .category-filters {
         flex-wrap: wrap;
         justify-content: center;
     }
-    
+
     .category-btn {
         margin: 0.25rem;
     }
-    
+
     .no-tips-message {
         padding: 2rem 1rem;
     }
-    
+
     .no-tips-message i {
         font-size: 2.5rem;
     }
@@ -520,16 +520,16 @@
     .tips-filters {
         padding: 1rem;
     }
-    
+
     .search-filter {
         margin-bottom: 1rem;
     }
-    
+
     .category-btn {
         font-size: 0.85rem;
         padding: 0.5rem 0.75rem;
     }
-    
+
     .tip-category {
         top: 0.5rem;
         right: 0.5rem;
