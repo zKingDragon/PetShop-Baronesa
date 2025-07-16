@@ -14,7 +14,7 @@ class AdminMiddleware {
             '/html/admin.html',
             'admin.html'
         ];
-        
+
         this.init();
     }
 
@@ -24,12 +24,12 @@ class AdminMiddleware {
     async init() {
         try {
             console.log('Initializing admin middleware...');
-            
+
             // Check if we're on a protected page
             if (this.isProtectedRoute()) {
                 await this.checkPageAccess();
             }
-            
+
             this.setupEventListeners();
             this.isInitialized = true;
             console.log('Admin middleware initialized');
@@ -76,8 +76,8 @@ class AdminMiddleware {
      */
     isProtectedRoute() {
         const currentPath = window.location.pathname;
-        return this.protectedRoutes.some(route => 
-            currentPath.endsWith(route) || 
+        return this.protectedRoutes.some(route =>
+            currentPath.endsWith(route) ||
             currentPath.includes(route)
         );
     }
@@ -88,15 +88,15 @@ class AdminMiddleware {
     async checkPageAccess() {
         try {
             console.log('[checkPageAccess] Checking page access...');
-            
+
             // Wait for auth system to be available
             await this.waitForAuthSystem();
             console.log('[checkPageAccess] Auth system ready');
-            
+
             // Check if user is authenticated
             const isAuthenticated = this.isUserAuthenticated();
             console.log('[checkPageAccess] Is authenticated:', isAuthenticated);
-            
+
             if (!isAuthenticated) {
                 console.warn('[checkPageAccess] User not authenticated, redirecting to login');
                 this.redirectToLogin();
@@ -106,7 +106,7 @@ class AdminMiddleware {
             // Check if user has admin privileges
             const isAdmin = await this.isUserAdmin();
             console.log('[checkPageAccess] Is admin:', isAdmin);
-            
+
             if (!isAdmin) {
                 console.warn('[checkPageAccess] User is not admin, access denied');
                 this.handleAccessDenied();
@@ -128,30 +128,30 @@ class AdminMiddleware {
         console.log('[waitForAuthSystem] Waiting for auth system...');
         let retryCount = 0;
         const maxRetries = 50; // Reduzido para 5 segundos
-        
+
         return new Promise((resolve) => {
             const checkAuth = () => {
                 // Check if our auth functions are loaded (mais importante que Firebase)
-                const authFunctionsReady = typeof getCurrentUser === 'function' && 
-                                         typeof getCurrentUserType === 'function' && 
+                const authFunctionsReady = typeof getCurrentUser === 'function' &&
+                                         typeof getCurrentUserType === 'function' &&
                                          typeof isAdmin === 'function';
-                
+
                 // Check if Firebase is loaded (opcional para o teste)
                 const firebaseReady = window.firebase && window.firebase.auth;
-                
+
                 console.log(`[waitForAuthSystem] Check ${retryCount + 1}/${maxRetries} - Auth Functions: ${authFunctionsReady}, Firebase: ${firebaseReady}`);
-                
+
                 // Continua se as funções auth estão prontas OU se atingiu o máximo de tentativas
                 if (authFunctionsReady || retryCount >= maxRetries) {
                     console.log('[waitForAuthSystem] Auth system ready or timeout reached');
                     resolve();
                     return;
                 }
-                
+
                 retryCount++;
                 setTimeout(checkAuth, 100);
             };
-            
+
             checkAuth();
         });
     }
@@ -162,7 +162,7 @@ class AdminMiddleware {
      */
     isUserAuthenticated() {
         console.log('[isUserAuthenticated] Checking authentication...');
-        
+
         // Método 1: Use getCurrentUser function se disponível
         if (typeof getCurrentUser === 'function') {
             const user = getCurrentUser();
@@ -210,7 +210,7 @@ class AdminMiddleware {
     async isUserAdmin() {
         try {
             console.log('[isUserAdmin] Checking admin status...');
-            
+
             // Use global isAdmin function if available
             if (typeof isAdmin === 'function') {
                 const result = await isAdmin();
@@ -258,7 +258,7 @@ class AdminMiddleware {
      */
     async handleAuthStateChange(user) {
         this.currentUser = user;
-        
+
         if (user) {
             // User is logged in - check role
             this.userRole = await this.determineUserRole(user);
@@ -280,7 +280,7 @@ class AdminMiddleware {
      */
     async determineUserRole(user) {
         if (!user) return 'guest';
-        
+
         try {
             if (typeof window.auth !== 'undefined' && window.auth.checktype) {
                 const type = await window.auth.checktype(user.uid);
@@ -299,14 +299,14 @@ class AdminMiddleware {
     redirectToLogin() {
         // Store the current page for redirect after login
         sessionStorage.setItem('redirect_after_login', window.location.pathname);
-        
+
         // Determine login page path
-        const loginPath = window.location.pathname.includes('/html/') ? 
+        const loginPath = window.location.pathname.includes('/html/') ?
             'login.html' : 'html/login.html';
-        
+
         // Show loading message
         this.showLoadingMessage('Redirecionando para login...');
-        
+
         // Redirect after brief delay
         setTimeout(() => {
             window.location.href = loginPath;
@@ -332,7 +332,7 @@ class AdminMiddleware {
                 </div>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -369,7 +369,7 @@ class AdminMiddleware {
                 100% { transform: rotate(360deg); }
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(loadingDiv);
     }
@@ -407,7 +407,7 @@ class AdminMiddleware {
                 </div>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -451,10 +451,10 @@ class AdminMiddleware {
                 background: #c82333;
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(errorDiv);
-        
+
         // Set callback
         if (onClose) {
             errorDiv.querySelector('.admin-error-button').onClose = onClose;
@@ -474,7 +474,7 @@ class AdminMiddleware {
                 <span>${message}</span>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -493,10 +493,10 @@ class AdminMiddleware {
                 gap: 0.5rem;
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(successDiv);
-        
+
         // Remove after 3 seconds
         setTimeout(() => {
             successDiv.remove();
@@ -509,7 +509,7 @@ class AdminMiddleware {
     initializeAdminFeatures() {
         // Add admin-specific event listeners
         this.setupAdminEventListeners();
-        
+
         // Initialize admin UI enhancements
         this.enhanceAdminUI();
     }
@@ -583,7 +583,7 @@ class AdminMiddleware {
                 </button>
             </div>
         `;
-        
+
         document.body.appendChild(quickActions);
     }
 
@@ -663,7 +663,7 @@ class AdminMiddleware {
         try {
             const isAuth = this.isUserAuthenticated();
             if (!isAuth) return false;
-            
+
             const isAdmin = await this.isUserAdmin();
             return isAdmin;
         } catch (error) {
