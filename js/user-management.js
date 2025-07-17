@@ -37,7 +37,7 @@ class UserManagement {
             this.isInitialized = true;
             console.log('User management system initialized');
         } catch (error) {
-            console.error('Error initializing user management:', error);
+             console.error('Error initializing user management:', error);
         }
     }
 
@@ -67,12 +67,21 @@ class UserManagement {
      * Wait for auth system to be available
      */
     async waitForAuthSystem() {
+        console.log('[UserManagement] Aguardando sistema de autenticação...');
         let retryCount = 0;
         const maxRetries = 100;
         
         return new Promise((resolve) => {
             const checkAuth = () => {
-                if (typeof window.auth !== 'undefined' || retryCount >= maxRetries) {
+                // Check if our auth functions are loaded
+                const authFunctionsReady = typeof getCurrentUser === 'function' && 
+                                         typeof getCurrentUserType === 'function' && 
+                                         typeof isAdmin === 'function';
+                
+                console.log(`[UserManagement] Check ${retryCount + 1}/${maxRetries} - Auth Functions Ready: ${authFunctionsReady}`);
+                
+                if (authFunctionsReady || retryCount >= maxRetries) {
+                    console.log('[UserManagement] Sistema de autenticação pronto ou timeout atingido');
                     resolve();
                     return;
                 }
@@ -90,12 +99,33 @@ class UserManagement {
      */
     async isUserAdmin() {
         try {
-            if (typeof window.auth !== 'undefined' && window.auth.isAdmin) {
-                return await window.auth.isAdmin();
+            console.log('[UserManagement] Verificando se usuário é admin...');
+            
+            // Use global isAdmin function if available
+            if (typeof isAdmin === 'function') {
+                const result = await isAdmin();
+                console.log('[UserManagement] isAdmin() result:', result);
+                return result;
             }
+
+            // Use getCurrentUserType function if available
+            if (typeof getCurrentUserType === 'function') {
+                const userType = await getCurrentUserType();
+                console.log('[UserManagement] getCurrentUserType() result:', userType);
+                return userType === 'admin';
+            }
+
+            // Fallback to window.auth
+            if (typeof window.auth !== 'undefined' && window.auth.isAdmin) {
+                const result = await window.auth.isAdmin();
+                console.log('[UserManagement] window.auth.isAdmin() result:', result);
+                return result;
+            }
+            
+            console.log('[UserManagement] Nenhuma função de verificação admin encontrada');
             return false;
         } catch (error) {
-            console.error('Error checking admin status:', error);
+            console.error('[UserManagement] Error checking admin status:', error);
             return false;
         }
     }
@@ -105,12 +135,26 @@ class UserManagement {
      */
     getCurrentUser() {
         try {
-            if (typeof window.auth !== 'undefined' && window.auth.getCurrentUser) {
-                return window.auth.getCurrentUser();
+            console.log('[UserManagement] Obtendo usuário atual...');
+            
+            // Use global getCurrentUser function if available
+            if (typeof getCurrentUser === 'function') {
+                const user = getCurrentUser();
+                console.log('[UserManagement] getCurrentUser() found:', user ? user.email : 'null');
+                return user;
             }
+            
+            // Fallback to window.auth
+            if (typeof window.auth !== 'undefined' && window.auth.getCurrentUser) {
+                const user = window.auth.getCurrentUser();
+                console.log('[UserManagement] window.auth.getCurrentUser() found:', user ? user.email : 'null');
+                return user;
+            }
+            
+            console.log('[UserManagement] Nenhuma função getCurrentUser encontrada');
             return null;
         } catch (error) {
-            console.error('Error getting current user:', error);
+            console.error('[UserManagement] Error getting current user:', error);
             return null;
         }
     }

@@ -313,9 +313,58 @@ class AdminMiddleware {
         }, 1000);
     }
 
+    /**
+     * Handle access denied
+     */
+    handleAccessDenied() {
+        console.log('[handleAccessDenied] Acesso negado - usuário não é admin');
+        
+        // Remove loading message if exists
+        const loadingDiv = document.getElementById('admin-loading');
+        if (loadingDiv) {
+            loadingDiv.remove();
+        }
+        
+      
+    }
 
+    /**
+     * Handle access granted
+     */
+    handleAccessGranted() {
+        console.log('[handleAccessGranted] Acesso liberado para admin');
+        // Remove loading message if exists
+        const loadingDiv = document.getElementById('admin-loading');
+        if (loadingDiv) {
+            loadingDiv.remove();
+        }
+                
+        // Initialize admin features
+        this.initializeAdminFeatures();
+    }
 
-
+    /**
+     * Handle errors
+     * @param {Error} error - Error object
+     */
+    handleError(error) {
+        console.error('[handleError] Erro no middleware:', error);
+        
+        // Remove loading message if exists
+        const loadingDiv = document.getElementById('admin-loading');
+        if (loadingDiv) {
+            loadingDiv.remove();
+        }
+        
+        // Show error message
+        this.showErrorMessage(
+            'Erro do Sistema',
+            'Ocorreu um erro ao verificar as permissões. Tente recarregar a página.',
+            () => {
+                window.location.reload();
+            }
+        );
+    }
 
     /**
      * Show loading message
@@ -463,44 +512,63 @@ class AdminMiddleware {
 
     /**
      * Show success message
-     * @param {string} message - Success message
+     * @param {string} title - Success message title
+     * @param {string} message - Success message content
      */
-    showSuccessMessage(message) {
+    showSuccessMessage(title, message) {
         const successDiv = document.createElement('div');
         successDiv.id = 'admin-success';
         successDiv.innerHTML = `
-            <div class="admin-success-notification">
-                <i class="fas fa-check-circle"></i>
-                <span>${message}</span>
+            <div class="admin-success-overlay">
+                <div class="admin-success-content">
+                    <div class="admin-success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                </div>
             </div>
         `;
         
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
-            .admin-success-notification {
+            .admin-success-overlay {
                 position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #28a745;
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 4px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-                z-index: 9999;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
                 display: flex;
+                justify-content: center;
                 align-items: center;
-                gap: 0.5rem;
+                z-index: 9999;
+            }
+            .admin-success-content {
+                text-align: center;
+                padding: 2rem;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                max-width: 400px;
+                margin: 1rem;
+            }
+            .admin-success-icon {
+                font-size: 3rem;
+                color: #28a745;
+                margin-bottom: 1rem;
             }
         `;
         
         document.head.appendChild(style);
         document.body.appendChild(successDiv);
         
-        // Remove after 3 seconds
+        // Remove after 2 seconds
         setTimeout(() => {
             successDiv.remove();
-        }, 3000);
+            style.remove();
+        }, 2000);
     }
 
     /**
@@ -546,22 +614,7 @@ class AdminMiddleware {
             }
         });
     }
-
-    /**
-     * Enhance admin UI
-     */
-    enhanceAdminUI() {
-        // Add admin badge to header
-        const header = document.querySelector('header');
-        if (header) {
-            const adminBadge = document.createElement('div');
-            adminBadge.className = 'admin-badge';
-            adminBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Admin';
-            header.appendChild(adminBadge);
-        }
-
-        // Add admin quick actions
-        this.addAdminQuickActions();
+this.addAdminQuickActions();
     }
 
     /**

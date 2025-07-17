@@ -414,15 +414,58 @@ class AdminPanel {
    */
   openAddProductModal() {
     this.currentEditingProduct = null
-    this.elements.modalTitle.textContent = "Adicionar Produto"
+    this.elements.modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Adicionar Produto'
     this.elements.saveBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Produto'
 
     // Reset form
     this.elements.productForm.reset()
+    
+    // Reset form states
+    this.resetFormStates()
+    
+    // Reset image preview
     this.updateImagePreview("")
 
     this.elements.productModal.style.display = "flex"
     document.body.style.overflow = "hidden"
+    
+    // Focar no primeiro campo
+    setTimeout(() => {
+      document.getElementById('productName')?.focus()
+    }, 100)
+  }
+
+  /**
+   * Reset form visual states
+   */
+  resetFormStates() {
+    // Remove todos os estados de erro/sucesso
+    document.querySelectorAll('.form-group').forEach(group => {
+      group.classList.remove('error', 'success')
+    })
+    
+    // Remove mensagens de erro
+    document.querySelectorAll('.error-message').forEach(msg => {
+      msg.remove()
+    })
+    
+    // Reset toggle de promoção
+    const salePriceInput = document.getElementById('productSalePrice')
+    if (salePriceInput) {
+      salePriceInput.disabled = true
+      salePriceInput.parentElement.style.opacity = '0.6'
+    }
+    
+    // Reset file upload
+    const fileInput = document.getElementById('productImage')
+    const fileInfo = document.getElementById('fileInfo')
+    const uploadContainer = fileInput?.closest('.file-upload-container')
+    
+    if (fileInput) fileInput.value = ''
+    if (fileInfo) fileInfo.style.display = 'none'
+    if (uploadContainer) {
+      uploadContainer.classList.remove('has-file', 'error')
+    }
   }
 
   /**
@@ -436,7 +479,7 @@ class AdminPanel {
       }
 
       this.currentEditingProduct = product
-      this.elements.modalTitle.textContent = "Editar Produto"
+      this.elements.modalTitle.innerHTML = '<i class="fas fa-edit"></i> Editar Produto'
       this.elements.saveBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Alterações'
 
       // Fill form with product data
@@ -444,16 +487,51 @@ class AdminPanel {
       document.getElementById("productCategory").value = product.category || ""
       document.getElementById("productType").value = product.type || ""
       document.getElementById("productPrice").value = product.price || ""
-      document.getElementById("productImage").value = product.image || ""
       document.getElementById("productDescription").value = product.description || ""
+      
       // Promoção
-      document.getElementById("productOnSale").checked = !!product.promocional
-      document.getElementById("productSalePrice").value = product.precoPromo || ""
+      const onSaleCheckbox = document.getElementById("productOnSale")
+      const salePriceInput = document.getElementById("productSalePrice")
+      
+      onSaleCheckbox.checked = !!product.promocional
+      salePriceInput.value = product.precoPromo || ""
+      
+      // Habilitar/desabilitar preço promocional baseado no estado da promoção
+      if (product.promocional) {
+        salePriceInput.disabled = false
+        salePriceInput.parentElement.style.opacity = '1'
+      } else {
+        salePriceInput.disabled = true
+        salePriceInput.parentElement.style.opacity = '0.6'
+      }
 
+      // Limpar input de arquivo (não pode ser preenchido programaticamente)
+      const fileInput = document.getElementById("productImage")
+      fileInput.value = ""
+      
+      // Esconder info de arquivo
+      const fileInfo = document.getElementById("fileInfo")
+      if (fileInfo) {
+        fileInfo.style.display = "none"
+      }
+      
+      // Resetar container de upload
+      const uploadContainer = fileInput.closest('.file-upload-container')
+      if (uploadContainer) {
+        uploadContainer.classList.remove('has-file', 'error')
+      }
+
+      // Atualizar preview com imagem existente
       this.updateImagePreview(product.image)
 
       this.elements.productModal.style.display = "flex"
       document.body.style.overflow = "hidden"
+      
+      // Focar no primeiro campo
+      setTimeout(() => {
+        document.getElementById('productName')?.focus()
+      }, 100)
+      
     } catch (error) {
       console.error("Error opening edit modal:", error)
       this.showToast("Erro ao carregar dados do produto", "error")
@@ -503,15 +581,54 @@ class AdminPanel {
       const salePriceRaw = formData.get("salePrice")
       const salePrice = salePriceRaw ? Number.parseFloat(salePriceRaw) : null
 
+      // Prepare product data
       const productData = {
         name: formData.get("name").trim(),
         category: formData.get("category"),
         type: formData.get("type"),
         price: Number.parseFloat(formData.get("price")),
-        image: formData.get("image").trim() || "assets/images/placeholder.png",
+        image: "", // will be set below
         description: formData.get("description").trim(),
         promocional: onSale,
         precoPromo: onSale && salePriceRaw ? salePrice : null,
+      }
+
+      // Handle image file input (base64 conversion)
+      try {
+        const fileInput = document.getElementById('productImage')
+        const file = fileInput.files && fileInput.files[0]
+        
+        if (file) {
+          // Nova imagem foi selecionada
+          if (typeof FileUploadManager === 'undefined') {
+            throw new Error('FileUploadManager não está disponível');
+          }
+          
+          const fileUploadManager = new FileUploadManager()
+          productData.image = await fileUploadManager.fileToBase64(file)
+          
+          // Feedback de sucesso
+          this.showToast('Imagem processada com sucesso!', 'success')
+        } else {
+          // Nenhuma nova imagem selecionada
+          if (this.currentEditingProduct && this.currentEditingProduct.image) {
+            // Editando produto existente - manter imagem atual
+            productData.image = this.currentEditingProduct.image
+          } else {
+            // Novo produto sem imagem - usar padrão
+            productData.image = '../assets/images/gerais/iconeBaronesa.png'
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao processar imagem:', error)
+        this.showToast('Erro ao processar imagem. Usando imagem padrão.', 'warning')
+        
+        // Em caso de erro, preservar imagem existente ou usar padrão
+        if (this.currentEditingProduct && this.currentEditingProduct.image) {
+          productData.image = this.currentEditingProduct.image
+        } else {
+          productData.image = '../assets/images/gerais/iconeBaronesa.png'
+        }
       }
 
       // Validate required fields
@@ -530,10 +647,12 @@ class AdminPanel {
       // Save product
       if (this.currentEditingProduct) {
         // Update existing product
+        this.showToast('Atualizando produto...', 'info')
         await window.ProductsService.updateProduct(this.currentEditingProduct.id, productData)
         this.showToast("Produto atualizado com sucesso!", "success")
       } else {
         // Create new product
+        this.showToast('Criando produto...', 'info')
         await window.ProductsService.createProduct(productData)
         this.showToast("Produto criado com sucesso!", "success")
       }
@@ -594,10 +713,10 @@ class AdminPanel {
     if (imageUrl && imageUrl.trim()) {
       preview.src = imageUrl
       preview.onerror = () => {
-        preview.src = "assets/images/placeholder.png"
+        preview.src = "../assets/images/gerais/iconeBaronesa.png"
       }
     } else {
-      preview.src = "assets/images/placeholder.png"
+      preview.src = "../assets/images/gerais/iconeBaronesa.png"
     }
   }
 
@@ -645,6 +764,63 @@ class AdminPanel {
       timeout = setTimeout(later, wait)
     }
   }
+
+  // Função para aplicar filtros de produtos (chamada pelo admin-filters.js)
+  applyProductFilters(filters) {
+    this.filteredProducts = this.products.filter(product => {
+      // Filtro por busca
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        const matchesSearch = product.name.toLowerCase().includes(searchLower) ||
+                            product.description.toLowerCase().includes(searchLower) ||
+                            product.category.toLowerCase().includes(searchLower) ||
+                            product.type.toLowerCase().includes(searchLower);
+        if (!matchesSearch) return false;
+      }
+      
+      // Filtro por categoria
+      if (filters.categories.length > 0) {
+        if (!filters.categories.includes(product.category)) return false;
+      }
+      
+      // Filtro por promoção
+      if (filters.promocional) {
+        if (!product.onSale) return false;
+      }
+      
+      // Filtro por faixa de preço
+      if (filters.priceRanges.length > 0) {
+        const price = parseFloat(product.price);
+        const matchesPrice = filters.priceRanges.some(range => {
+          switch(range) {
+            case '0-50': return price <= 50;
+            case '50-100': return price > 50 && price <= 100;
+            case '100-150': return price > 100 && price <= 150;
+            case '150+': return price > 150;
+            default: return true;
+          }
+        });
+        if (!matchesPrice) return false;
+      }
+      
+      // Filtro por tipo
+      if (filters.types.length > 0) {
+        if (!filters.types.includes(product.type)) return false;
+      }
+      
+      return true;
+    });
+    
+    this.renderProducts();
+    this.updateProductsCount();
+  }
+
+  // Função para aplicar filtros de dicas (chamada pelo admin-filters.js)
+  applyTipFilters(filters) {
+    // Esta função será implementada quando o sistema de dicas estiver pronto
+    console.log('Aplicando filtros de dicas:', filters);
+    // Aqui você pode implementar a lógica de filtro para dicas
+  }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -664,6 +840,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.adminPanel = new AdminPanel();
   }
 });
+
+// Instanciar o painel admin
+const adminPanel = new AdminPanel()
+
+// Tornar as funções de filtro disponíveis globalmente
+window.applyProductFilters = (filters) => adminPanel.applyProductFilters(filters);
+window.applyTipFilters = (filters) => adminPanel.applyTipFilters(filters);
 
 // Export for global access
 window.AdminPanel = AdminPanel;

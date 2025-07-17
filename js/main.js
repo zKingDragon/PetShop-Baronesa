@@ -217,7 +217,7 @@ function initPageTransitions() {
   if (loader) {
     setTimeout(() => {
       loader.classList.add('hidden');
-      setTimeout(() => loader.remove(), 2000);
+      setTimeout(() => loader.remove(), );
     }, 200);
   }
 }
@@ -319,7 +319,6 @@ class UIPermissionManager {
       this.authService.onAuthStateChanged(async (user) => {
         await this.updateUserRole()
         this.updateUI()
-        await this.checkPagePermission()
       })
       
       // Atualiza o papel do usuário inicial
@@ -327,7 +326,6 @@ class UIPermissionManager {
     }
     
     this.updateUI()
-    await this.checkPagePermission()
   }
 
   /**
@@ -541,22 +539,9 @@ class UIPermissionManager {
 
   
   /**
-   * Verifica e aplica permissão de acesso à página atual
-   */
-  async checkPagePermission() {
-    const currentPath = window.location.pathname;
-    const pageName = currentPath.split('/').pop() || '';
-    
-    let hasPermission = true;
-    if (pageName.includes('admin')) {
-      hasPermission = this.currentRole === 'admin';
-    }
-    // Removido verificação de promoções pois não há mais página de promoções
-    
-    if (!hasPermission) {
+ * Verifica e aplica permissão de acesso à página atual
+ */
 
-    }
-  }
 }
 
 // Instância global do gerenciador de permissões
@@ -635,3 +620,172 @@ function fixHeaderLinks() {
 
 // Corrige os links do header ao carregar a página
 document.addEventListener('headerLoaded', fixHeaderLinks);
+
+// Adicionar no final do arquivo ou criar um novo arquivo file-upload.js
+
+/**
+ * Gerenciador de upload de arquivos
+ */
+class FileUploadManager {
+    constructor() {
+        this.initializeUploads();
+    }
+
+    initializeUploads() {
+        // Upload de produto
+        this.setupFileUpload('productImage', 'fileInfo', 'removeFile', 'imagePreview');
+        
+        // Upload de dica
+        this.setupFileUpload('tipImage', 'tipFileInfo', 'removeTipFile', 'tipImagePreview');
+    }
+
+    setupFileUpload(inputId, fileInfoId, removeButtonId, previewId) {
+        const fileInput = document.getElementById(inputId);
+        const fileInfo = document.getElementById(fileInfoId);
+        const removeButton = document.getElementById(removeButtonId);
+        const preview = document.getElementById(previewId);
+        const container = fileInput?.closest('.file-upload-container');
+
+        if (!fileInput || !container) return;
+
+        // Drag and drop
+        container.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            container.classList.add('dragover');
+        });
+
+        container.addEventListener('dragleave', () => {
+            container.classList.remove('dragover');
+        });
+
+        container.addEventListener('drop', (e) => {
+            e.preventDefault();
+            container.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                this.handleFile(files[0], fileInput, fileInfo, container, preview);
+            }
+        });
+
+        // Seleção de arquivo
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                this.handleFile(file, fileInput, fileInfo, container, preview);
+            }
+        });
+
+        // Remover arquivo
+        removeButton?.addEventListener('click', () => {
+            this.clearFile(fileInput, fileInfo, container, preview);
+        });
+    }
+
+    handleFile(file, fileInput, fileInfo, container, preview) {
+        // Validar arquivo
+        if (!this.validateFile(file, container)) {
+            return;
+        }
+
+        // Exibir informações do arquivo
+        const fileName = fileInfo.querySelector('.file-name');
+        if (fileName) {
+            fileName.textContent = file.name;
+        }
+
+        // Atualizar UI
+        container.classList.add('has-file');
+        container.classList.remove('error');
+        fileInfo.style.display = 'flex';
+
+        // Gerar preview
+        if (preview) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Remover mensagem de erro anterior
+        const errorMsg = container.querySelector('.file-error');
+        if (errorMsg) {
+            errorMsg.remove();
+        }
+    }
+
+    validateFile(file, container) {
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+        // Verificar tipo
+        if (!allowedTypes.includes(file.type)) {
+            this.showError(container, 'Formato não suportado. Use JPG, PNG ou GIF.');
+            return false;
+        }
+
+        // Verificar tamanho
+        if (file.size > maxSize) {
+            this.showError(container, 'Arquivo muito grande. Máximo 5MB.');
+            return false;
+        }
+
+        return true;
+    }
+
+    showError(container, message) {
+        container.classList.add('error');
+        
+        // Remover erro anterior
+        const existingError = container.querySelector('.file-error');
+        if (existingError) {
+            existingError.remove();
+        }
+
+        // Adicionar nova mensagem de erro
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'file-error';
+        errorDiv.textContent = message;
+        container.appendChild(errorDiv);
+    }
+
+    clearFile(fileInput, fileInfo, container, preview) {
+        fileInput.value = '';
+        fileInfo.style.display = 'none';
+        container.classList.remove('has-file', 'error');
+        
+        // Restaurar preview padrão
+        if (preview) {
+            preview.src = '../assets/images/gerais/iconeBaronesa.png';
+        }
+
+        // Remover mensagem de erro
+        const errorMsg = container.querySelector('.file-error');
+        if (errorMsg) {
+            errorMsg.remove();
+        }
+    }
+
+    // Método para converter arquivo para base64 (para salvar no Firebase)
+    async fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Método para upload para Firebase Storage (opcional)
+    async uploadToFirebase(file, path) {
+        // Implementar se você quiser usar Firebase Storage
+        // Por enquanto, retorna base64
+        return await this.fileToBase64(file);
+    }
+}
+
+// Inicializar quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+    new FileUploadManager();
+});

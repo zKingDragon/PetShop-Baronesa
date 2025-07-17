@@ -8,6 +8,7 @@
     <link rel="shortcut icon" type="image/png" href="../assets/images/gerais/iconeBaronesa.png"> 
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/admin-tabs.css">
+    <link rel="stylesheet" href="../css/admin-filters.css">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -37,18 +38,10 @@
                 <!-- Tab Navigation -->
                 <div class="admin-tabs">
                     <div class="tab-nav">
-                        <button class="tab-button active" data-tab="products">
+                        <div class="tab-button active" data-tab="products">
                             <i class="fas fa-box"></i>
                             <span>Produtos</span>
-                        </button>
-                        <button class="tab-button" data-tab="tips">
-                            <i class="fas fa-lightbulb"></i>
-                            <span>Dicas</span>
-                        </button>
-                        <button class="tab-button" data-tab="users">
-                            <i class="fas fa-users"></i>
-                            <span>Usuários</span>
-                        </button>
+                        </div>
                     </div>
                 </div>
 
@@ -68,15 +61,7 @@
                                     <p>Total de Produtos</p>
                                 </div>
                             </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-tags"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h3 id="categoriesCount">0</h3>
-                                    <p>Categorias</p>
-                                </div>
-                            </div>
+
                             <div class="stat-card">
                                 <div class="stat-icon">
                                     <i class="fas fa-dollar-sign"></i>
@@ -88,113 +73,168 @@
                             </div>
                         </div>
 
-                        <!-- Filtros e Busca -->
-                        <div class="admin-filters">
-                            <div class="filter-card">
-                                <div class="filter-header">
-                                    <i class="fas fa-filter"></i>
-                                    <h2>Filtros</h2>
-                                </div>
-                                
-                                <!-- Busca -->
-                                <div class="filter-section">
-                                    <label for="adminSearchInput">Buscar Produtos</label>
-                                    <div class="search-input-container">
-                                        <input type="text" id="adminSearchInput" placeholder="Digite o nome do produto...">
-                                        <i class="fas fa-search"></i>
-                                    </div>
-                                </div>
-
-                                <!-- Filtro por Categoria -->
-                                <div class="filter-section">
-                                    <h3>Categoria</h3>
-                                    <div class="filter-options">
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="" id="allCategories" checked>
-                                            <span>Todas as Categorias</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Cachorros" class="category-filter">
-                                            <span>Cachorros</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Gatos" class="category-filter">
-                                            <span>Gatos</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Pássaros" class="category-filter">
-                                            <span>Pássaros</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Outros Pets" class="category-filter">
-                                            <span>Outros Pets</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Filtro por Tipo -->
-                                <div class="filter-section">
-                                    <h3>Tipo de Produto</h3>
-                                    <div class="filter-options">
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="" id="allTypes" checked>
-                                            <span>Todos os Tipos</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Alimentação" class="type-filter">
-                                            <span>Alimentação</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Acessórios" class="type-filter">
-                                            <span>Acessórios</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Higiene" class="type-filter">
-                                            <span>Higiene</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Brinquedos" class="type-filter">
-                                            <span>Brinquedos</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Botão Limpar Filtros -->
-                                <button id="clearFiltersBtn" class="btn-secondary btn-block">
-                                    <i class="fas fa-times"></i> Limpar Filtros
+                        <!-- Layout Principal com Sidebar -->
+                        <div class="admin-layout">
+                            <!-- Botão de filtro mobile -->
+                            <div class="filter-mobile-toggle">
+                                <button id="filterToggleBtn" class="btn-secondary">
+                                    <i class="fas fa-filter"></i> Mostrar Filtros
                                 </button>
                             </div>
-                        </div>
+                            
+                            <!-- Sidebar com Filtros -->     
+                            <aside class="admin-sidebar">
+                                <div class="sidebar-content">
+                                    <div class="filter-card">
+                                        <div class="filter-header">
+                                            <i class="fas fa-filter"></i>
+                                            <h2>Filtros</h2>
+                                            <button class="filter-collapse-btn" id="filterCollapseBtn">
+                                                <i class="fas fa-chevron-up"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="filter-content" id="filterContent">
+                                            <!-- Busca -->
+                                            <div class="filter-section">
+                                                <label for="adminSearchInput">Buscar Produtos</label>
+                                                <div class="search-input-container">
+                                                    <input type="text" id="adminSearchInput" placeholder="Digite o nome do produto...">
+                                                    <i class="fas fa-search"></i>
+                                                </div>
+                                            </div>
 
-                        <!-- Lista de Produtos -->
-                        <div class="admin-products-section">
-                            <div class="products-header">
-                                <h2>Produtos</h2>
-                                <div class="products-counter">
-                                    <span id="filteredProductsCount">0</span> produtos encontrados
+                                            <!-- Filtro por Categoria -->
+                                            <div class="filter-section">
+                                                <h3>Categorias</h3>
+                                                <div class="filter-options">
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="category" value="Cachorros">
+                                                        <span>Cachorros</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="category" value="Gatos">
+                                                        <span>Gatos</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="category" value="Pássaros">
+                                                        <span>Pássaros</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="category" value="Outros Pets">
+                                                        <span>Outros Pets</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Filtro por Promoções -->
+                                            <div class="filter-section">
+                                                <h3>Promoções</h3>
+                                                <div class="filter-options">
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="promocional" value="true">
+                                                        <span>Apenas produtos em promoção</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Filtro por Preço -->
+                                            <div class="filter-section">
+                                                <h3>Preço</h3>
+                                                <div class="filter-options">
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="priceRanges" value="0-50">
+                                                        <span>Até R$ 50</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="priceRanges" value="50-100">
+                                                        <span>R$ 50 a R$ 100</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="priceRanges" value="100-150">
+                                                        <span>R$ 100 a R$ 150</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="priceRanges" value="150+">
+                                                        <span>Acima de R$ 150</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Filtro por Tipo -->
+                                            <div class="filter-section">
+                                                <h3>Tipo de Produto</h3>
+                                                <div class="filter-options">
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="type" value="Alimentação">
+                                                        <span>Alimentação</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="type" value="Acessórios">
+                                                        <span>Acessórios</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="type" value="Higiene">
+                                                        <span>Higiene</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="type" value="Brinquedos">
+                                                        <span>Brinquedos</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Botão de Limpar Filtros -->
+                                            <div class="filter-section">
+                                                <button id="clearFiltersBtn" class="btn-secondary btn-block">
+                                                    <i class="fas fa-eraser"></i> Limpar Filtros
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </aside>
 
-                            <!-- Loading State -->
-                            <div id="productsLoading" class="loading-spinner">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <p>Carregando produtos...</p>
-                            </div>
+                            
+                            
+                            <!-- Conteúdo Principal -->
+                            <main class="admin-main-content">
+                                <!-- Cabeçalho dos Produtos -->
+                                <div class="products-header">
+                                    <div class="products-title">
+                                        <h2>Produtos</h2>
+                                        <div class="products-counter">
+                                            <span id="filteredProductsCount">0</span> produtos encontrados
+                                        </div>
+                                    </div>
+                                    <div class="products-actions">
+                                        <button id="addProductBtn" class="btn-primary">
+                                            <i class="fas fa-plus"></i> Adicionar Produto
+                                        </button>
+                                    </div>
+                                </div>
 
-                            <!-- Products Grid -->
-                            <div id="adminProductsGrid" class="admin-products-grid">
-                                <!-- Products will be loaded here -->
-                            </div>
+                                <!-- Loading State -->
+                                <div id="productsLoading" class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Carregando produtos...</p>
+                                </div>
 
-                            <!-- No Products Message -->
-                            <div id="noProductsMessage" class="no-products" style="display: none;">
-                                <i class="fas fa-box-open"></i>
-                                <h3>Nenhum produto encontrado</h3>
-                                <p>Não há produtos que correspondam aos filtros selecionados.</p>
-                                <button id="addFirstProductBtn" class="btn-primary">
-                                    <i class="fas fa-plus"></i> Adicionar Primeiro Produto
-                                </button>
-                            </div>
+                                <!-- Products Grid -->
+                                <div id="adminProductsGrid" class="admin-products-grid">
+                                    <!-- Products will be loaded here -->
+                                </div>
+
+                                <!-- No Products Message -->
+                                <div id="noProductsMessage" class="no-products" style="display: none;">
+                                    <i class="fas fa-box-open"></i>
+                                    <h3>Nenhum produto encontrado</h3>
+                                    <p>Não há produtos que correspondam aos filtros selecionados.</p>
+                                    <button id="addFirstProductBtn" class="btn-primary">
+                                        <i class="fas fa-plus"></i> Adicionar Primeiro Produto
+                                    </button>
+                                </div>
+                            </main>
                         </div>
                     </div>
 
@@ -220,116 +260,145 @@
                                     <p>Dicas Publicadas</p>
                                 </div>
                             </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-calendar"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h3 id="recentTipsCount">0</h3>
-                                    <p>Dicas Recentes</p>
-                                </div>
-                            </div>
                         </div>
 
-                        <!-- Filtros para Dicas -->
-                        <div class="admin-filters">
-                            <div class="filter-card">
-                                <div class="filter-header">
-                                    <i class="fas fa-filter"></i>
-                                    <h2>Filtros de Dicas</h2>
-                                </div>
-                                
-                                <!-- Busca -->
-                                <div class="filter-section">
-                                    <label for="tipsSearchInput">Buscar Dicas</label>
-                                    <div class="search-input-container">
-                                        <input type="text" id="tipsSearchInput" placeholder="Digite o título da dica...">
-                                        <i class="fas fa-search"></i>
-                                    </div>
-                                </div>
-
-                                <!-- Filtro por Categoria -->
-                                <div class="filter-section">
-                                    <h3>Categoria</h3>
-                                    <div class="filter-options">
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="" id="allTipCategories" checked>
-                                            <span>Todas as Categorias</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Cachorros" class="tip-category-filter">
-                                            <span>Cachorros</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Gatos" class="tip-category-filter">
-                                            <span>Gatos</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Pássaros" class="tip-category-filter">
-                                            <span>Pássaros</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="Geral" class="tip-category-filter">
-                                            <span>Geral</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Filtro por Status -->
-                                <div class="filter-section">
-                                    <h3>Status</h3>
-                                    <div class="filter-options">
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="" id="allStatus" checked>
-                                            <span>Todos os Status</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="published" class="status-filter">
-                                            <span>Publicadas</span>
-                                        </label>
-                                        <label class="filter-option">
-                                            <input type="checkbox" value="draft" class="status-filter">
-                                            <span>Rascunhos</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Botão Limpar Filtros -->
-                                <button id="clearTipsFiltersBtn" class="btn-secondary btn-block">
-                                    <i class="fas fa-times"></i> Limpar Filtros
+                        <!-- Layout Principal com Sidebar para Dicas -->
+                        <div class="admin-layout">
+                            <!-- Botão de filtro mobile -->
+                            <div class="filter-mobile-toggle">
+                                <button id="tipsFilterToggleBtn" class="btn-secondary">
+                                    <i class="fas fa-filter"></i> Mostrar Filtros
                                 </button>
                             </div>
-                        </div>
+                            
+                            <!-- Sidebar com Filtros de Dicas -->
+                            <aside class="admin-sidebar">
+                                <div class="sidebar-content">
+                                    <div class="filter-card">
+                                        <div class="filter-header">
+                                            <i class="fas fa-filter"></i>
+                                            <h2>Filtros de Dicas</h2>
+                                            <button class="filter-collapse-btn" id="tipsFilterCollapseBtn">
+                                                <i class="fas fa-chevron-up"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="filter-content" id="tipsFilterContent">
+                                            <!-- Busca -->
+                                            <div class="filter-section">
+                                                <label for="tipsSearchInput">Buscar Dicas</label>
+                                                <div class="search-input-container">
+                                                    <input type="text" id="tipsSearchInput" placeholder="Digite o título da dica...">
+                                                    <i class="fas fa-search"></i>
+                                                </div>
+                                            </div>
 
-                        <!-- Lista de Dicas -->
-                        <div class="admin-tips-section">
-                            <div class="tips-header">
-                                <h2>Dicas</h2>
-                                <div class="tips-counter">
-                                    <span id="filteredTipsCount">0</span> dicas encontradas
+                                            <!-- Filtro por Categoria -->
+                                            <div class="filter-section">
+                                                <h3>Categorias</h3>
+                                                <div class="filter-options">
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipCategory" value="Cachorros">
+                                                        <span>Cachorros</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipCategory" value="Gatos">
+                                                        <span>Gatos</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipCategory" value="Pássaros">
+                                                        <span>Pássaros</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipCategory" value="Geral">
+                                                        <span>Geral</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Filtro por Status -->
+                                            <div class="filter-section">
+                                                <h3>Status</h3>
+                                                <div class="filter-options">
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipStatus" value="published">
+                                                        <span>Publicadas</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipStatus" value="draft">
+                                                        <span>Rascunhos</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Filtro por Data -->
+                                            <div class="filter-section">
+                                                <h3>Data de Publicação</h3>
+                                                <div class="filter-options">
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipDate" value="today">
+                                                        <span>Hoje</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipDate" value="week">
+                                                        <span>Esta semana</span>
+                                                    </label>
+                                                    <label class="filter-option">
+                                                        <input type="checkbox" name="tipDate" value="month">
+                                                        <span>Este mês</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Botão de Limpar Filtros -->
+                                            <div class="filter-section">
+                                                <button id="clearTipsFiltersBtn" class="btn-secondary btn-block">
+                                                    <i class="fas fa-eraser"></i> Limpar Filtros
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </aside>
+                            
+                            <!-- Conteúdo Principal -->
+                            <main class="admin-main-content">
+                                <!-- Cabeçalho das Dicas -->
+                                <div class="tips-header">
+                                    <div class="tips-title">
+                                        <h2>Dicas</h2>
+                                        <div class="tips-counter">
+                                            <span id="filteredTipsCount">0</span> dicas encontradas
+                                        </div>
+                                    </div>
+                                    <div class="tips-actions">
+                                        <button id="addTipBtn" class="btn-primary">
+                                            <i class="fas fa-plus"></i> Adicionar Dica
+                                        </button>
+                                    </div>
+                                </div>
 
-                            <!-- Loading State -->
-                            <div id="tipsLoading" class="loading-spinner">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <p>Carregando dicas...</p>
-                            </div>
+                                <!-- Loading State -->
+                                <div id="tipsLoading" class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Carregando dicas...</p>
+                                </div>
 
-                            <!-- Tips Grid -->
-                            <div id="adminTipsGrid" class="admin-tips-grid">
-                                <!-- Tips will be loaded here -->
-                            </div>
+                                <!-- Tips Grid -->
+                                <div id="adminTipsGrid" class="admin-tips-grid">
+                                    <!-- Tips will be loaded here -->
+                                </div>
 
-                            <!-- No Tips Message -->
-                            <div id="noTipsMessage" class="no-tips" style="display: none;">
-                                <i class="fas fa-lightbulb"></i>
-                                <h3>Nenhuma dica encontrada</h3>
-                                <p>Não há dicas que correspondam aos filtros selecionados.</p>
-                                <button id="addFirstTipBtn" class="btn-primary">
-                                    <i class="fas fa-plus"></i> Adicionar Primeira Dica
-                                </button>
-                            </div>
+                                <!-- No Tips Message -->
+                                <div id="noTipsMessage" class="no-tips" style="display: none;">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <h3>Nenhuma dica encontrada</h3>
+                                    <p>Não há dicas que correspondam aos filtros selecionados.</p>
+                                    <button id="addFirstTipBtn" class="btn-primary">
+                                        <i class="fas fa-plus"></i> Adicionar Primeira Dica
+                                    </button>
+                                </div>
+                            </main>
                         </div>
                     </div>
 
@@ -348,81 +417,172 @@
     <div id="productModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Adicionar Produto</h2>
+                <h2 id="modalTitle">
+                    <i class="fas fa-plus-circle"></i>
+                    Adicionar Produto
+                </h2>
                 <button id="closeModalBtn" class="modal-close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
             <form id="productForm" class="product-form">
-                <div class="form-grid">
-                    <!-- Nome do Produto -->
-                    <div class="form-group">
-                        <label for="productName">Nome do Produto *</label>
-                        <input type="text" id="productName" name="name" required>
+                <!-- Seção: Informações Básicas -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-info-circle"></i>
+                        Informações Básicas
+                    </h3>
+                    <div class="form-grid">
+                        <!-- Nome do Produto -->
+                        <div class="form-group">
+                            <label for="productName">
+                                <i class="fas fa-tag"></i>
+                                Nome do Produto
+                            </label>
+                            <input type="text" id="productName" name="name" required 
+                                   placeholder="Digite o nome do produto...">
+                        </div>
+
+                        <!-- Categoria -->
+                        <div class="form-group">
+                            <label for="productCategory">
+                                <i class="fas fa-folder"></i>
+                                Categoria
+                            </label>
+                            <select id="productCategory" name="category" required>
+                                <option value="">Selecione uma categoria</option>
+                                <option value="Cachorros">🐕 Cachorros</option>
+                                <option value="Gatos">🐱 Gatos</option>
+                                <option value="Pássaros">🦜 Pássaros</option>
+                                <option value="Outros Pets">🐾 Outros Pets</option>
+                            </select>
+                        </div>
+
+                        <!-- Tipo -->
+                        <div class="form-group">
+                            <label for="productType">
+                                <i class="fas fa-th-large"></i>
+                                Tipo de Produto
+                            </label>
+                            <select id="productType" name="type" required>
+                                <option value="">Selecione um tipo</option>
+                                <option value="Alimentação">🍖 Alimentação</option>
+                                <option value="Acessórios">🎀 Acessórios</option>
+                                <option value="Higiene">🧼 Higiene</option>
+                                <option value="Brinquedos">🎾 Brinquedos</option>
+                            </select>
+                        </div>
+
+                        <!-- Preço -->
+                        <div class="form-group">
+                            <label for="productPrice">
+                                <i class="fas fa-dollar-sign"></i>
+                                Preço (R$)
+                            </label>
+                            <input type="number" id="productPrice" name="price" step="0.01" min="0" required 
+                                   placeholder="0,00">
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Categoria -->
-                    <div class="form-group">
-                        <label for="productCategory">Categoria *</label>
-                        <select id="productCategory" name="category" required>
-                            <option value="">Selecione uma categoria</option>
-                            <option value="Cachorros">Cachorros</option>
-                            <option value="Gatos">Gatos</option>
-                            <option value="Pássaros">Pássaros</option>
-                            <option value="Outros Pets">Outros Pets</option>
-                        </select>
+                <!-- Seção: Imagem -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-image"></i>
+                        Imagem do Produto
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="productImage">
+                                <i class="fas fa-camera"></i>
+                                Selecionar Imagem
+                            </label>
+                            <div class="file-upload-container">
+                                <input type="file" id="productImage" name="image" accept="image/*" class="file-input">
+                                <label for="productImage" class="file-upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Arraste uma imagem aqui ou clique para selecionar</span>
+                                </label>
+                                <div class="file-info" id="fileInfo" style="display: none;">
+                                    <div class="file-details">
+                                        <i class="fas fa-image file-icon"></i>
+                                        <div class="file-text">
+                                            <span class="file-name"></span>
+                                            <span class="file-size"></span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="remove-file" id="removeFile" title="Remover arquivo">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <small>
+                                Formatos aceitos: JPG, PNG, GIF (máximo 5MB)
+                            </small>
+                        </div>
+
+                        <!-- Preview da Imagem -->
+                        <div class="form-group full-width">
+                            <label>
+                                Preview da Imagem
+                            </label>
+                            <div class="image-preview">
+                                <img id="imagePreview" src="../assets/images/gerais/iconeBaronesa.png" alt="Preview">
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Tipo -->
-                    <div class="form-group">
-                        <label for="productType">Tipo de Produto *</label>
-                        <select id="productType" name="type" required>
-                            <option value="">Selecione um tipo</option>
-                            <option value="Alimentação">Alimentação</option>
-                            <option value="Acessórios">Acessórios</option>
-                            <option value="Higiene">Higiene</option>
-                            <option value="Brinquedos">Brinquedos</option>
-                        </select>
+                <!-- Seção: Descrição -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-align-left"></i>
+                        Descrição
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="productDescription">
+                                <i class="fas fa-file-text"></i>
+                                Descrição do Produto
+                            </label>
+                            <textarea id="productDescription" name="description" rows="4" required 
+                                      placeholder="Descreva o produto detalhadamente..."></textarea>
+                            <small>Uma boa descrição ajuda na venda do produto</small>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Preço -->
-                    <div class="form-group">
-                        <label for="productPrice">Preço (R$) *</label>
-                        <input type="number" id="productPrice" name="price" step="0.01" min="0" required>
-                    </div>
+                <!-- Seção: Promoções -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-percent"></i>
+                        Configurações de Promoção
+                    </h3>
+                    <div class="form-grid">
+                        <!-- Promoção -->
+                        <div class="form-group">
+                            <label for="productOnSale">
+                                <i class="fas fa-fire"></i>
+                                Produto em Promoção
+                            </label>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <input type="checkbox" id="productOnSale" name="onSale" class="toggle-checkbox">
+                                <span style="color: #6b7280; font-size: 0.875rem;">
+                                    Ativar promoção para este produto
+                                </span>
+                            </div>
+                        </div>
 
-                    <!-- URL da Imagem -->
-                    <div class="form-group full-width">
-                        <label for="productImage">URL da Imagem</label>
-                        <input type="url" id="productImage" name="image" placeholder="https://exemplo.com/imagem.jpg">
-                        <small>Deixe em branco para usar a imagem padrão</small>
-                    </div>
-
-                    <!-- Descrição -->
-                    <div class="form-group full-width">
-                        <label for="productDescription">Descrição *</label>
-                        <textarea id="productDescription" name="description" rows="4" required></textarea>
-                    </div>
-
-                    <!-- Promoção -->
-                    <div class="form-group">
-                        <label>Produto em Promoção</label>
-                        <input type="checkbox" id="productOnSale" name="onSale" class="toggle-checkbox">
-
-                    </div>
-
-                    <!-- Preço Promocional -->
-                    <div class="form-group">
-                        <label for="productSalePrice">Preço Promocional (R$)</label>
-                        <input type="number" id="productSalePrice" name="salePrice" step="0.01" min="0" placeholder="Deixe em branco se não houver promoção">
-                    </div>
-
-                    <!-- Preview da Imagem -->
-                    <div class="form-group full-width">
-                        <label>Preview da Imagem</label>
-                        <div class="image-preview">
-                            <img id="imagePreview" src="../assets/images/gerais/iconeBaronesa.png" alt="Preview">
+                        <!-- Preço Promocional -->
+                        <div class="form-group">
+                            <label for="productSalePrice">
+                                <i class="fas fa-tags"></i>
+                                Preço Promocional (R$)
+                            </label>
+                            <input type="number" id="productSalePrice" name="salePrice" step="0.01" min="0" 
+                                   placeholder="0,00" disabled>
+                            <small>Será habilitado quando a promoção estiver ativa</small>
                         </div>
                     </div>
                 </div>
@@ -684,6 +844,7 @@
     <script src="../js/firebase-config.js"></script>
     <script src="../js/toast.js"></script>
     <script src="../js/auth.js"></script>
+    <script src="../js/header-auth.js"></script>
     <script src="../js/admin-debug.js"></script>
     <script src="../js/admin-middleware.js"></script>
     <script src="../js/user-management.js"></script>
@@ -693,5 +854,6 @@
     <script src="../js/main.js"></script>
     <script src="../js/admin.js"></script>
     <script src="../js/admin-tabs.js"></script>
+    <script src="../js/admin-filters.js"></script>
 </body>
 </html>

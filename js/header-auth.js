@@ -90,12 +90,6 @@ function createUserDropdown() {
             <i class="fas fa-chevron-down"></i>
         </div>
         <div class="user-dropdown-menu">
-            <a href="#" class="dropdown-item user-only">
-                <i class="fas fa-user"></i> Minha Conta
-            </a>
-            <a href="${pathPrefix}carrinho.html" class="dropdown-item user-only">
-                <i class="fas fa-shopping-cart"></i> Meu Carrinho
-            </a>
             <a href="${pathPrefix}admin.html" class="dropdown-item admin-only">
                 <i class="fas fa-cog"></i> Painel Admin
             </a>

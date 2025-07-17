@@ -128,13 +128,21 @@ async function isAdmin(user = null) {
     try {
         const currentUser = user || getCurrentUser()
         if (!currentUser) {
+            console.log('[isAdmin] Nenhum usuário logado');
             return false
         }
 
+        console.log('[isAdmin] Verificando admin para:', currentUser.email);
+        
         const userType = await checkUserType(currentUser.uid)
-        return userType === 'admin'
+        console.log('[isAdmin] Tipo do usuário:', userType);
+        
+        const isAdminResult = userType === 'admin';
+        console.log('[isAdmin] Resultado:', isAdminResult);
+        
+        return isAdminResult;
     } catch (error) {
-        console.error('Erro ao verificar se é admin:', error)
+        console.error('[isAdmin] Erro ao verificar admin:', error)
         return false
     }
 }
@@ -390,10 +398,10 @@ async function loginWithGoogle() {
         console.error('Erro ao fazer login com Google:', error)
         // Mostra mensagem de erro
         if (loginError) {
-            loginError.textContent = "Erro ao entrar com Google: " + (error.message || "Tente novamente.")
+            loginError.textContent = "Erro ao entrar com Google, tente novamente."
             loginError.style.display = "block"
         } else {
-            alert("Erro ao entrar com Google: " + (error.message || "Tente novamente."))
+            alert("Erro ao entrar com Google, tente novamente.")
         }
     }
 }
