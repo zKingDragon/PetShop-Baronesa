@@ -59,7 +59,7 @@
 </head>
 <body>
     <h1>🔧 Teste Direto de Acesso Admin</h1>
-    
+
     <div class="step">
         <h3>Passo 1: Configurar Login de Admin</h3>
         <p>Primeiro, vamos simular um login de admin no localStorage:</p>
@@ -67,28 +67,28 @@
         <button onclick="clearLogin()">Limpar Login</button>
         <div id="step1Result"></div>
     </div>
-    
+
     <div class="step">
         <h3>Passo 2: Verificar Funções de Auth</h3>
         <p>Vamos verificar se as funções de autenticação estão funcionando:</p>
         <button onclick="checkAuthFunctions()">Verificar Funções</button>
         <div id="step2Result"></div>
     </div>
-    
+
     <div class="step">
         <h3>Passo 3: Testar Acesso Admin</h3>
         <p>Agora vamos testar o acesso ao painel admin:</p>
         <button onclick="testAdminAccess()">Testar Acesso</button>
         <div id="step3Result"></div>
     </div>
-    
+
     <div class="step">
         <h3>Passo 4: Ir para Admin</h3>
         <p>Se tudo estiver OK, vamos para o painel admin:</p>
         <button onclick="goToAdmin()">Ir para Admin</button>
         <div id="step4Result"></div>
     </div>
-    
+
     <div class="step">
         <h3>Console Log</h3>
         <button onclick="clearConsole()">Limpar Console</button>
@@ -100,7 +100,7 @@
         const originalConsoleLog = console.log;
         const originalConsoleError = console.error;
         const originalConsoleWarn = console.warn;
-        
+
         function addToConsole(message, type = 'log') {
             const consoleDiv = document.getElementById('consoleLog');
             const timestamp = new Date().toLocaleTimeString();
@@ -108,26 +108,26 @@
             consoleDiv.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
-        
+
         console.log = function(...args) {
             originalConsoleLog.apply(console, args);
             addToConsole(args.join(' '), 'log');
         };
-        
+
         console.error = function(...args) {
             originalConsoleError.apply(console, args);
             addToConsole(args.join(' '), 'error');
         };
-        
+
         console.warn = function(...args) {
             originalConsoleWarn.apply(console, args);
             addToConsole(args.join(' '), 'warn');
         };
-        
+
         // Passo 1: Configurar login de admin
         function setupAdminLogin() {
             console.log('🔑 Configurando login de admin...');
-            
+
             const adminData = {
                 uid: 'admin-test-uid',
                 email: 'admin@petshop.com',
@@ -135,29 +135,29 @@
                 displayName: 'Admin Test',
                 emailVerified: true
             };
-            
+
             localStorage.setItem('petshop_baronesa_auth', JSON.stringify(adminData));
-            
-            document.getElementById('step1Result').innerHTML = 
+
+            document.getElementById('step1Result').innerHTML =
                 '<span class="success">✅ Login de admin configurado com sucesso!</span>';
-            
+
             console.log('✅ Dados salvos no localStorage:', adminData);
         }
-        
+
         // Limpar login
         function clearLogin() {
             localStorage.removeItem('petshop_baronesa_auth');
-            document.getElementById('step1Result').innerHTML = 
+            document.getElementById('step1Result').innerHTML =
                 '<span class="info">🔄 Login limpo</span>';
             console.log('🔄 Login limpo');
         }
-        
+
         // Passo 2: Verificar funções de auth
         function checkAuthFunctions() {
             console.log('🔍 Verificando funções de auth...');
-            
+
             let html = '<h4>Status das Funções:</h4>';
-            
+
             // Verifica localStorage
             const authData = localStorage.getItem('petshop_baronesa_auth');
             if (authData) {
@@ -170,10 +170,10 @@
             } else {
                 html += `<p><strong>localStorage:</strong> <span class="error">❌ Sem dados</span></p>`;
             }
-            
+
             // Simula as funções que deveriam estar disponíveis
             html += '<h4>Simulação das Funções:</h4>';
-            
+
             // Simula getCurrentUser
             const getCurrentUserSimulation = () => {
                 const authData = localStorage.getItem('petshop_baronesa_auth');
@@ -186,109 +186,109 @@
                 }
                 return null;
             };
-            
+
             // Simula getCurrentUserType
             const getCurrentUserTypeSimulation = () => {
                 const user = getCurrentUserSimulation();
                 return user ? user.type : 'guest';
             };
-            
+
             // Simula isAdmin
             const isAdminSimulation = () => {
                 const userType = getCurrentUserTypeSimulation();
                 return userType === 'admin';
             };
-            
+
             const currentUser = getCurrentUserSimulation();
             const userType = getCurrentUserTypeSimulation();
             const adminStatus = isAdminSimulation();
-            
+
             html += `<p><strong>getCurrentUser():</strong> ${currentUser ? `<span class="success">✅ ${currentUser.email}</span>` : '<span class="error">❌ null</span>'}</p>`;
             html += `<p><strong>getCurrentUserType():</strong> <span class="${userType === 'admin' ? 'success' : 'error'}">${userType === 'admin' ? '✅' : '❌'} ${userType}</span></p>`;
             html += `<p><strong>isAdmin():</strong> <span class="${adminStatus ? 'success' : 'error'}">${adminStatus ? '✅' : '❌'} ${adminStatus}</span></p>`;
-            
+
             document.getElementById('step2Result').innerHTML = html;
-            
+
             console.log('📊 Resultados:', {
                 currentUser: currentUser?.email,
                 userType,
                 adminStatus
             });
         }
-        
+
         // Passo 3: Testar acesso admin
         function testAdminAccess() {
             console.log('🔐 Testando acesso admin...');
-            
+
             const authData = localStorage.getItem('petshop_baronesa_auth');
             if (!authData) {
-                document.getElementById('step3Result').innerHTML = 
+                document.getElementById('step3Result').innerHTML =
                     '<span class="error">❌ Nenhum usuário logado</span>';
                 console.log('❌ Nenhum usuário logado');
                 return;
             }
-            
+
             try {
                 const userData = JSON.parse(authData);
                 const isAdmin = userData.type === 'admin';
-                
+
                 if (isAdmin) {
-                    document.getElementById('step3Result').innerHTML = 
+                    document.getElementById('step3Result').innerHTML =
                         '<span class="success">✅ Acesso PERMITIDO - Usuário é admin</span>';
                     console.log('✅ Acesso PERMITIDO - Usuário é admin');
                 } else {
-                    document.getElementById('step3Result').innerHTML = 
+                    document.getElementById('step3Result').innerHTML =
                         '<span class="error">❌ Acesso NEGADO - Usuário não é admin</span>';
                     console.log('❌ Acesso NEGADO - Usuário não é admin');
                 }
             } catch (error) {
-                document.getElementById('step3Result').innerHTML = 
+                document.getElementById('step3Result').innerHTML =
                     '<span class="error">❌ Erro ao verificar dados</span>';
                 console.log('❌ Erro ao verificar dados:', error);
             }
         }
-        
+
         // Passo 4: Ir para admin
         function goToAdmin() {
             console.log('🚀 Redirecionando para admin...');
-            
+
             const authData = localStorage.getItem('petshop_baronesa_auth');
             if (!authData) {
-                document.getElementById('step4Result').innerHTML = 
+                document.getElementById('step4Result').innerHTML =
                     '<span class="error">❌ Configure o login primeiro</span>';
                 return;
             }
-            
+
             try {
                 const userData = JSON.parse(authData);
                 if (userData.type === 'admin') {
-                    document.getElementById('step4Result').innerHTML = 
+                    document.getElementById('step4Result').innerHTML =
                         '<span class="success">✅ Redirecionando... Verifique o console da nova página!</span>';
-                    
+
                     // Aguarda um pouco para mostrar a mensagem
                     setTimeout(() => {
                         window.location.href = 'html/admin.html';
                     }, 1000);
                 } else {
-                    document.getElementById('step4Result').innerHTML = 
+                    document.getElementById('step4Result').innerHTML =
                         '<span class="error">❌ Usuário não é admin</span>';
                 }
             } catch (error) {
-                document.getElementById('step4Result').innerHTML = 
+                document.getElementById('step4Result').innerHTML =
                     '<span class="error">❌ Erro nos dados do usuário</span>';
             }
         }
-        
+
         // Limpar console
         function clearConsole() {
             document.getElementById('consoleLog').innerHTML = '';
         }
-        
+
         // Inicialização
         window.addEventListener('load', () => {
             console.log('🔧 Página de teste carregada');
             console.log('📋 Siga os passos para testar o acesso admin');
-            
+
             // Verifica se já há dados no localStorage
             const authData = localStorage.getItem('petshop_baronesa_auth');
             if (authData) {
