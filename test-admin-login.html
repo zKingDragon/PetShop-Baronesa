@@ -50,25 +50,25 @@
 </head>
 <body>
     <h1>Teste de Login Admin</h1>
-    
+
     <div class="test-section">
         <h2>Simulação de Login</h2>
         <button onclick="simulateAdminLogin()">Simular Login de Admin</button>
         <button onclick="simulateGuestLogin()">Simular Login de Guest</button>
         <button onclick="clearLogin()">Limpar Login</button>
-        
+
         <div id="loginStatus"></div>
     </div>
-    
+
     <div class="test-section">
         <h2>Testes de Função</h2>
         <button onclick="testAuthFunctions()">Testar Funções de Auth</button>
         <button onclick="testAdminAccess()">Testar Acesso Admin</button>
         <button onclick="goToAdmin()">Ir para Admin</button>
-        
+
         <div id="testResults"></div>
     </div>
-    
+
     <div class="test-section">
         <h2>Console Output</h2>
         <button onclick="clearConsole()">Limpar Console</button>
@@ -89,7 +89,7 @@
         const originalConsoleLog = console.log;
         const originalConsoleError = console.error;
         const originalConsoleWarn = console.warn;
-        
+
         function logToPage(message, type = 'log') {
             const consoleOutput = document.getElementById('consoleOutput');
             const timestamp = new Date().toLocaleTimeString();
@@ -97,22 +97,22 @@
             consoleOutput.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
         }
-        
+
         console.log = function(...args) {
             originalConsoleLog.apply(console, args);
             logToPage(args.join(' '), 'log');
         };
-        
+
         console.error = function(...args) {
             originalConsoleError.apply(console, args);
             logToPage(args.join(' '), 'error');
         };
-        
+
         console.warn = function(...args) {
             originalConsoleWarn.apply(console, args);
             logToPage(args.join(' '), 'warn');
         };
-        
+
         // Função para simular login de admin
         function simulateAdminLogin() {
             const adminData = {
@@ -121,18 +121,18 @@
                 type: 'admin',
                 displayName: 'Admin Test'
             };
-            
+
             localStorage.setItem('petshop_baronesa_auth', JSON.stringify(adminData));
-            
+
             // Simula um usuário Firebase
             if (window.firebase && window.firebase.auth) {
                 // Não podemos simular completamente o Firebase, mas podemos simular o localStorage
                 console.log('✅ Dados de admin salvos no localStorage');
             }
-            
+
             document.getElementById('loginStatus').innerHTML = '<span class="success">✅ Login de admin simulado</span>';
         }
-        
+
         // Função para simular login de guest
         function simulateGuestLogin() {
             const guestData = {
@@ -141,22 +141,22 @@
                 type: 'guest',
                 displayName: 'Guest Test'
             };
-            
+
             localStorage.setItem('petshop_baronesa_auth', JSON.stringify(guestData));
             document.getElementById('loginStatus').innerHTML = '<span class="error">❌ Login de guest simulado</span>';
         }
-        
+
         // Função para limpar login
         function clearLogin() {
             localStorage.removeItem('petshop_baronesa_auth');
             document.getElementById('loginStatus').innerHTML = '<span>🔄 Login limpo</span>';
         }
-        
+
         // Função para testar funções de auth
         async function testAuthFunctions() {
             const results = document.getElementById('testResults');
             let html = '<h3>Resultados dos Testes:</h3>';
-            
+
             try {
                 // Testa getCurrentUser
                 if (typeof getCurrentUser === 'function') {
@@ -165,7 +165,7 @@
                 } else {
                     html += '<p><strong>getCurrentUser():</strong> <span class="error">Função não encontrada</span></p>';
                 }
-                
+
                 // Testa getCurrentUserType
                 if (typeof getCurrentUserType === 'function') {
                     const userType = await getCurrentUserType();
@@ -173,7 +173,7 @@
                 } else {
                     html += '<p><strong>getCurrentUserType():</strong> <span class="error">Função não encontrada</span></p>';
                 }
-                
+
                 // Testa isAdmin
                 if (typeof isAdmin === 'function') {
                     const adminStatus = await isAdmin();
@@ -181,7 +181,7 @@
                 } else {
                     html += '<p><strong>isAdmin():</strong> <span class="error">Função não encontrada</span></p>';
                 }
-                
+
                 // Testa localStorage
                 const authData = localStorage.getItem('petshop_baronesa_auth');
                 if (authData) {
@@ -190,27 +190,27 @@
                 } else {
                     html += '<p><strong>localStorage:</strong> <span class="error">Sem dados</span></p>';
                 }
-                
+
             } catch (error) {
                 html += `<p><strong>Erro:</strong> <span class="error">${error.message}</span></p>`;
             }
-            
+
             results.innerHTML = html;
         }
-        
+
         // Função para testar acesso admin
         async function testAdminAccess() {
             console.log('🔍 Testando acesso admin...');
-            
+
             try {
                 const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
                 const userType = typeof getCurrentUserType === 'function' ? await getCurrentUserType() : null;
                 const adminStatus = typeof isAdmin === 'function' ? await isAdmin() : false;
-                
+
                 console.log('Usuário:', user?.email || 'null');
                 console.log('Tipo:', userType || 'null');
                 console.log('É admin:', adminStatus);
-                
+
                 if (adminStatus || userType === 'admin') {
                     console.log('✅ Acesso admin PERMITIDO');
                     document.getElementById('testResults').innerHTML = '<span class="success">✅ Acesso admin PERMITIDO</span>';
@@ -218,23 +218,23 @@
                     console.log('❌ Acesso admin NEGADO');
                     document.getElementById('testResults').innerHTML = '<span class="error">❌ Acesso admin NEGADO</span>';
                 }
-                
+
             } catch (error) {
                 console.error('Erro no teste:', error);
                 document.getElementById('testResults').innerHTML = `<span class="error">Erro: ${error.message}</span>`;
             }
         }
-        
+
         // Função para ir para admin
         function goToAdmin() {
             window.location.href = 'html/admin.html';
         }
-        
+
         // Função para limpar console
         function clearConsole() {
             document.getElementById('consoleOutput').innerHTML = '';
         }
-        
+
         // Inicialização
         window.addEventListener('load', () => {
             console.log('🚀 Página de teste carregada');
@@ -244,7 +244,7 @@
                 getCurrentUserType: typeof getCurrentUserType === 'function',
                 isAdmin: typeof isAdmin === 'function'
             });
-            
+
             // Testa automaticamente após 2 segundos
             setTimeout(testAuthFunctions, 2000);
         });
