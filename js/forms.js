@@ -92,7 +92,7 @@ function initCadastroForm() {
       } catch (error) {
         console.error('Erro ao cadastrar:', error)
         let errorMessage = "Erro ao cadastrar: "
-        
+
         // Mensagens de erro mais específicas
         switch (error.code) {
           case 'auth/email-already-in-use':
@@ -107,7 +107,7 @@ function initCadastroForm() {
           default:
             errorMessage += error.message || "Tente novamente."
         }
-        
+
         alert(errorMessage)
       }
     })
@@ -147,7 +147,7 @@ function showSuccessMessage() {
                 max-width: 32rem;
                 margin: 0 auto;
             }
-            
+
             .success-icon {
                 display: inline-flex;
                 align-items: center;
@@ -158,24 +158,24 @@ function showSuccessMessage() {
                 border-radius: 9999px;
                 margin-bottom: 1rem;
             }
-            
+
             .success-icon i {
                 color: white;
                 font-size: 2rem;
             }
-            
+
             .success-message h2 {
                 font-weight: 700;
                 color: #005f73;
                 margin-bottom: 0.5rem;
                 font-size: 1.5rem;
             }
-            
+
             .success-message p {
                 color: #6b7280;
                 margin-bottom: 1.5rem;
             }
-            
+
             .success-message .btn-primary {
                 display: inline-block;
             }
@@ -239,10 +239,10 @@ function clearAddressData() {
  */
 function isAddressComplete() {
   const address = getAddressData()
-  return address && 
-         address.name && 
-         address.street && 
-         address.number && 
+  return address &&
+         address.name &&
+         address.street &&
+         address.number &&
          address.neighborhood
 }
 
@@ -269,51 +269,51 @@ function showAddressModal() {
             <i class="fas fa-times"></i>
           </button>
         </div>
-        
+
         <form id="addressForm" class="address-form">
           <div class="form-group">
             <label for="customerName">Nome Completo *</label>
-            <input type="text" id="customerName" name="name" required 
-                   value="${existingAddress.name || ''}" 
+            <input type="text" id="customerName" name="name" required
+                   value="${existingAddress.name || ''}"
                    placeholder="Digite seu nome completo">
           </div>
-          
+
           <div class="form-group">
             <label for="streetName">Nome da Rua *</label>
-            <input type="text" id="streetName" name="street" required 
-                   value="${existingAddress.street || ''}" 
+            <input type="text" id="streetName" name="street" required
+                   value="${existingAddress.street || ''}"
                    placeholder="Ex: Rua das Flores">
           </div>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label for="streetNumber">Número *</label>
-              <input type="text" id="streetNumber" name="number" required 
-                     value="${existingAddress.number || ''}" 
+              <input type="text" id="streetNumber" name="number" required
+                     value="${existingAddress.number || ''}"
                      placeholder="Ex: 123">
             </div>
-            
+
             <div class="form-group">
               <label for="complement">Complemento</label>
-              <input type="text" id="complement" name="complement" 
-                     value="${existingAddress.complement || ''}" 
+              <input type="text" id="complement" name="complement"
+                     value="${existingAddress.complement || ''}"
                      placeholder="Ex: Apto 45">
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="neighborhood">Bairro *</label>
-            <input type="text" id="neighborhood" name="neighborhood" required 
-                   value="${existingAddress.neighborhood || ''}" 
+            <input type="text" id="neighborhood" name="neighborhood" required
+                   value="${existingAddress.neighborhood || ''}"
                    placeholder="Ex: Centro">
           </div>
-          
+
           <div class="form-group">
             <label for="reference">Ponto de Referência</label>
-            <textarea id="reference" name="reference" rows="2" 
+            <textarea id="reference" name="reference" rows="2"
                       placeholder="Ex: Próximo ao supermercado">${existingAddress.reference || ''}</textarea>
           </div>
-          
+
           <div class="address-form-actions">
             <button type="button" class="btn-secondary" onclick="closeAddressModal()">
               <i class="fas fa-times"></i> Cancelar
@@ -352,11 +352,11 @@ function closeAddressModal() {
  */
 function setupAddressFormEvents() {
   const addressForm = document.getElementById("addressForm")
-  
+
   if (addressForm) {
     addressForm.addEventListener("submit", (e) => {
       e.preventDefault()
-      
+
       // Coletar dados do formulário
       const formData = new FormData(addressForm)
       const addressData = {
@@ -367,22 +367,22 @@ function setupAddressFormEvents() {
         neighborhood: formData.get('neighborhood').trim(),
         reference: formData.get('reference').trim()
       }
-      
+
       // Validar campos obrigatórios
       if (!addressData.name || !addressData.street || !addressData.number || !addressData.neighborhood) {
         alert('Por favor, preencha todos os campos obrigatórios.')
         return
       }
-      
+
       // Salvar dados
       saveAddressData(addressData)
-      
+
       // Fechar modal
       closeAddressModal()
-      
+
       // Atualizar interface
       updateAddressDisplay()
-      
+
       // Mostrar mensagem de sucesso
       showAddressSuccessMessage()
     })
@@ -395,11 +395,11 @@ function setupAddressFormEvents() {
 function updateAddressDisplay() {
   const addressSection = document.getElementById("addressSection")
   const checkoutButton = document.getElementById("checkoutButton")
-  
+
   if (!addressSection) return
-  
+
   const address = getAddressData()
-  
+
   if (address && isAddressComplete()) {
     // Endereço completo - mostrar dados e habilitar finalizar compra
     addressSection.innerHTML = `
@@ -419,7 +419,7 @@ function updateAddressDisplay() {
         </div>
       </div>
     `
-    
+
     // Habilitar botão de finalizar compra
     if (checkoutButton) {
       checkoutButton.disabled = false
@@ -442,7 +442,7 @@ function updateAddressDisplay() {
         </button>
       </div>
     `
-    
+
     // Desabilitar botão de finalizar compra
     if (checkoutButton) {
       checkoutButton.disabled = true
@@ -463,15 +463,15 @@ function showAddressSuccessMessage() {
     <i class="fas fa-check-circle"></i>
     <span>Endereço salvo com sucesso!</span>
   `
-  
+
   // Adicionar ao body
   document.body.appendChild(notification)
-  
+
   // Mostrar animação
   setTimeout(() => {
     notification.classList.add('show')
   }, 100)
-  
+
   // Remover após 3 segundos
   setTimeout(() => {
     notification.classList.remove('show')
@@ -489,7 +489,7 @@ function showAddressSuccessMessage() {
 function addAddressModalStyles() {
   // Verificar se os estilos já foram adicionados
   if (document.getElementById('addressModalStyles')) return
-  
+
   const style = document.createElement('style')
   style.id = 'addressModalStyles'
   style.textContent = `
@@ -506,7 +506,7 @@ function addAddressModalStyles() {
       z-index: 9999;
       animation: fadeIn 0.3s ease;
     }
-    
+
     .address-modal-content {
       background: white;
       border-radius: 8px;
@@ -517,7 +517,7 @@ function addAddressModalStyles() {
       overflow-y: auto;
       animation: slideIn 0.3s ease;
     }
-    
+
     .address-modal-header {
       background: #005f73;
       color: white;
@@ -527,7 +527,7 @@ function addAddressModalStyles() {
       justify-content: space-between;
       align-items: center;
     }
-    
+
     .address-modal-header h2 {
       margin: 0;
       font-size: 1.2rem;
@@ -535,7 +535,7 @@ function addAddressModalStyles() {
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .address-modal-close {
       background: none;
       border: none;
@@ -546,32 +546,32 @@ function addAddressModalStyles() {
       border-radius: 4px;
       transition: background 0.3s ease;
     }
-    
+
     .address-modal-close:hover {
       background: rgba(255, 255, 255, 0.1);
     }
-    
+
     .address-form {
       padding: 1.5rem;
     }
-    
+
     .form-group {
       margin-bottom: 1rem;
     }
-    
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
-    
+
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
       color: #333;
     }
-    
+
     .form-group input,
     .form-group textarea {
       width: 100%;
@@ -581,14 +581,14 @@ function addAddressModalStyles() {
       font-size: 1rem;
       transition: border-color 0.3s ease;
     }
-    
+
     .form-group input:focus,
     .form-group textarea:focus {
       outline: none;
       border-color: #005f73;
       box-shadow: 0 0 0 2px rgba(0, 95, 115, 0.1);
     }
-    
+
     .address-form-actions {
       display: flex;
       gap: 1rem;
@@ -597,7 +597,7 @@ function addAddressModalStyles() {
       padding-top: 1rem;
       border-top: 1px solid #eee;
     }
-    
+
     .address-info {
       background: #f8f9fa;
       border: 1px solid #e9ecef;
@@ -605,7 +605,7 @@ function addAddressModalStyles() {
       padding: 1rem;
       margin-bottom: 1rem;
     }
-    
+
     .address-header {
       display: flex;
       align-items: center;
@@ -614,11 +614,11 @@ function addAddressModalStyles() {
       color: #005f73;
       font-weight: 500;
     }
-    
+
     .address-header i {
       margin-right: 0.5rem;
     }
-    
+
     .edit-address-btn {
       background: none;
       border: none;
@@ -628,26 +628,26 @@ function addAddressModalStyles() {
       border-radius: 3px;
       transition: background 0.3s ease;
     }
-    
+
     .edit-address-btn:hover {
       background: rgba(0, 123, 255, 0.1);
     }
-    
+
     .address-details p {
       margin: 0.25rem 0;
       color: #333;
     }
-    
+
     .address-reference {
       color: #666;
       font-size: 0.9rem;
       margin-top: 0.5rem;
     }
-    
+
     .address-reference i {
       margin-right: 0.25rem;
     }
-    
+
     .address-required {
       background: #fff3cd;
       border: 1px solid #ffeaa7;
@@ -656,23 +656,23 @@ function addAddressModalStyles() {
       text-align: center;
       margin-bottom: 1rem;
     }
-    
+
     .address-icon {
       font-size: 2rem;
       color: #856404;
       margin-bottom: 1rem;
     }
-    
+
     .address-message h3 {
       margin: 0 0 0.5rem 0;
       color: #856404;
     }
-    
+
     .address-message p {
       margin: 0 0 1rem 0;
       color: #856404;
     }
-    
+
     .btn-address {
       background: #007bff;
       color: white;
@@ -686,11 +686,11 @@ function addAddressModalStyles() {
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .btn-address:hover {
       background: #0056b3;
     }
-    
+
     .address-notification {
       position: fixed;
       top: 20px;
@@ -707,42 +707,42 @@ function addAddressModalStyles() {
       transform: translateX(100%);
       transition: transform 0.3s ease;
     }
-    
+
     .address-notification.show {
       transform: translateX(0);
     }
-    
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
-    
+
     @keyframes slideIn {
       from { transform: translateY(-20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-    
+
     @media (max-width: 768px) {
       .form-row {
         grid-template-columns: 1fr;
       }
-      
+
       .address-form-actions {
         flex-direction: column;
       }
-      
+
       .address-modal-content {
         width: 95%;
         margin: 1rem;
       }
-      
+
       .address-notification {
         right: 10px;
         left: 10px;
       }
     }
   `
-  
+
   document.head.appendChild(style)
 }
 
