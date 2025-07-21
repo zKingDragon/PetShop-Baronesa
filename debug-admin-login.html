@@ -75,7 +75,7 @@
 </head>
 <body>
     <h1>Teste Admin Login - Pet Shop Baronesa</h1>
-    
+
     <!-- Mock Header -->
     <div class="debug-section">
         <h3>Mock Header (simulando o header real)</h3>
@@ -89,21 +89,21 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Status do Sistema -->
     <div class="debug-section">
         <h3>Status do Sistema</h3>
         <div id="system-status">Verificando...</div>
         <button onclick="checkSystem()">Verificar Sistema</button>
     </div>
-    
+
     <!-- Teste de Autenticação -->
     <div class="debug-section">
         <h3>Teste de Autenticação</h3>
         <div id="auth-status">Não testado</div>
         <button onclick="testAuth()">Testar Autenticação</button>
     </div>
-    
+
     <!-- Teste do Header -->
     <div class="debug-section">
         <h3>Teste do Header</h3>
@@ -111,14 +111,14 @@
         <button onclick="testHeader()">Testar Header</button>
         <button onclick="forceUpdateHeader()">Forçar Atualização do Header</button>
     </div>
-    
+
     <!-- Teste do Admin Middleware -->
     <div class="debug-section">
         <h3>Teste do Admin Middleware</h3>
         <div id="middleware-status">Não testado</div>
         <button onclick="testMiddleware()">Testar Middleware</button>
     </div>
-    
+
     <!-- Logs -->
     <div class="debug-section">
         <h3>Logs</h3>
@@ -134,33 +134,33 @@
     <script src="js/auth.js"></script>
     <script src="js/header-auth.js"></script>
     <script src="js/admin-middleware.js"></script>
-    
+
     <script>
         // Interceptar logs
         let logOutput = '';
         const originalLog = console.log;
         const originalError = console.error;
-        
+
         console.log = function(...args) {
             logOutput += `[LOG] ${args.join(' ')}\n`;
             document.getElementById('logs').textContent = logOutput;
             originalLog.apply(console, arguments);
         };
-        
+
         console.error = function(...args) {
             logOutput += `[ERROR] ${args.join(' ')}\n`;
             document.getElementById('logs').textContent = logOutput;
             originalError.apply(console, arguments);
         };
-        
+
         function showResult(elementId, type, message) {
             const element = document.getElementById(elementId);
             element.innerHTML = `<div class="status ${type}">${message}</div>`;
         }
-        
+
         function checkSystem() {
             showResult('system-status', 'info', 'Verificando sistema...');
-            
+
             let status = '<strong>Status do Sistema:</strong><br>';
             status += `Firebase: ${typeof firebase !== 'undefined' ? '✅' : '❌'}<br>`;
             status += `Auth: ${typeof auth !== 'undefined' ? '✅' : '❌'}<br>`;
@@ -169,50 +169,50 @@
             status += `getCurrentUser function: ${typeof getCurrentUser === 'function' ? '✅' : '❌'}<br>`;
             status += `getCurrentUserType function: ${typeof getCurrentUserType === 'function' ? '✅' : '❌'}<br>`;
             status += `headerAuth: ${typeof window.headerAuth !== 'undefined' ? '✅' : '❌'}<br>`;
-            
+
             showResult('system-status', 'info', status);
         }
-        
+
         async function testAuth() {
             showResult('auth-status', 'info', 'Testando autenticação...');
-            
+
             try {
                 const user = firebase.auth().currentUser;
                 if (!user) {
                     showResult('auth-status', 'error', 'Usuário não está logado');
                     return;
                 }
-                
+
                 const userType = await getCurrentUserType();
                 const isAdminResult = await isAdmin();
-                
+
                 let result = `<strong>Usuário:</strong> ${user.email}<br>`;
                 result += `<strong>UID:</strong> ${user.uid}<br>`;
                 result += `<strong>Tipo:</strong> ${userType}<br>`;
                 result += `<strong>É Admin:</strong> ${isAdminResult}<br>`;
-                
+
                 showResult('auth-status', isAdminResult ? 'success' : 'error', result);
-                
+
             } catch (error) {
                 showResult('auth-status', 'error', `Erro: ${error.message}`);
             }
         }
-        
+
         function testHeader() {
             showResult('header-status', 'info', 'Testando header...');
-            
+
             const authButtons = document.querySelector('.auth-buttons');
             const userDropdown = document.querySelector('.user-dropdown');
-            
+
             let result = '<strong>Elementos do Header:</strong><br>';
             result += `Auth Buttons: ${authButtons ? '✅' : '❌'}<br>`;
             result += `User Dropdown: ${userDropdown ? '✅' : '❌'}<br>`;
             result += `Auth Buttons Visible: ${authButtons && authButtons.style.display !== 'none' ? '✅' : '❌'}<br>`;
             result += `User Dropdown Visible: ${userDropdown && userDropdown.style.display !== 'none' ? '✅' : '❌'}<br>`;
-            
+
             showResult('header-status', 'info', result);
         }
-        
+
         function forceUpdateHeader() {
             if (typeof window.headerAuth !== 'undefined' && window.headerAuth.updateHeaderUI) {
                 window.headerAuth.updateHeaderUI();
@@ -221,14 +221,14 @@
                 showResult('header-status', 'error', 'headerAuth não disponível');
             }
         }
-        
+
         async function testMiddleware() {
             showResult('middleware-status', 'info', 'Testando middleware...');
-            
+
             try {
                 if (typeof window.adminMiddleware !== 'undefined') {
                     const hasAccess = await window.adminMiddleware.hasAdminAccess();
-                    showResult('middleware-status', hasAccess ? 'success' : 'error', 
+                    showResult('middleware-status', hasAccess ? 'success' : 'error',
                         `Admin Access: ${hasAccess ? 'Permitido' : 'Negado'}`);
                 } else {
                     showResult('middleware-status', 'error', 'Admin middleware não disponível');
@@ -237,19 +237,19 @@
                 showResult('middleware-status', 'error', `Erro: ${error.message}`);
             }
         }
-        
+
         function clearLogs() {
             logOutput = '';
             document.getElementById('logs').textContent = '';
         }
-        
+
         // Inicializar verificações
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 checkSystem();
             }, 2000);
         });
-        
+
         // Escutar mudanças de auth
         if (typeof firebase !== 'undefined') {
             firebase.auth().onAuthStateChanged(function(user) {

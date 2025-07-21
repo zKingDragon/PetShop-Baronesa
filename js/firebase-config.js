@@ -28,7 +28,7 @@ let auth
 async function initializeFirebase() {
   try {
     console.log('🔄 Inicializando Firebase...');
-    
+
     // Check if Firebase is already initialized
     if (!firebase.apps.length) {
       app = firebase.initializeApp(firebaseConfig)
