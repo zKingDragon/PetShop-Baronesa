@@ -8,7 +8,7 @@ O sistema de filtros de preço não estava considerando corretamente os preços 
 ### 1. Correção no `catalog.js`
 - **Arquivo**: `js/catalog.js`
 - **Linha 268-274**: Corrigida a lógica de fallback para cálculo de `priceRange`
-- **Antes**: Usava sempre `product.price` 
+- **Antes**: Usava sempre `product.price`
 - **Depois**: Usa `effectivePrice` (preço promocional se disponível, senão preço normal)
 
 ```javascript
