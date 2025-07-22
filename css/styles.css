@@ -3998,6 +3998,7 @@ body {
   line-height: 1.6;
   color: var(--black);
   background-color: #f9fafb;
+  margin-top: 5%;
 }
 
 a {

@@ -6,41 +6,104 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // Função para inicializar o formulário de agendamento
+// ...existing code...
+
+/**
+ * Inicializa formulário de agendamento de banho e tosa
+ */
 function initAppointmentForm() {
-  const appointmentForm = document.getElementById("appointmentForm")
+    const form = document.getElementById('appointmentForm');
+    if (!form) return;
 
-  if (appointmentForm) {
-    appointmentForm.addEventListener("submit", (e) => {
-      e.preventDefault()
+    console.log('✅ Formulário de agendamento encontrado');
 
-      // Coletar dados do formulário
-      const petName = document.getElementById("petName").value
-      const petType = document.getElementById("petType").value
-      const date = document.getElementById("date").value
-      const time = document.getElementById("time").value
-      const ownerName = document.getElementById("ownerName").value
-      const phone = document.getElementById("phone").value
-      const notes = document.getElementById("notes").value
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Coletar dados do formulário
+        const formData = new FormData(form);
+        const data = {
+            petName: formData.get('petName'),
+            petType: formData.get('petType'),
+            date: formData.get('date'),
+            ownerName: formData.get('ownerName'),
+            notes: formData.get('notes') || ''
+        };
 
-      // Construir a mensagem para o WhatsApp
-      const message = `
-Olá! Gostaria de agendar um horário para banho e tosa.
+        // Validar dados
+        if (!data.petName || !data.petType || !data.date || !data.ownerName) {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
 
-Nome do pet: ${petName}
-Tipo de pet: ${petType}
-Seria possível dia: ${date}?
-Nome do dono: ${ownerName}
-Observações: ${notes}
-            `
+        // Validar data (não pode ser no passado)
+        const selectedDate = new Date(data.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (selectedDate < today) {
+            alert('Por favor, selecione uma data futura.');
+            return;
+        }
 
-      // Codificar a mensagem para URL
-      const encodedMessage = encodeURIComponent(message)
+        // Criar mensagem para WhatsApp
+        const message = createWhatsAppMessage(data);
+        
+        // Abrir WhatsApp
+        openWhatsApp(message);
+    });
 
-      // Abrir o WhatsApp com a mensagem
-      window.open(`https://wa.me/551334559994?text=${encodedMessage}`, "_blank")
-    })
-  }
+    // Definir data mínima como hoje
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+    }
 }
+
+/**
+ * Cria mensagem formatada para WhatsApp
+ */
+function createWhatsAppMessage(data) {
+    const formattedDate = new Date(data.date).toLocaleDateString('pt-BR');
+    
+    let message = `🐾 *AGENDAMENTO BANHO & TOSA*\n\n`;
+    message += `👤 *Dono: * ${data.ownerName}\n`;
+    message += `🐕 *Pet: * ${data.petName}\n`;
+    message += `🐾 *Tipo de pet: * ${data.petType}\n`;
+    message += `📅 *Quais horários teriam para o dia: * ${formattedDate}\n`;
+    
+    if (data.notes) {
+        message += `📝 *Observações: * ${data.notes}\n`;
+    }
+    
+    message += `\nGostaria de confirmar o agendamento! 😊`;
+    
+    return encodeURIComponent(message);
+}
+
+/**
+ * Abre WhatsApp com mensagem pré-formatada
+ */
+function openWhatsApp(message) {
+    // Número do WhatsApp do Pet Shop (substitua pelo número real)
+    const phoneNumber = '5513996825624'; // Formato: código do país + DDD + número
+
+    // URL para WhatsApp Web
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
+    
+    // Abrir em nova aba
+    window.open(whatsappURL, '_blank');
+}
+
+// Inicializar quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    // ...existing code...
+    
+    // Inicializar formulário de agendamento se estiver na página
+    initAppointmentForm();
+});
+
 
 // Função para inicializar o formulário de cadastro
 function initCadastroForm() {

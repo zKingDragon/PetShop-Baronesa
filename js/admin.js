@@ -823,6 +823,8 @@ class AdminPanel {
   }
 }
 
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   // Aguarde a inicialização do Firebase e dos serviços
   if (typeof window.FirebaseConfig !== "undefined" && window.FirebaseConfig.initializeFirebase) {

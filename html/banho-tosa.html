@@ -61,44 +61,42 @@
                         </div>
 
                         <div class="appointment-card">
-                            <h2>Agende um Horário</h2>
-                            <form id="appointmentForm" class="appointment-form">
-                                <div class="form-group">
-                                    <label for="petName">Nome do Pet</label>
-                                    <input type="text" id="petName" name="petName" required>
-                                </div>
+    <h2>📅 Agendar Banho & Tosa</h2>
+    <form id="appointmentForm" class="appointment-form">
+        <div class="form-group">
+            <label for="ownerName">Seu nome</label>
+            <input type="text" id="ownerName" name="ownerName" required placeholder="Digite seu nome completo">
+        </div>
 
-                                <div class="form-group">
-                                    <label for="petType">Tipo de Pet</label>
-                                    <select id="petType" name="petType" required>
-                                        <option value="">Selecione...</option>
-                                        <option value="Cão">Cão</option>
-                                        <option value="Gato">Gato</option>
-                                        <option value="Outro">Outro</option>
-                                    </select>
-                                </div>
+        <div class="form-group">
+            <label for="petName">Nome do Pet </label>
+            <input type="text" id="petName" name="petName" required placeholder="Digite o nome do seu pet">
+        </div>
 
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="date">Data</label>
-                                        <div class="input-icon">
-                                            <input type="date" id="date" name="date" required>
-                                        </div>
-                                    </div>
+        <div class="form-group">
+            <label for="petType">Tipo de Pet </label>
+            <select id="petType" name="petType" required>
+                <option value="">Selecione o tipo</option>
+                <option value="Cão">Cão</option>
+                <option value="Gato">Gato</option>
+                <option value="Outro">Outro</option>
+            </select>
+        </div>
 
-                                <div class="form-group">
-                                    <label for="ownerName">Seu Nome</label>
-                                    <input type="text" id="ownerName" name="ownerName" required>
-                                </div>
+        <div class="form-group">
+            <label for="date">Data</label>
+            <input type="date" id="date" name="date" required>
+        </div>
 
-                                <div class="form-group">
-                                    <label for="notes">Observações (opcional)</label>
-                                    <textarea id="notes" name="notes" rows="3"></textarea>
-                                </div>
+        <div class="form-group">
+            <label for="notes">Observações (opcional)</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Alguma informação adicional sobre seu pet ou preferências..."></textarea>
+        </div>
 
-                                <button type="submit" class="btn-primary btn-block">Agendar via WhatsApp</button>
-                            </form>
-                        </div>
+        <button type="submit" class="btn-primary btn-block">Agendar via WhatsApp</button>
+    </form>
+</div>
+
                     </div>
 
                     <div class="faq-card">

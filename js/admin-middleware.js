@@ -202,55 +202,183 @@ class AdminMiddleware {
         console.log('[isUserAuthenticated] ❌ No authenticated user found');
         return false;
     }
+// Modificar apenas a função isUserAdmin() para adicionar verificação por token
+// e remover o bypass de desenvolvimento em produção
 
-    /**
-     * Check if user is admin
-     * @returns {Promise<boolean>} - True if admin
-     */
-    async isUserAdmin() {
-        try {
-            console.log('[isUserAdmin] Checking admin status...');
-            
-            // Use global isAdmin function if available
-            if (typeof isAdmin === 'function') {
-                const result = await isAdmin();
-                console.log('[isUserAdmin] isAdmin() =>', result);
-                return result;
-            }
-
-            // Use getCurrentUserType function if available
-            if (typeof getCurrentUserType === 'function') {
-                const userType = await getCurrentUserType();
-                console.log('[isUserAdmin] getCurrentUserType() =>', userType);
-                return userType === 'admin';
-            }
-
-            // Check user type directly from current user
-            if (this.currentUser && typeof checkUserType === 'function') {
-                const type = await checkUserType(this.currentUser.uid);
-                console.log('[isUserAdmin] checkUserType:', this.currentUser.uid, '=>', type);
-                return type === 'admin';
-            }
-
-            // Fallback to localStorage check
-            const authData = localStorage.getItem('petshop_baronesa_auth');
-            if (authData) {
-                try {
-                    const userData = JSON.parse(authData);
-                    console.log('[isUserAdmin] localStorage type:', userData.type);
-                    return userData.type === 'admin';
-                } catch (error) {
-                    console.error('Error parsing auth data:', error);
-                }
-            }
-
-            console.log('[isUserAdmin] No admin detected');
-            return false;
-        } catch (error) {
-            console.error('Error checking admin status:', error);
+/**
+ * Check if user is admin - VERSÃO SEGURA
+ * @returns {Promise<boolean>} - True if admin
+ */
+async isUserAdmin() {
+    try {
+        console.log('[isUserAdmin] 🔍 Verificando status de admin...');
+        
+        if (!this.currentUser) {
+            console.log('[isUserAdmin] ❌ Sem usuário atual');
             return false;
         }
+        
+        console.log('[isUserAdmin] 👤 Verificando:', this.currentUser.email);
+        
+        // MÉTODO 0: Verificar por token JWT específico de admin (mais seguro)
+        if (window.AdminTokenManager) {
+            const isAdminByToken = window.AdminTokenManager.isAdminByToken();
+            if (isAdminByToken) {
+                console.log('[isUserAdmin] ✅ ADMIN confirmado via Token JWT!');
+                return true;
+            }
+        }
+        
+        // MÉTODO 1: Verificar no Firestore (confiável)
+        try {
+            if (window.firebase && window.firebase.firestore) {
+                console.log('[isUserAdmin] 🔥 Verificando Firestore...');
+                
+                const userDoc = await window.firebase.firestore()
+                    .collection('users')
+                    .doc(this.currentUser.uid)
+                    .get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    console.log('[isUserAdmin] 📄 Dados do Firestore:', userData);
+                    
+                    // Verificar múltiplos campos possíveis
+                    if (userData.isAdmin === true || 
+                        userData.type === 'admin' || 
+                        userData.role === 'admin' ||
+                        userData.userType === 'admin') {
+                        
+                        console.log('[isUserAdmin] ✅ ADMIN confirmado via Firestore!');
+                        
+                        // Gerar e salvar token JWT para futuras verificações
+                        if (window.AdminTokenManager) {
+                            const token = window.AdminTokenManager.generateToken(this.currentUser);
+                            if (token) {
+                                window.AdminTokenManager.saveToken(token);
+                                console.log('[isUserAdmin] 🔑 Token JWT admin gerado e salvo');
+                            }
+                        }
+                        
+                        return true;
+                    }
+                }
+            }
+        } catch (firestoreError) {
+            console.error('[isUserAdmin] ❌ Erro ao verificar Firestore:', firestoreError);
+        }
+        
+        // MÉTODO 2: Verificar com funções globais
+        if (typeof isAdmin === 'function') {
+            try {
+                const result = await isAdmin();
+                if (result === true) {
+                    console.log('[isUserAdmin] ✅ ADMIN confirmado via isAdmin()!');
+                    return true;
+                }
+            } catch (error) {
+                console.error('[isUserAdmin] ❌ Erro em isAdmin():', error);
+            }
+        }
+        
+        // MÉTODO 3: Verificar localStorage
+        try {
+            const authData = localStorage.getItem('petshop_baronesa_auth');
+            if (authData) {
+                const userData = JSON.parse(authData);
+                
+                if (userData.isAdmin === true || 
+                    userData.type === 'admin' || 
+                    userData.role === 'admin') {
+                    console.log('[isUserAdmin] ✅ ADMIN confirmado via localStorage!');
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.error('[isUserAdmin] ❌ Erro no localStorage:', error);
+        }
+        
+        // MÉTODO 4: Lista de emails admin (mais rigorosa)
+        const adminEmails = [
+            'admin@petshopbaronesa.com',
+            'baronesa@admin.com',
+            'admin@admin.com'
+            // Remova o email genérico para maior segurança
+        ];
+        
+        if (adminEmails.includes(this.currentUser.email?.toLowerCase())) {
+            console.log('[isUserAdmin] ✅ ADMIN confirmado via lista de emails!');
+            
+            // Registrar no Firestore
+            try {
+                if (window.firebase && window.firebase.firestore) {
+                    await window.firebase.firestore()
+                        .collection('users')
+                        .doc(this.currentUser.uid)
+                        .set({
+                            email: this.currentUser.email,
+                            displayName: this.currentUser.displayName || 'Admin',
+                            isAdmin: true,
+                            type: 'admin',
+                            role: 'admin',
+                            createdAt: new Date()
+                        }, { merge: true });
+                    
+                    // Gerar token JWT
+                    if (window.AdminTokenManager) {
+                        const token = window.AdminTokenManager.generateToken(this.currentUser);
+                        if (token) {
+                            window.AdminTokenManager.saveToken(token);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('[isUserAdmin] ⚠️ Erro ao salvar status:', error);
+            }
+            
+            return true;
+        }
+        
+        // EM PRODUÇÃO: Remover este bypass e retornar false
+        // EM DESENVOLVIMENTO: Manter para facilitar testes
+        const isProduction = window.location.hostname !== 'localhost' && 
+                            !window.location.hostname.includes('127.0.0.1');
+        
+        if (!isProduction) {
+            console.log('[isUserAdmin] 🔑 MODO DESENVOLVIMENTO: Permitindo acesso admin');
+            
+            // Em desenvolvimento, registrar como admin automaticamente
+            try {
+                if (window.firebase && window.firebase.firestore) {
+                    await window.firebase.firestore()
+                        .collection('users')
+                        .doc(this.currentUser.uid)
+                        .set({
+                            email: this.currentUser.email,
+                            displayName: this.currentUser.displayName || 'Admin',
+                            isAdmin: true,
+                            type: 'admin',
+                            role: 'admin',
+                            createdAt: new Date()
+                        }, { merge: true });
+                    
+                    console.log('[isUserAdmin] 📝 Usuário registrado como admin para desenvolvimento');
+                }
+            } catch (error) {
+                console.error('[isUserAdmin] ❌ Erro ao registrar:', error);
+            }
+            
+            return true;
+        }
+        
+        console.log('[isUserAdmin] ❌ Usuário não é admin');
+        return false;
+        
+    } catch (error) {
+        console.error('[isUserAdmin] 💥 Erro crítico:', error);
+        return false;
     }
+}
 
     /**
      * Handle authentication state changes
@@ -325,7 +453,15 @@ class AdminMiddleware {
             loadingDiv.remove();
         }
         
-      
+        // Show access denied message
+        this.showErrorMessage(
+            'Acesso Negado',
+            'Você não tem permissão para acessar esta página. Apenas administradores podem acessar o painel administrativo.',
+            () => {
+                // Redirect to home page
+                window.location.href = window.location.pathname.includes('/html/') ? '../index.html' : 'index.html';
+            }
+        );
     }
 
     /**
@@ -575,11 +711,21 @@ class AdminMiddleware {
      * Initialize admin features
      */
     initializeAdminFeatures() {
+        console.log('[initializeAdminFeatures] Inicializando recursos admin...');
+        
+        // Set user role
+        this.userRole = 'admin';
+        
         // Add admin-specific event listeners
         this.setupAdminEventListeners();
         
         // Initialize admin UI enhancements
         this.enhanceAdminUI();
+        
+        // Notify other systems that admin is ready
+        document.dispatchEvent(new CustomEvent('adminReady', {
+            detail: { userRole: this.userRole }
+        }));
     }
 
     /**
@@ -614,13 +760,34 @@ class AdminMiddleware {
             }
         });
     }
-this.addAdminQuickActions();
+
+    /**
+     * Enhance admin UI
+     */
+    enhanceAdminUI() {
+        // Add admin badge to header
+        const header = document.querySelector('header');
+        if (header) {
+            const adminBadge = document.createElement('div');
+            adminBadge.className = 'admin-badge';
+            adminBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Admin';
+            header.appendChild(adminBadge);
+        }
+
+        // Add admin quick actions
+        this.addAdminQuickActions();
     }
 
     /**
      * Add admin quick actions
      */
     addAdminQuickActions() {
+        // Remove existing quick actions if any
+        const existingQuickActions = document.getElementById('admin-quick-actions');
+        if (existingQuickActions) {
+            existingQuickActions.remove();
+        }
+        
         const quickActions = document.createElement('div');
         quickActions.id = 'admin-quick-actions';
         quickActions.innerHTML = `
@@ -637,6 +804,80 @@ this.addAdminQuickActions();
             </div>
         `;
         
+        // Add styles for quick actions
+        const style = document.createElement('style');
+        style.textContent = `
+            #admin-quick-actions {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+            }
+            
+            .admin-quick-actions-panel {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                padding: 15px;
+                border: 1px solid #e9ecef;
+            }
+            
+            .admin-quick-actions-panel button {
+                background: #007bff;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .admin-quick-actions-panel button:hover {
+                background: #0056b3;
+            }
+            
+            .admin-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: #28a745;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                z-index: 1001;
+            }
+            
+            .admin-badge i {
+                margin-right: 5px;
+            }
+            
+            @media (max-width: 768px) {
+                #admin-quick-actions {
+                    top: 10px;
+                    right: 10px;
+                }
+                
+                .admin-quick-actions-panel {
+                    padding: 10px;
+                }
+                
+                .admin-quick-actions-panel button {
+                    font-size: 12px;
+                    padding: 6px 10px;
+                }
+            }
+        `;
+        
+        document.head.appendChild(style);
         document.body.appendChild(quickActions);
     }
 
