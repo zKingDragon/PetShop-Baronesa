@@ -128,11 +128,6 @@
                 <div id="admin-badge" class="admin-only" style="display: none;">
                     <!-- Admin badge will be added by JavaScript -->
                 </div>
-                
-                <!-- Admin quick actions -->
-                <div id="admin-quick-actions" class="admin-only" style="display: none;">
-                    <!-- Admin quick actions will be added by JavaScript -->
-                </div>
             </div>
         </section>
        
@@ -257,24 +252,17 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-    <!-- Scripts essenciais em ordem correta -->
     <script src="js/firebase-config.js"></script>
     <script src="js/services/auth-service.js"></script>
     <script src="js/toast.js"></script>
     
-    <!-- Carregar main.js primeiro para setup do header/footer -->
     <script src="js/main.js"></script>
     
-    <!-- Depois carregar sistemas de autenticação -->
     <script src="js/auth.js"></script>
     <script src="js/header-auth.js"></script>
-    <script src="js/footer-permissions.js"></script>
     
     <!-- Scripts complementares -->
     <script src="js/carousel.js"></script>
-    
-    <!-- Script de teste para debug -->
-    <script src="js/test-auth.js"></script>
     
     <script>
         // Inicialização específica para a página inicial

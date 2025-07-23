@@ -36,9 +36,6 @@
                         <li><a href="catalogo.html">Catálogo</a></li>
                         <li><a href="banho-tosa.html">Banho & Tosa</a></li>
                         <li><a href="carrinho.html">Carrinho</a></li>
-
-                        <!-- Links apenas para admin -->
-                        <li class="admin-only"><a href="admin.html">Painel Admin</a></li>
                     </ul>
                 </div>
 
@@ -57,37 +54,6 @@
                             <i class="fab fa-facebook-f"></i>
                         </a>
                     </div>
-                    
-                    <!-- Links de usuário baseados em permissões -->
-                    <div class="user-links">
-                        <!-- Para usuários não logados -->
-                        <div class="guest-only">
-                            <a href="admin-login.html" class="footer-user-link">
-                                <i class="fas fa-sign-in-alt"></i>
-                                <span>Entrar</span>
-                            </a>
-                        </div>
-                        
-                        <!-- Para usuários logados -->
-                        <div class="user-only">
-                            <a href="#" class="footer-user-link" id="userProfileLink">
-                                <i class="fas fa-user"></i>
-                                <span id="footerUserName">Minha Conta</span>
-                            </a>
-                            <a href="#" class="footer-user-link" id="footerLogoutLink">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Sair</span>
-                            </a>
-                        </div>
-                        
-                        <!-- Para admin -->
-                        <div class="admin-only">
-                            <a href="admin.html" class="footer-user-link">
-                                <i class="fas fa-cog"></i>
-                                <span>Administração</span>
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -98,9 +64,3 @@
             </div>
         </div>
     </footer>
-
-    <!-- Footer Permissions CSS -->
-    <link rel="stylesheet" href="../css/footer-permissions.css">
-    
-    <!-- Footer Permissions JavaScript -->
-    <script src="../js/footer-permissions.js"></script>

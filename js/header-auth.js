@@ -90,7 +90,7 @@ function createUserDropdown() {
             <i class="fas fa-chevron-down"></i>
         </div>
         <div class="user-dropdown-menu">
-            <a href="${pathPrefix}admin.html" class="dropdown-item admin-only">
+            <a href="${pathPrefix}admin.html" class="dropdown-item">
                 <i class="fas fa-cog"></i> Painel Admin
             </a>
             <hr class="dropdown-divider">

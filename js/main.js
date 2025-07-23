@@ -218,7 +218,7 @@ function initPageTransitions() {
     setTimeout(() => {
       loader.classList.add('hidden');
       setTimeout(() => loader.remove(), );
-    }, 200);
+    }, 400);
   }
 }
 
@@ -503,13 +503,7 @@ class UIPermissionManager {
         e.preventDefault()
         await this.logout()
       })
-    } else {
-      // Adiciona login no menu mobile para guests
-      const loginItem = document.createElement('li')
-      loginItem.className = 'mobile-user-item'
-      loginItem.innerHTML = '<a href="../html/admin-login.html">Login Admin</a>'
-      nav.appendChild(loginItem)
-    }
+    } 
   }
 
   /**

@@ -1,6 +1,6 @@
 /**
  * Sistema de Proteção de Rotas Administrativas
- * Protege páginas sensíveis com token secreto
+ * Protege páginas com token (login) e autenticação (admin)
  */
 
 (function() {
@@ -8,123 +8,144 @@
 
 // Configurações de segurança
 const SECURITY_CONFIG = {
-    // Token secreto - ALTERE ESTE TOKEN PARA ALGO ÚNICO
-    SECRET_TOKEN: 'PSB_ADM_2024_7x9k2mB8nQ5wE3r1vT6y',
+    // Token secreto para página de login - ALTERE ESTE TOKEN PARA ALGO ÚNICO
+    LOGIN_TOKEN: 'PSB_LOGIN_2024_SecretKey789',
     
-    // Páginas protegidas (adicione mais conforme necessário)
-    PROTECTED_PAGES: [
-        'admin-login.html',
-        'admin.html',
-        'user-management.html'
-    ],
+    // Configurações de proteção por tipo
+    PROTECTION_TYPES: {
+        TOKEN: 'token',        // Requer token na URL
+        AUTH: 'auth'           // Requer estar logado
+    },
     
-    // Página de redirecionamento para acesso negado
+    // Páginas protegidas e seus tipos de proteção
+    PROTECTED_PAGES: {
+        'admin-login.html': 'token',     // Protegida por token
+        'admin.html': 'auth',            // Protegida por autenticação
+        'user-management.html': 'auth'   // Protegida por autenticação
+    },
+    
+    // Configurações gerais
     REDIRECT_PAGE: '../index.html',
-    
-    // Tempo de validade do token em sessão (em minutos)
-    TOKEN_VALIDITY: 60,
-    
-    // Nome do parâmetro na URL
+    TOKEN_VALIDITY: 120,  // 2 horas para sessão de login
     TOKEN_PARAM: 'access_key',
+    REDIRECT_DELAY: 300,
+    CLEAR_CONSOLE: false,
     
-    // Configurações adicionais de segurança
-    BLOCK_DEVTOOLS: false, // Bloquear DevTools (não recomendado para desenvolvimento)
-    CLEAR_CONSOLE: false,  // Limpar console (não recomendado para desenvolvimento)
-    REDIRECT_DELAY: 500    // Delay antes do redirecionamento (ms)
+    // URLs de redirecionamento
+    LOGIN_REDIRECT: 'login-required.html'  // Página para mostrar "login necessário"
 };
 
 /**
- * Verifica se a página atual é protegida
- * @returns {boolean}
+ * Obtém o nome da página atual
  */
-function isProtectedPage() {
-    const currentPage = window.location.pathname.split('/').pop();
-    return SECURITY_CONFIG.PROTECTED_PAGES.includes(currentPage);
+function getCurrentPageName() {
+    const path = window.location.pathname;
+    return path.substring(path.lastIndexOf('/') + 1);
 }
 
 /**
- * Obtém o token da URL
- * @returns {string|null}
+ * Verifica se o usuário está logado
  */
-function getTokenFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(SECURITY_CONFIG.TOKEN_PARAM);
-}
-
-/**
- * Verifica se o token é válido
- * @param {string} token 
- * @returns {boolean}
- */
-function isValidToken(token) {
-    return token === SECURITY_CONFIG.SECRET_TOKEN;
-}
-
-/**
- * Salva o token válido na sessão com timestamp
- * @param {string} token 
- */
-function saveTokenSession(token) {
-    const sessionData = {
-        token: token,
-        timestamp: Date.now(),
-        validity: SECURITY_CONFIG.TOKEN_VALIDITY * 60 * 1000 // converter para ms
-    };
-    
-    sessionStorage.setItem('admin_session_token', JSON.stringify(sessionData));
-    
-    console.log('🔐 Token de sessão salvo com validade de', SECURITY_CONFIG.TOKEN_VALIDITY, 'minutos');
-}
-
-/**
- * Verifica se existe uma sessão válida
- * @returns {boolean}
- */
-function hasValidSession() {
+function isUserLoggedIn() {
     try {
-        const sessionData = sessionStorage.getItem('admin_session_token');
-        if (!sessionData) return false;
-        
-        const data = JSON.parse(sessionData);
-        const now = Date.now();
-        const isExpired = (now - data.timestamp) > data.validity;
-        
-        if (isExpired) {
-            sessionStorage.removeItem('admin_session_token');
-            console.log('⏰ Sessão expirada, removendo token');
-            return false;
+        // Verifica Firebase Auth
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                console.log('✅ Usuário logado via Firebase:', user.email);
+                return true;
+            }
         }
         
-        return isValidToken(data.token);
+        // Verifica localStorage como fallback
+        const authData = localStorage.getItem('petshop_baronesa_auth');
+        if (authData) {
+            try {
+                const parsed = JSON.parse(authData);
+                if (parsed.uid && parsed.email) {
+                    console.log('✅ Usuário logado via localStorage:', parsed.email);
+                    return true;
+                }
+            } catch (e) {}
+        }
+        
+        // Verifica sessionStorage
+        const sessionAuth = sessionStorage.getItem('admin_authenticated');
+        if (sessionAuth === 'true') {
+            console.log('✅ Usuário logado via sessionStorage');
+            return true;
+        }
+        
+        console.log('❌ Usuário não está logado');
+        return false;
     } catch (error) {
-        console.error('❌ Erro ao verificar sessão:', error);
-        sessionStorage.removeItem('admin_session_token');
+        console.warn('⚠️ Erro ao verificar autenticação:', error);
         return false;
     }
 }
 
 /**
- * Remove o token da URL mantendo outros parâmetros
+ * Verifica se o token está presente na URL
  */
-function cleanURL() {
-    const url = new URL(window.location);
-    url.searchParams.delete(SECURITY_CONFIG.TOKEN_PARAM);
+function hasValidToken() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get(SECURITY_CONFIG.TOKEN_PARAM);
     
-    // Atualizar URL sem recarregar a página
-    window.history.replaceState({}, document.title, url.toString());
+    if (token === SECURITY_CONFIG.LOGIN_TOKEN) {
+        console.log('✅ Token válido encontrado');
+        // Salvar token válido na sessão
+        sessionStorage.setItem('login_token_valid', 'true');
+        sessionStorage.setItem('login_token_time', Date.now().toString());
+        return true;
+    }
     
-    console.log('🧹 URL limpa, token removido da visualização');
+    // Verificar se já tem token válido na sessão
+    const storedValid = sessionStorage.getItem('login_token_valid');
+    const storedTime = sessionStorage.getItem('login_token_time');
+    
+    if (storedValid === 'true' && storedTime) {
+        const elapsed = Date.now() - parseInt(storedTime);
+        const maxAge = SECURITY_CONFIG.TOKEN_VALIDITY * 60 * 1000; // converter para ms
+        
+        if (elapsed < maxAge) {
+            console.log('✅ Token da sessão ainda válido');
+            return true;
+        } else {
+            console.log('⏰ Token da sessão expirado');
+            sessionStorage.removeItem('login_token_valid');
+            sessionStorage.removeItem('login_token_time');
+        }
+    }
+    
+    console.log('❌ Token inválido ou ausente');
+    return false;
 }
 
 /**
- * Redireciona para página de acesso negado
+ * Limpa o token da URL sem recarregar a página
  */
-function redirectToAccessDenied() {
-    console.log('🚫 Acesso negado, redirecionando...');
+function cleanTokenFromURL() {
+    if (window.location.search.includes(SECURITY_CONFIG.TOKEN_PARAM)) {
+        const url = new URL(window.location);
+        url.searchParams.delete(SECURITY_CONFIG.TOKEN_PARAM);
+        window.history.replaceState({}, document.title, url.pathname + url.search);
+        console.log('🧹 Token removido da URL');
+    }
+}
+
+/**
+ * Redireciona para página especificada
+ */
+function redirectTo(page, reason = '') {
+    console.log(`� Redirecionando para: ${page} ${reason ? '(' + reason + ')' : ''}`);
     
-    // Usar delay configurável
     setTimeout(() => {
-        window.location.href = SECURITY_CONFIG.REDIRECT_PAGE;
+        if (page.startsWith('http') || page.startsWith('/')) {
+            window.location.href = page;
+        } else {
+            // Caminho relativo
+            window.location.href = page;
+        }
     }, SECURITY_CONFIG.REDIRECT_DELAY);
 }
 
@@ -177,133 +198,178 @@ function showAccessDeniedMessage() {
 }
 
 /**
- * Oculta completamente o conteúdo da página
+ * Bloqueia acesso à página
  */
-function hidePageContent() {
+function blockAccess(reason) {
+    console.log(`🚫 Acesso bloqueado: ${reason}`);
+    
     // Ocultar todo o conteúdo imediatamente
     document.documentElement.style.display = 'none';
     
-    // Adicionar estilo inline para garantir que nada seja visível
-    const style = document.createElement('style');
-    style.textContent = `
-        * { display: none !important; }
-        body { background: #000 !important; }
-    `;
-    document.head.appendChild(style);
+    // Limpar conteúdo
+    if (document.body) {
+        document.body.innerHTML = '<div style="display:none;">Acesso negado</div>';
+    }
+    
+    // Redirecionar
+    if (reason.includes('login')) {
+        redirectTo(SECURITY_CONFIG.REDIRECT_PAGE, 'login necessário');
+    } else {
+        redirectTo(SECURITY_CONFIG.REDIRECT_PAGE, 'token inválido');
+    }
 }
 
 /**
- * Restaura a visibilidade da página
+ * Verifica proteção da página atual
  */
-function showPageContent() {
-    document.documentElement.style.display = 'block';
+function checkPageProtection() {
+    const currentPage = getCurrentPageName();
+    const protectionType = SECURITY_CONFIG.PROTECTED_PAGES[currentPage];
     
-    // Remove estilos de ocultação se existirem
-    const hideStyles = document.head.querySelectorAll('style');
-    hideStyles.forEach(style => {
-        if (style.textContent.includes('display: none !important')) {
-            style.remove();
+    if (!protectionType) {
+        console.log('ℹ️ Página não protegida');
+        document.documentElement.style.display = '';
+        return;
+    }
+    
+    console.log(`� Verificando proteção para: ${currentPage} (tipo: ${protectionType})`);
+    
+    if (protectionType === 'token') {
+        // Página protegida por token (admin-login.html)
+        if (!hasValidToken()) {
+            blockAccess('Token inválido ou ausente');
+            return;
         }
-    });
+        
+        // Token válido - limpar da URL e continuar
+        cleanTokenFromURL();
+        console.log('✅ Acesso liberado - token válido');
+        
+    } else if (protectionType === 'auth') {
+        // Página protegida por autenticação (admin.html, etc.)
+        if (!isUserLoggedIn()) {
+            blockAccess('Login necessário');
+            return;
+        }
+        
+        console.log('✅ Acesso liberado - usuário autenticado');
+    }
+    
+    // Se chegou até aqui, liberar acesso
+    document.documentElement.style.display = '';
 }
 
 /**
- * Verifica e protege a página atual
+ * Funções utilitárias públicas
  */
-function protectPage() {
-    // Só proteger se for uma página protegida
-    if (!isProtectedPage()) {
-        console.log('ℹ️ Página não protegida, continuando normalmente');
-        return;
-    }
-    
-    console.log('🛡️ Página protegida detectada, verificando acesso...');
-    
-    // Ocultar conteúdo imediatamente enquanto verifica
-    hidePageContent();
-    
-    // Verificar se já tem sessão válida
-    if (hasValidSession()) {
-        console.log('✅ Sessão válida encontrada, permitindo acesso');
-        showPageContent();
-        return;
-    }
-    
-    // Verificar token na URL
-    const token = getTokenFromURL();
-    
-    if (token && isValidToken(token)) {
-        console.log('✅ Token válido fornecido, criando sessão');
-        saveTokenSession(token);
-        cleanURL();
-        showPageContent();
-        return;
-    }
-    
-    // Acesso negado
-    console.log('🚫 Acesso negado - token inválido ou ausente');
-    
-    // Escolha uma das opções abaixo:
-    
-    // Opção 1: Redirecionar para página inicial
-    redirectToAccessDenied();
-    
-    // Opção 2: Mostrar página de erro (descomente a linha abaixo e comente a de cima)
-    // showAccessDeniedMessage();
-}
-
-/**
- * Gera uma URL de acesso com token (função de desenvolvimento)
- */
-function generateAccessURL() {
-    const currentURL = new URL(window.location);
-    currentURL.searchParams.set(SECURITY_CONFIG.TOKEN_PARAM, SECURITY_CONFIG.SECRET_TOKEN);
-    return currentURL.toString();
-}
-
-/**
- * Limpa a sessão (logout de segurança)
- */
-function clearSecuritySession() {
-    sessionStorage.removeItem('admin_session_token');
-    console.log('🧹 Sessão de segurança limpa');
-}
-
-// Exportar funções para uso global (apenas em desenvolvimento)
 window.RouteProtection = {
-    generateAccessURL,
-    clearSecuritySession,
-    isProtectedPage,
-    hasValidSession,
-    
-    // Função para desenvolvedores obterem a URL de acesso
-    getAdminURL: function() {
-        const baseURL = window.location.origin + window.location.pathname;
-        return `${baseURL}?${SECURITY_CONFIG.TOKEN_PARAM}=${SECURITY_CONFIG.SECRET_TOKEN}`;
+    /**
+     * Gera URL com token para página de login
+     */
+    getLoginURL: function() {
+        const baseURL = window.location.origin;
+        const path = window.location.pathname.includes('/html/') ? 
+            'admin-login.html' : 'html/admin-login.html';
+        return `${baseURL}/${path}?${SECURITY_CONFIG.TOKEN_PARAM}=${SECURITY_CONFIG.LOGIN_TOKEN}`;
     },
     
-    // Função para gerar URLs de outras páginas protegidas
-    getAdminURLFor: function(page) {
-        const baseURL = window.location.origin + '/html/' + page;
-        return `${baseURL}?${SECURITY_CONFIG.TOKEN_PARAM}=${SECURITY_CONFIG.SECRET_TOKEN}`;
+    /**
+     * Verifica se usuário pode acessar área admin
+     */
+    canAccessAdmin: function() {
+        return isUserLoggedIn();
     },
     
-    // Informações do sistema (apenas para debug)
+    /**
+     * Redireciona para área admin (se autenticado)
+     */
+    goToAdmin: function() {
+        if (this.canAccessAdmin()) {
+            const path = window.location.pathname.includes('/html/') ? 
+                'admin.html' : 'html/admin.html';
+            window.location.href = path;
+        } else {
+            alert('Você precisa estar logado para acessar esta área.');
+        }
+    },
+    
+    /**
+     * Limpa sessão de segurança
+     */
+    clearSecuritySession: function() {
+        sessionStorage.removeItem('login_token_valid');
+        sessionStorage.removeItem('login_token_time');
+        sessionStorage.removeItem('admin_authenticated');
+        console.log('🧹 Sessão de segurança limpa');
+    },
+    
+    /**
+     * Obtém configurações (sem expor token)
+     */
     getConfig: function() {
         return {
             protectedPages: SECURITY_CONFIG.PROTECTED_PAGES,
             tokenValidity: SECURITY_CONFIG.TOKEN_VALIDITY,
-            tokenParam: SECURITY_CONFIG.TOKEN_PARAM
+            redirectPage: SECURITY_CONFIG.REDIRECT_PAGE
         };
+    },
+    
+    /**
+     * Verifica se tem sessão válida
+     */
+    hasValidSession: function() {
+        const currentPage = getCurrentPageName();
+        const protectionType = SECURITY_CONFIG.PROTECTED_PAGES[currentPage];
+        
+        if (protectionType === 'token') {
+            return hasValidToken();
+        } else if (protectionType === 'auth') {
+            return isUserLoggedIn();
+        }
+        
+        return true; // Página não protegida
+    },
+    
+    /**
+     * Simular login (para testes)
+     */
+    simulateLogin: function() {
+        sessionStorage.setItem('admin_authenticated', 'true');
+        console.log('🧪 Login simulado ativado');
+    },
+    
+    /**
+     * Simular logout (para testes)
+     */
+    simulateLogout: function() {
+        sessionStorage.removeItem('admin_authenticated');
+        console.log('🧪 Logout simulado ativado');
     }
 };
 
-// Executar proteção imediatamente
-protectPage();
+// Executar verificação imediatamente
+(function() {
+    // Ocultar conteúdo imediatamente até verificação
+    document.documentElement.style.display = 'none';
+    
+    // Verificar proteção quando DOM estiver pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkPageProtection);
+    } else {
+        checkPageProtection();
+    }
+})();
 
-// Também executar quando a página carregar completamente
-document.addEventListener('DOMContentLoaded', protectPage);
+// Limpar sessão quando fechar aba/navegador
+window.addEventListener('beforeunload', function() {
+    // Manter apenas se estiver logado
+    if (!isUserLoggedIn()) {
+        RouteProtection.clearSecuritySession();
+    }
+});
 
 console.log('🛡️ Sistema de proteção de rotas inicializado');
+console.log('🔑 Use: RouteProtection.getLoginURL() para gerar link de login');
+console.log('👤 Use: RouteProtection.canAccessAdmin() para verificar acesso admin');
 
 })();

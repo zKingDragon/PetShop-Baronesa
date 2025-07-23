@@ -1,83 +1,99 @@
-# Sistema de Proteção de Rotas - Pet Shop Baronesa
+# 🔐 Sistema de Proteção de Rotas - Pet Shop Baronesa
 
-## 🔐 Segurança Implementada
+## � Estrutura de Proteção
 
-O sistema agora possui proteção avançada para páginas administrativas sensíveis.
+### 🔑 Proteção por Token (admin-login.html)
+- **Acesso:** Apenas com token na URL
+- **URL:** `/html/admin-login.html?access_key=PSB_LOGIN_2024_SecretKey789`
+- **Finalidade:** Permitir acesso ao formulário de login via link compartilhado
+
+### 🛡️ Proteção por Autenticação (admin.html)
+- **Acesso:** Apenas usuários logados
+- **URL:** `/html/admin.html` (sem token necessário)
+- **Finalidade:** Área administrativa restrita a usuários autenticados
+
+## 🚀 Como Usar
+
+### Para Administradores
+1. **Primeiro Acesso:** Use o link com token para acessar a página de login
+2. **Fazer Login:** Entre com suas credenciais na página de login
+3. **Acessar Painel:** Após login, acesse admin.html normalmente
+
+### Para Desenvolvedores
+```javascript
+// Gerar link de login
+RouteProtection.getLoginURL()
+
+// Verificar se pode acessar admin
+RouteProtection.canAccessAdmin()
+
+// Ir para painel admin (se logado)
+RouteProtection.goToAdmin()
+
+// Limpar sessão
+RouteProtection.clearSecuritySession()
+```
+
+## � Configuração
+
+### Token de Login
+```javascript
+LOGIN_TOKEN: 'PSB_LOGIN_2024_SecretKey789'
+```
 
 ### Páginas Protegidas
-
-- ✅ `admin-login.html` - Login administrativo
-- ✅ `admin.html` - Painel administrativo principal
-- ⚠️ `user-management.html` - (se existir, adicionar proteção)
-
-### Como Funciona
-
-1. **Token Secreto**: `BARONESA_ADMIN_2025_SECURE_TOKEN`
-2. **Verificação Automática**: O script executa imediatamente ao carregar a página
-3. **Sessão Temporária**: Token válido por 60 minutos após acesso autorizado
-4. **Redirecionamento**: Usuários não autorizados são redirecionados para a página inicial
-
-### 🚀 Como Acessar (Para Desenvolvedores)
-
-#### Método 1: URL com Token
-```
-http://localhost/html/admin-login.html?access_key=PSB_ADM_2024_7x9k2mB8nQ5wE3r1vT6y
-```
-
-#### Método 2: Console do Navegador
-1. Abra o console do navegador (F12)
-2. Digite: `RouteProtection.getAdminURL()`
-3. Copie a URL gerada e acesse
-
-#### Método 3: URLs para Páginas Específicas
 ```javascript
-// No console do navegador
-RouteProtection.getAdminURLFor('admin-login.html')
-RouteProtection.getAdminURLFor('admin.html')
+PROTECTED_PAGES: {
+    'admin-login.html': 'token',     // Requer token
+    'admin.html': 'auth',            // Requer login
+    'user-management.html': 'auth'   // Requer login
+}
 ```
 
-### 🛠️ Configurações de Segurança
+## �️ Recursos de Segurança
 
-O arquivo `js/route-protection.js` contém:
+✅ **Bloqueio Imediato:** Conteúdo oculto antes da verificação
+✅ **Limpeza de URL:** Token removido automaticamente após validação
+✅ **Sessão Temporária:** Token válido por 2 horas
+✅ **Redirecionamento:** Acesso negado redireciona para página inicial
+✅ **Múltiplas Verificações:** Firebase Auth, localStorage, sessionStorage
 
-```javascript
-const SECURITY_CONFIG = {
-    SECRET_TOKEN: 'PSB_ADM_2024_7x9k2mB8nQ5wE3r1vT6y', // ⚠️ ALTERE EM PRODUÇÃO
-    PROTECTED_PAGES: ['admin-login.html', 'admin.html'],
-    REDIRECT_PAGE: '../index.html',
-    TOKEN_VALIDITY: 60, // minutos
-    TOKEN_PARAM: 'access_key',
-    REDIRECT_DELAY: 500 // ms
-};
+## ⚠️ Importante
+
+1. **ALTERE O TOKEN** antes do deploy (`PSB_LOGIN_2024_SecretKey789`)
+2. **Mantenha Secreto:** Nunca compartilhe o token publicamente
+3. **Link Seguro:** Compartilhe apenas com administradores autorizados
+
+## 📱 Fluxo de Acesso
+
 ```
-
-### 🔧 Para Alterar o Token
-
-1. Edite o arquivo `js/route-protection.js`
-2. Modifique a constante `SECRET_TOKEN`
-3. **IMPORTANTE**: Use um token único e complexo em produção
-
-### 🎯 Exemplo de Token Seguro
-
-```javascript
-SECRET_TOKEN: 'PSB_' + btoa(Date.now().toString()).replace(/=/g, '') + '_ADMIN'
+1. Admin recebe link: admin-login.html?access_key=TOKEN
+2. Sistema verifica token → Acesso liberado
+3. Admin faz login no formulário
+4. Após login → admin.html acessível normalmente
+5. Sem login → admin.html bloqueado
 ```
 
 ### 📋 Comandos Úteis (Console)
 
 ```javascript
-// Gerar URL de acesso para página atual
-RouteProtection.getAdminURL()
+// Gerar URL de login com token
+RouteProtection.getLoginURL()
 
-// Gerar URL para página específica
-RouteProtection.getAdminURLFor('admin-login.html')
-RouteProtection.getAdminURLFor('admin.html')
+// Verificar se pode acessar admin
+RouteProtection.canAccessAdmin()
+
+// Ir para área admin (se logado)
+RouteProtection.goToAdmin()
+
+// Simular login (para teste)
+RouteProtection.simulateLogin()
+
+// Simular logout (para teste)
+RouteProtection.simulateLogout()
 
 // Limpar sessão (forçar re-autenticação)
 RouteProtection.clearSecuritySession()
-
-// Verificar se página é protegida
-RouteProtection.isProtectedPage()
 
 // Verificar se tem sessão válida
 RouteProtection.hasValidSession()
@@ -95,7 +111,7 @@ RouteProtection.getConfig()
 
 ### 🔄 Sessão e Validade
 
-- **Duração**: 60 minutos por padrão
+- **Duração Login Token**: 120 minutos por padrão
 - **Armazenamento**: SessionStorage (limpa ao fechar aba)
 - **Renovação**: Automática enquanto a aba estiver ativa
 - **Limpeza**: Automática ao expirar ou fechar navegador
@@ -105,12 +121,14 @@ RouteProtection.getConfig()
 Se você perder acesso:
 
 1. **Método 1**: Temporariamente comente a linha de proteção no HTML
-2. **Método 2**: Acesse via console com `RouteProtection.getAdminURL()`
+2. **Método 2**: Acesse via console com `RouteProtection.getLoginURL()`
 3. **Método 3**: Edite o token no arquivo `route-protection.js`
+4. **Método 4**: Use `RouteProtection.simulateLogin()` para teste
 
 ### 📊 Status da Implementação
 
-- ✅ Proteção ativa
+- ✅ Proteção ativa por token (login)
+- ✅ Proteção ativa por autenticação (admin)
 - ✅ Redirecionamento funcional
 - ✅ Sessão temporária
 - ✅ Limpeza automática de URL
@@ -120,4 +138,4 @@ Se você perder acesso:
 ---
 
 **Desenvolvido para Pet Shop Baronesa** 🐾
-*Sistema de segurança implementado em 2024*
+*Sistema de segurança atualizado em 2024*
