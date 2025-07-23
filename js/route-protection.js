@@ -10,23 +10,23 @@
 const SECURITY_CONFIG = {
     // Token secreto - ALTERE ESTE TOKEN PARA ALGO ÚNICO
     SECRET_TOKEN: 'PSB_ADM_2024_7x9k2mB8nQ5wE3r1vT6y',
-    
+
     // Páginas protegidas (adicione mais conforme necessário)
     PROTECTED_PAGES: [
         'admin-login.html',
         'admin.html',
         'user-management.html'
     ],
-    
+
     // Página de redirecionamento para acesso negado
     REDIRECT_PAGE: '../index.html',
-    
+
     // Tempo de validade do token em sessão (em minutos)
     TOKEN_VALIDITY: 60,
-    
+
     // Nome do parâmetro na URL
     TOKEN_PARAM: 'access_key',
-    
+
     // Configurações adicionais de segurança
     BLOCK_DEVTOOLS: false, // Bloquear DevTools (não recomendado para desenvolvimento)
     CLEAR_CONSOLE: false,  // Limpar console (não recomendado para desenvolvimento)
@@ -53,7 +53,7 @@ function getTokenFromURL() {
 
 /**
  * Verifica se o token é válido
- * @param {string} token 
+ * @param {string} token
  * @returns {boolean}
  */
 function isValidToken(token) {
@@ -62,7 +62,7 @@ function isValidToken(token) {
 
 /**
  * Salva o token válido na sessão com timestamp
- * @param {string} token 
+ * @param {string} token
  */
 function saveTokenSession(token) {
     const sessionData = {
@@ -70,9 +70,9 @@ function saveTokenSession(token) {
         timestamp: Date.now(),
         validity: SECURITY_CONFIG.TOKEN_VALIDITY * 60 * 1000 // converter para ms
     };
-    
+
     sessionStorage.setItem('admin_session_token', JSON.stringify(sessionData));
-    
+
     console.log('🔐 Token de sessão salvo com validade de', SECURITY_CONFIG.TOKEN_VALIDITY, 'minutos');
 }
 
@@ -84,17 +84,17 @@ function hasValidSession() {
     try {
         const sessionData = sessionStorage.getItem('admin_session_token');
         if (!sessionData) return false;
-        
+
         const data = JSON.parse(sessionData);
         const now = Date.now();
         const isExpired = (now - data.timestamp) > data.validity;
-        
+
         if (isExpired) {
             sessionStorage.removeItem('admin_session_token');
             console.log('⏰ Sessão expirada, removendo token');
             return false;
         }
-        
+
         return isValidToken(data.token);
     } catch (error) {
         console.error('❌ Erro ao verificar sessão:', error);
@@ -109,10 +109,10 @@ function hasValidSession() {
 function cleanURL() {
     const url = new URL(window.location);
     url.searchParams.delete(SECURITY_CONFIG.TOKEN_PARAM);
-    
+
     // Atualizar URL sem recarregar a página
     window.history.replaceState({}, document.title, url.toString());
-    
+
     console.log('🧹 URL limpa, token removido da visualização');
 }
 
@@ -121,7 +121,7 @@ function cleanURL() {
  */
 function redirectToAccessDenied() {
     console.log('🚫 Acesso negado, redirecionando...');
-    
+
     // Usar delay configurável
     setTimeout(() => {
         window.location.href = SECURITY_CONFIG.REDIRECT_PAGE;
@@ -182,7 +182,7 @@ function showAccessDeniedMessage() {
 function hidePageContent() {
     // Ocultar todo o conteúdo imediatamente
     document.documentElement.style.display = 'none';
-    
+
     // Adicionar estilo inline para garantir que nada seja visível
     const style = document.createElement('style');
     style.textContent = `
@@ -197,7 +197,7 @@ function hidePageContent() {
  */
 function showPageContent() {
     document.documentElement.style.display = 'block';
-    
+
     // Remove estilos de ocultação se existirem
     const hideStyles = document.head.querySelectorAll('style');
     hideStyles.forEach(style => {
@@ -216,22 +216,22 @@ function protectPage() {
         console.log('ℹ️ Página não protegida, continuando normalmente');
         return;
     }
-    
+
     console.log('🛡️ Página protegida detectada, verificando acesso...');
-    
+
     // Ocultar conteúdo imediatamente enquanto verifica
     hidePageContent();
-    
+
     // Verificar se já tem sessão válida
     if (hasValidSession()) {
         console.log('✅ Sessão válida encontrada, permitindo acesso');
         showPageContent();
         return;
     }
-    
+
     // Verificar token na URL
     const token = getTokenFromURL();
-    
+
     if (token && isValidToken(token)) {
         console.log('✅ Token válido fornecido, criando sessão');
         saveTokenSession(token);
@@ -239,15 +239,15 @@ function protectPage() {
         showPageContent();
         return;
     }
-    
+
     // Acesso negado
     console.log('🚫 Acesso negado - token inválido ou ausente');
-    
+
     // Escolha uma das opções abaixo:
-    
+
     // Opção 1: Redirecionar para página inicial
     redirectToAccessDenied();
-    
+
     // Opção 2: Mostrar página de erro (descomente a linha abaixo e comente a de cima)
     // showAccessDeniedMessage();
 }
@@ -275,19 +275,19 @@ window.RouteProtection = {
     clearSecuritySession,
     isProtectedPage,
     hasValidSession,
-    
+
     // Função para desenvolvedores obterem a URL de acesso
     getAdminURL: function() {
         const baseURL = window.location.origin + window.location.pathname;
         return `${baseURL}?${SECURITY_CONFIG.TOKEN_PARAM}=${SECURITY_CONFIG.SECRET_TOKEN}`;
     },
-    
+
     // Função para gerar URLs de outras páginas protegidas
     getAdminURLFor: function(page) {
         const baseURL = window.location.origin + '/html/' + page;
         return `${baseURL}?${SECURITY_CONFIG.TOKEN_PARAM}=${SECURITY_CONFIG.SECRET_TOKEN}`;
     },
-    
+
     // Informações do sistema (apenas para debug)
     getConfig: function() {
         return {
