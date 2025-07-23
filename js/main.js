@@ -218,7 +218,7 @@ function initPageTransitions() {
     setTimeout(() => {
       loader.classList.add('hidden');
       setTimeout(() => loader.remove(), );
-    }, 400);
+    }, 800);
   }
 }
 
