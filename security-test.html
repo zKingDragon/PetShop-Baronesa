@@ -68,47 +68,47 @@
 <body>
     <div class="container">
         <h1>🔐 Sistema de Proteção de Rotas - Pet Shop Baronesa</h1>
-        
+
         <div class="success">
             ✅ <strong>Sistema Implementado com Sucesso!</strong><br>
             As páginas administrativas agora estão protegidas contra acesso não autorizado.
         </div>
-        
+
         <h2>📋 Páginas Protegidas</h2>
         <ul>
             <li><code>admin-login.html</code> - Login administrativo</li>
             <li><code>admin.html</code> - Painel administrativo</li>
             <li><code>user-management.html</code> - Gerenciamento de usuários (se existir)</li>
         </ul>
-        
+
         <h2>🧪 Teste o Sistema</h2>
-        
+
         <h3>1. Teste de Acesso Negado</h3>
         <p>Clique nos links abaixo para testar o acesso SEM token (deve redirecionar):</p>
         <a href="html/admin-login.html" class="btn btn-danger">❌ Admin Login (SEM TOKEN)</a>
         <a href="html/admin.html" class="btn btn-danger">❌ Painel Admin (SEM TOKEN)</a>
-        
+
         <h3>2. Teste de Acesso Autorizado</h3>
         <p>Use os botões abaixo para gerar URLs com token válido:</p>
         <button onclick="openAdminLogin()" class="btn">✅ Admin Login (COM TOKEN)</button>
         <button onclick="openAdminPanel()" class="btn">✅ Painel Admin (COM TOKEN)</button>
-        
+
         <h3>3. Ferramentas de Debug</h3>
         <button onclick="showConsoleCommands()" class="btn">🛠️ Mostrar Comandos do Console</button>
         <button onclick="testProtection()" class="btn">🔍 Testar Proteção</button>
-        
+
         <div id="output" style="margin-top: 20px;"></div>
-        
+
         <div class="warning">
             <strong>⚠️ Importante:</strong><br>
             • O token atual é apenas para desenvolvimento<br>
             • Sempre altere o token antes do deploy em produção<br>
             • Mantenha o token secreto e seguro
         </div>
-        
+
         <h2>🔑 Token Atual</h2>
         <div class="code">PSB_ADM_2024_7x9k2mB8nQ5wE3r1vT6y</div>
-        
+
         <h2>📖 Como Usar</h2>
         <ol>
             <li>Para acessar páginas protegidas, adicione o parâmetro: <code>?access_key=TOKEN</code></li>
@@ -117,18 +117,18 @@
             <li>Use as funções JavaScript para gerar URLs automaticamente</li>
         </ol>
     </div>
-    
+
     <script>
         function openAdminLogin() {
             const url = window.location.origin + '/html/admin-login.html?access_key=PSB_ADM_2024_7x9k2mB8nQ5wE3r1vT6y';
             window.open(url, '_blank');
         }
-        
+
         function openAdminPanel() {
             const url = window.location.origin + '/html/admin.html?access_key=PSB_ADM_2024_7x9k2mB8nQ5wE3r1vT6y';
             window.open(url, '_blank');
         }
-        
+
         function showConsoleCommands() {
             const output = document.getElementById('output');
             output.innerHTML = `
@@ -153,7 +153,7 @@ RouteProtection.hasValidSession()
                 <p><strong>💡 Dica:</strong> Abra o console do navegador (F12) e teste estes comandos!</p>
             `;
         }
-        
+
         function testProtection() {
             const output = document.getElementById('output');
             output.innerHTML = `
@@ -171,7 +171,7 @@ RouteProtection.hasValidSession()
                 </div>
             `;
         }
-        
+
         // Mostrar informações na inicialização
         window.addEventListener('load', function() {
             console.log('🔐 Página de teste carregada');

@@ -28,7 +28,7 @@ class ToastManager {
    */
   show(message, type = 'success', duration = 3000) {
     const toast = this.createToast(message, type)
-    
+
     // Adiciona ao container
     this.container.appendChild(toast)
     this.activeToasts.add(toast)
@@ -54,7 +54,7 @@ class ToastManager {
     toast.className = `toast-notification toast-${type}`
 
     const icon = this.getIcon(type)
-    
+
     toast.innerHTML = `
       <div class="toast-content">
         <i class="fas fa-${icon} toast-icon"></i>
