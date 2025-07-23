@@ -430,7 +430,7 @@ async isUserAdmin() {
         
         // Determine login page path
         const loginPath = window.location.pathname.includes('/html/') ? 
-            'login.html' : 'html/login.html';
+            'admin-login.html' : 'html/admin-login.html';
         
         // Show loading message
         this.showLoadingMessage('Redirecionando para login...');

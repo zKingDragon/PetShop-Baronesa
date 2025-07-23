@@ -507,7 +507,7 @@ class UIPermissionManager {
       // Adiciona login no menu mobile para guests
       const loginItem = document.createElement('li')
       loginItem.className = 'mobile-user-item'
-      loginItem.innerHTML = '<a href="../html/login.html">Login Admin</a>'
+      loginItem.innerHTML = '<a href="../html/admin-login.html">Login Admin</a>'
       nav.appendChild(loginItem)
     }
   }
