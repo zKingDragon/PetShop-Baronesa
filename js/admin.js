@@ -258,11 +258,11 @@ class AdminPanel {
           <div class="product-category">${product.category}</div>
           ${onSale ? `<div class="product-tag sale-tag">Promoção</div>` : ""}
         </div>
-        
+
         <div class="product-info">
           <h3>${product.name}</h3>
           <p class="product-description">${product.description}</p>
-          
+
           <div class="product-details">
             <div class="product-type">
               <i class="fas fa-tag"></i>
@@ -275,7 +275,7 @@ class AdminPanel {
               }
             </div>
           </div>
-          
+
           <div class="product-actions">
             <button class="btn-secondary btn-sm edit-product-btn" data-product-id="${product.id}">
               <i class="fas fa-edit"></i> Editar
@@ -419,16 +419,16 @@ class AdminPanel {
 
     // Reset form
     this.elements.productForm.reset()
-    
+
     // Reset form states
     this.resetFormStates()
-    
+
     // Reset image preview
     this.updateImagePreview("")
 
     this.elements.productModal.style.display = "flex"
     document.body.style.overflow = "hidden"
-    
+
     // Focar no primeiro campo
     setTimeout(() => {
       document.getElementById('productName')?.focus()
@@ -443,24 +443,24 @@ class AdminPanel {
     document.querySelectorAll('.form-group').forEach(group => {
       group.classList.remove('error', 'success')
     })
-    
+
     // Remove mensagens de erro
     document.querySelectorAll('.error-message').forEach(msg => {
       msg.remove()
     })
-    
+
     // Reset toggle de promoção
     const salePriceInput = document.getElementById('productSalePrice')
     if (salePriceInput) {
       salePriceInput.disabled = true
       salePriceInput.parentElement.style.opacity = '0.6'
     }
-    
+
     // Reset file upload
     const fileInput = document.getElementById('productImage')
     const fileInfo = document.getElementById('fileInfo')
     const uploadContainer = fileInput?.closest('.file-upload-container')
-    
+
     if (fileInput) fileInput.value = ''
     if (fileInfo) fileInfo.style.display = 'none'
     if (uploadContainer) {
@@ -488,14 +488,14 @@ class AdminPanel {
       document.getElementById("productType").value = product.type || ""
       document.getElementById("productPrice").value = product.price || ""
       document.getElementById("productDescription").value = product.description || ""
-      
+
       // Promoção
       const onSaleCheckbox = document.getElementById("productOnSale")
       const salePriceInput = document.getElementById("productSalePrice")
-      
+
       onSaleCheckbox.checked = !!product.promocional
       salePriceInput.value = product.precoPromo || ""
-      
+
       // Habilitar/desabilitar preço promocional baseado no estado da promoção
       if (product.promocional) {
         salePriceInput.disabled = false
@@ -508,13 +508,13 @@ class AdminPanel {
       // Limpar input de arquivo (não pode ser preenchido programaticamente)
       const fileInput = document.getElementById("productImage")
       fileInput.value = ""
-      
+
       // Esconder info de arquivo
       const fileInfo = document.getElementById("fileInfo")
       if (fileInfo) {
         fileInfo.style.display = "none"
       }
-      
+
       // Resetar container de upload
       const uploadContainer = fileInput.closest('.file-upload-container')
       if (uploadContainer) {
@@ -526,12 +526,12 @@ class AdminPanel {
 
       this.elements.productModal.style.display = "flex"
       document.body.style.overflow = "hidden"
-      
+
       // Focar no primeiro campo
       setTimeout(() => {
         document.getElementById('productName')?.focus()
       }, 100)
-      
+
     } catch (error) {
       console.error("Error opening edit modal:", error)
       this.showToast("Erro ao carregar dados do produto", "error")
@@ -597,16 +597,16 @@ class AdminPanel {
       try {
         const fileInput = document.getElementById('productImage')
         const file = fileInput.files && fileInput.files[0]
-        
+
         if (file) {
           // Nova imagem foi selecionada
           if (typeof FileUploadManager === 'undefined') {
             throw new Error('FileUploadManager não está disponível');
           }
-          
+
           const fileUploadManager = new FileUploadManager()
           productData.image = await fileUploadManager.fileToBase64(file)
-          
+
           // Feedback de sucesso
           this.showToast('Imagem processada com sucesso!', 'success')
         } else {
@@ -622,7 +622,7 @@ class AdminPanel {
       } catch (error) {
         console.error('Erro ao processar imagem:', error)
         this.showToast('Erro ao processar imagem. Usando imagem padrão.', 'warning')
-        
+
         // Em caso de erro, preservar imagem existente ou usar padrão
         if (this.currentEditingProduct && this.currentEditingProduct.image) {
           productData.image = this.currentEditingProduct.image
@@ -777,17 +777,17 @@ class AdminPanel {
                             product.type.toLowerCase().includes(searchLower);
         if (!matchesSearch) return false;
       }
-      
+
       // Filtro por categoria
       if (filters.categories.length > 0) {
         if (!filters.categories.includes(product.category)) return false;
       }
-      
+
       // Filtro por promoção
       if (filters.promocional) {
         if (!product.onSale) return false;
       }
-      
+
       // Filtro por faixa de preço
       if (filters.priceRanges.length > 0) {
         const price = parseFloat(product.price);
@@ -802,15 +802,15 @@ class AdminPanel {
         });
         if (!matchesPrice) return false;
       }
-      
+
       // Filtro por tipo
       if (filters.types.length > 0) {
         if (!filters.types.includes(product.type)) return false;
       }
-      
+
       return true;
     });
-    
+
     this.renderProducts();
     this.updateProductsCount();
   }

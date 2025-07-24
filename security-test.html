@@ -68,55 +68,55 @@
 <body>
     <div class="container">
         <h1>🔐 Sistema de Proteção de Rotas - Pet Shop Baronesa</h1>
-        
+
         <div class="success">
             ✅ <strong>Sistema Atualizado!</strong><br>
             • Login protegido por token fixo<br>
             • Admin protegido por autenticação
         </div>
-        
+
         <h2>🔑 Estrutura de Proteção</h2>
         <div class="code">📁 admin-login.html → Protegida por TOKEN
    ↪️ Acesso via: ?access_key=PSB_LOGIN_2024_SecretKey789
-   
+
 📁 admin.html → Protegida por AUTENTICAÇÃO
    ↪️ Só entra se estiver logado</div>
-        
+
         <h2>📋 Páginas Protegidas</h2>
         <ul>
             <li><code>admin-login.html</code> - Login administrativo (TOKEN)</li>
             <li><code>admin.html</code> - Painel administrativo (AUTH)</li>
             <li><code>user-management.html</code> - Gerenciamento de usuários (AUTH)</li>
         </ul>
-        
+
         <h2>🧪 Teste o Sistema</h2>
-        
+
         <h3>1. Página de Login</h3>
         <p>Teste o acesso à página de login:</p>
         <button onclick="testLoginWithToken()" class="btn">✅ Login (COM TOKEN)</button>
         <button onclick="testLoginWithoutToken()" class="btn btn-danger">❌ Login (SEM TOKEN)</button>
-        
+
         <h3>2. Painel Admin</h3>
         <p>Teste o acesso ao painel (requer estar logado):</p>
         <button onclick="testAdminLoggedIn()" class="btn">✅ Admin (Simular Login)</button>
         <button onclick="testAdminLoggedOut()" class="btn btn-danger">❌ Admin (Sem Login)</button>
-        
+
         <h3>3. Gerar Link de Acesso</h3>
         <button onclick="generateLoginLink()" class="btn">� Gerar Link de Login</button>
         <button onclick="showConsoleCommands()" class="btn">�️ Comandos Console</button>
-        
+
         <div id="output" style="margin-top: 20px;"></div>
-        
+
         <div class="warning">
             <strong>💡 Como Funciona:</strong><br>
             1. Compartilhe o link de login com token para administradores<br>
             2. Após fazer login, podem acessar admin.html normalmente<br>
             3. Sem login, admin.html fica inacessível
         </div>
-        
+
         <h2>🔑 Token Atual</h2>
         <div class="code">PSB_LOGIN_2024_SecretKey789</div>
-        
+
         <h2>📖 Como Usar</h2>
         <ol>
             <li>Para acessar login, adicione o parâmetro: <code>?access_key=PSB_LOGIN_2024_SecretKey789</code></li>
@@ -125,36 +125,36 @@
             <li>Use as funções JavaScript para gerar URLs automaticamente</li>
         </ol>
     </div>
-    
+
     <script>
         function testLoginWithToken() {
             const url = window.location.origin + '/html/admin-login.html?access_key=PSB_LOGIN_2024_SecretKey789';
             window.open(url, '_blank');
         }
-        
+
         function testLoginWithoutToken() {
             const url = window.location.origin + '/html/admin-login.html';
             window.open(url, '_blank');
         }
-        
+
         function testAdminLoggedIn() {
             // Simular login
             sessionStorage.setItem('admin_authenticated', 'true');
             const url = window.location.origin + '/html/admin.html';
             window.open(url, '_blank');
         }
-        
+
         function testAdminLoggedOut() {
             // Remover login
             sessionStorage.removeItem('admin_authenticated');
             const url = window.location.origin + '/html/admin.html';
             window.open(url, '_blank');
         }
-        
+
         function generateLoginLink() {
             const output = document.getElementById('output');
             const link = window.location.origin + '/html/admin-login.html?access_key=PSB_LOGIN_2024_SecretKey789';
-            
+
             output.innerHTML = `
                 <div class="success">
                     <h4>🔗 Link de Acesso Gerado:</h4>
@@ -164,13 +164,13 @@
                 </div>
             `;
         }
-        
+
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 alert('Link copiado para a área de transferência!');
             });
         }
-        
+
         function showConsoleCommands() {
             const output = document.getElementById('output');
             output.innerHTML = `
@@ -204,7 +204,7 @@ RouteProtection.hasValidSession()
                 <p><strong>💡 Dica:</strong> Abra o console do navegador (F12) e teste estes comandos!</p>
             `;
         }
-        
+
         // Comandos de console
         window.addEventListener('load', function() {
             console.log('🔐 Teste de proteção carregado');
