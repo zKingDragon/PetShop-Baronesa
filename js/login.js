@@ -4,7 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🔄 Inicializando página de login...');
-  
+
   // Aguarda Firebase estar disponível (já inicializado globalmente)
   await waitForFirebase()
   console.log('✅ Firebase disponível para login');
@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function waitForFirebase() {
     return new Promise((resolve) => {
       const checkFirebase = () => {
-        if (typeof firebase !== 'undefined' && 
-            firebase.auth && 
+        if (typeof firebase !== 'undefined' &&
+            firebase.auth &&
             firebase.firestore &&
             firebase.apps &&
             firebase.apps.length > 0) {
@@ -86,10 +86,10 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   async function handleLogin(e) {
     e.preventDefault()
-    
+
     const email = document.getElementById('email').value.trim()
     const password = document.getElementById('password').value
-    
+
     if (!email || !password) {
       showError('Por favor, preencha todos os campos.')
       return
@@ -100,22 +100,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       console.log('Tentando fazer login com:', email);
-      
+
       // Login direto com Firebase
       const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
       const user = userCredential.user
-      
+
       console.log('✅ Login realizado com sucesso:', user.uid);
-      
+
       // Sucesso - redireciona para a página anterior ou home
       const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
       window.location.href = returnUrl
-      
+
     } catch (error) {
       console.error('❌ Erro no login:', error)
-      
+
       let errorMessage = 'Email ou senha incorretos. Tente novamente.'
-      
+
       switch (error.code) {
         case 'auth/user-not-found':
           errorMessage = 'Usuário não encontrado. Verifique o email ou cadastre-se.'
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         default:
           errorMessage = `Erro: ${error.message}`
       }
-      
+
       showError(errorMessage)
     } finally {
       setLoading(false)
@@ -145,35 +145,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function handleDemoLogin(e) {
     const email = e.currentTarget.dataset.email
     const password = e.currentTarget.dataset.password
-    
+
     document.getElementById('email').value = email
     document.getElementById('password').value = password
-    
+
     setLoading(true)
     hideError()
 
     try {
       console.log('Tentando login demo com:', email);
-      
+
       const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
       console.log('✅ Login demo realizado:', userCredential.user.uid);
-      
+
       // Sucesso - redireciona
       const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
       window.location.href = returnUrl
-      
+
     } catch (error) {
       console.error('❌ Erro no login de demonstração:', error)
-      
+
       // Se a conta de demo não existir, cria automaticamente
       if (error.code === 'auth/user-not-found') {
         try {
           console.log('🔧 Criando conta demo automaticamente...');
           await createDemoAccount(email, password)
-          
+
           const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
           console.log('✅ Login após criação demo:', userCredential.user.uid);
-          
+
           const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
           window.location.href = returnUrl
         } catch (createError) {
@@ -194,16 +194,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function createDemoAccount(email, password) {
     try {
       const displayName = email.includes('admin') ? 'Administrador Demo' : 'Usuário Demo'
-      
+
       // Criar usuário no Firebase Auth
       const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password)
       const user = userCredential.user
-      
+
       // Atualizar perfil
       await user.updateProfile({
         displayName: displayName
       })
-      
+
       // Salvar dados no Firestore
       const userData = {
         name: displayName,
@@ -214,10 +214,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }
-      
+
       await firebase.firestore().collection("usuarios").doc(user.uid).set(userData)
       console.log('✅ Conta demo criada e salva:', user.uid);
-      
+
     } catch (error) {
       console.error('❌ Erro ao criar conta demo:', error);
       throw error;
@@ -229,19 +229,19 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   function togglePasswordVisibility(e) {
     e.preventDefault();
-    
+
     const targetId = e.target.closest('.toggle-password').getAttribute('data-target');
     let targetInput;
-    
+
     // Mapear o ID correto do input
     if (targetId === 'password') {
       targetInput = document.getElementById('password');
     } else {
       targetInput = document.getElementById(targetId);
     }
-    
+
     const icon = e.target.closest('.toggle-password').querySelector('i');
-    
+
     if (targetInput) {
       if (targetInput.type === 'password') {
         targetInput.type = 'text';
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function setLoading(loading) {
     if (loginBtn) {
       loginBtn.disabled = loading
-      loginBtn.innerHTML = loading 
+      loginBtn.innerHTML = loading
         ? '<i class="fas fa-spinner fa-spin"></i> Entrando...'
         : '<i class="fas fa-sign-in-alt"></i> Entrar'
     }
