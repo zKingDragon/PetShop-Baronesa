@@ -3,12 +3,12 @@
 <head>
     <!-- Sistema de Proteção de Rota - DEVE SER O PRIMEIRO SCRIPT -->
     <script src="../js/route-protection.js"></script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Pet Shop Baronesa</title>
     <meta name="description" content="Painel administrativo para gerenciar produtos da Pet Shop Baronesa.">
-    <link rel="shortcut icon" type="image/png" href="../assets/images/gerais/iconeBaronesa.png"> 
+    <link rel="shortcut icon" type="image/png" href="../assets/images/gerais/iconeBaronesa.png">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/admin-tabs.css">
     <link rel="stylesheet" href="../css/admin-filters.css">
@@ -50,7 +50,7 @@
 
                 <!-- Tab Content -->
                 <div class="tab-content">
-                    
+
                     <!-- Products Tab -->
                     <div id="products-tab" class="tab-pane active">
                         <!-- Estatísticas Rápidas -->
@@ -84,8 +84,8 @@
                                     <i class="fas fa-filter"></i> Mostrar Filtros
                                 </button>
                             </div>
-                            
-                            <!-- Sidebar com Filtros -->     
+
+                            <!-- Sidebar com Filtros -->
                             <aside class="admin-sidebar">
                                 <div class="sidebar-content">
                                     <div class="filter-card">
@@ -96,7 +96,7 @@
                                                 <i class="fas fa-chevron-up"></i>
                                             </button>
                                         </div>
-                                        
+
                                         <div class="filter-content" id="filterContent">
                                             <!-- Busca -->
                                             <div class="filter-section">
@@ -198,8 +198,8 @@
                                 </div>
                             </aside>
 
-                            
-                            
+
+
                             <!-- Conteúdo Principal -->
                             <main class="admin-main-content">
                                 <!-- Cabeçalho dos Produtos -->
@@ -273,7 +273,7 @@
                                     <i class="fas fa-filter"></i> Mostrar Filtros
                                 </button>
                             </div>
-                            
+
                             <!-- Sidebar com Filtros de Dicas -->
                             <aside class="admin-sidebar">
                                 <div class="sidebar-content">
@@ -285,7 +285,7 @@
                                                 <i class="fas fa-chevron-up"></i>
                                             </button>
                                         </div>
-                                        
+
                                         <div class="filter-content" id="tipsFilterContent">
                                             <!-- Busca -->
                                             <div class="filter-section">
@@ -363,7 +363,7 @@
                                     </div>
                                 </div>
                             </aside>
-                            
+
                             <!-- Conteúdo Principal -->
                             <main class="admin-main-content">
                                 <!-- Cabeçalho das Dicas -->
@@ -428,7 +428,7 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
+
             <form id="productForm" class="product-form">
                 <!-- Seção: Informações Básicas -->
                 <div class="form-section">
@@ -443,7 +443,7 @@
                                 <i class="fas fa-tag"></i>
                                 Nome do Produto
                             </label>
-                            <input type="text" id="productName" name="name" required 
+                            <input type="text" id="productName" name="name" required
                                    placeholder="Digite o nome do produto...">
                         </div>
 
@@ -483,7 +483,7 @@
                                 <i class="fas fa-dollar-sign"></i>
                                 Preço (R$)
                             </label>
-                            <input type="number" id="productPrice" name="price" step="0.01" min="0" required 
+                            <input type="number" id="productPrice" name="price" step="0.01" min="0" required
                                    placeholder="0,00">
                         </div>
                     </div>
@@ -549,7 +549,7 @@
                                 <i class="fas fa-file-text"></i>
                                 Descrição do Produto
                             </label>
-                            <textarea id="productDescription" name="description" rows="4" required 
+                            <textarea id="productDescription" name="description" rows="4" required
                                       placeholder="Descreva o produto detalhadamente..."></textarea>
                             <small>Uma boa descrição ajuda na venda do produto</small>
                         </div>
@@ -583,7 +583,7 @@
                                 <i class="fas fa-tags"></i>
                                 Preço Promocional (R$)
                             </label>
-                            <input type="number" id="productSalePrice" name="salePrice" step="0.01" min="0" 
+                            <input type="number" id="productSalePrice" name="salePrice" step="0.01" min="0"
                                    placeholder="0,00" disabled>
                             <small>Será habilitado quando a promoção estiver ativa</small>
                         </div>
@@ -611,7 +611,7 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
+
             <div class="modal-body">
                 <div class="delete-warning">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -640,7 +640,7 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
+
             <form id="tipForm" class="tip-form">
                 <div class="form-grid">
                     <!-- Título da Dica -->
@@ -743,7 +743,7 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
+
             <div class="modal-body">
                 <div class="delete-warning">
                     <i class="fas fa-exclamation-triangle"></i>
