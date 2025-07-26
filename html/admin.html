@@ -45,6 +45,10 @@
                             <i class="fas fa-box"></i>
                             <span>Produtos</span>
                         </div>
+                        <button class="tab-button" data-tab="slides">
+                            <i class="fas fa-images"></i>
+                            <span>Slides</span>
+                        </button>
                     </div>
                 </div>
 
@@ -79,7 +83,7 @@
                         <!-- Layout Principal com Sidebar -->
                         <div class="admin-layout">
                             <!-- Botão de filtro mobile -->
-                            <div class="filter-mobile-toggle">
+                            <div class="admin-filter-mobile-toggle">
                                 <button id="filterToggleBtn" class="btn-secondary">
                                     <i class="fas fa-filter"></i> Mostrar Filtros
                                 </button>
@@ -92,9 +96,6 @@
                                         <div class="filter-header">
                                             <i class="fas fa-filter"></i>
                                             <h2>Filtros</h2>
-                                            <button class="filter-collapse-btn" id="filterCollapseBtn">
-                                                <i class="fas fa-chevron-up"></i>
-                                            </button>
                                         </div>
                                         
                                         <div class="filter-content" id="filterContent">
@@ -241,167 +242,164 @@
                         </div>
                     </div>
 
-                    <!-- Tips Tab -->
-                    <div id="tips-tab" class="tab-pane">
-                        <!-- Estatísticas de Dicas -->
-                        <div class="admin-stats">
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-lightbulb"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h3 id="totalTipsCount">0</h3>
-                                    <p>Total de Dicas</p>
-                                </div>
+                        <!-- Slides Tab -->
+                        <div class="tab-pane" id="slidesTab">
+                            <div class="slides-header">
+                                <h2><i class="fas fa-images"></i> Gerenciar Slides do Carrossel</h2>
+                                <p>Gerencie os 3 slides principais que aparecem na página inicial</p>
                             </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-eye"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h3 id="publishedTipsCount">0</h3>
-                                    <p>Dicas Publicadas</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Layout Principal com Sidebar para Dicas -->
-                        <div class="admin-layout">
-                            <!-- Botão de filtro mobile -->
-                            <div class="filter-mobile-toggle">
-                                <button id="tipsFilterToggleBtn" class="btn-secondary">
-                                    <i class="fas fa-filter"></i> Mostrar Filtros
-                                </button>
-                            </div>
-                            
-                            <!-- Sidebar com Filtros de Dicas -->
-                            <aside class="admin-sidebar">
-                                <div class="sidebar-content">
-                                    <div class="filter-card">
-                                        <div class="filter-header">
-                                            <i class="fas fa-filter"></i>
-                                            <h2>Filtros de Dicas</h2>
-                                            <button class="filter-collapse-btn" id="tipsFilterCollapseBtn">
-                                                <i class="fas fa-chevron-up"></i>
-                                            </button>
+                    
+                            <div class="slides-grid">
+                                <!-- Slide 1 -->
+                                <div class="slide-card" data-slide="1">
+                                    <div class="slide-header">
+                                        <h3><i class="fas fa-image"></i> Slide 1</h3>
+                                        <span class="slide-status active">Ativo</span>
+                                    </div>
+                                    
+                                    <div class="slide-preview">
+                                        <img id="slide1Preview" src="../assets/images/slides/caoPoteDesconto.jpg" alt="Slide 1">
+                                        <div class="slide-overlay">
+                                            <div class="slide-title" id="slide1TitlePreview">
+                                                Desconto especial na Ração Golden até domingo!
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slide-form">
+                                        <div class="form-group">
+                                            <label for="slide1Title">Título do Slide</label>
+                                            <input type="text" id="slide1Title" maxlength="100" 
+                                                   value="Desconto especial na Ração Golden até domingo!"
+                                                   placeholder="Digite o título do slide">
+                                            <small class="char-count"><span id="slide1TitleCount">52</span>/100 caracteres</small>
                                         </div>
                                         
-                                        <div class="filter-content" id="tipsFilterContent">
-                                            <!-- Busca -->
-                                            <div class="filter-section">
-                                                <label for="tipsSearchInput">Buscar Dicas</label>
-                                                <div class="search-input-container">
-                                                    <input type="text" id="tipsSearchInput" placeholder="Digite o título da dica...">
-                                                    <i class="fas fa-search"></i>
+                                        <div class="form-group">
+                                            <label for="slide1Image">Imagem do Slide</label>
+                                            <div class="file-upload-container slide-upload">
+                                                <input type="file" id="slide1Image" accept="image/*">
+                                                <div class="upload-area">
+                                                    <i class="fas fa-cloud-upload-alt"></i>
+                                                    <span>Clique para selecionar ou arraste a imagem</span>
+                                                    <small>Formatos: JPG, PNG, GIF (Máx: 5MB)</small>
                                                 </div>
-                                            </div>
-
-                                            <!-- Filtro por Categoria -->
-                                            <div class="filter-section">
-                                                <h3>Categorias</h3>
-                                                <div class="filter-options">
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipCategory" value="Cachorros">
-                                                        <span>Cachorros</span>
-                                                    </label>
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipCategory" value="Gatos">
-                                                        <span>Gatos</span>
-                                                    </label>
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipCategory" value="Pássaros">
-                                                        <span>Pássaros</span>
-                                                    </label>
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipCategory" value="Geral">
-                                                        <span>Geral</span>
-                                                    </label>
+                                                <div class="file-info" style="display: none;">
+                                                    <i class="fas fa-file-image"></i>
+                                                    <span class="file-name"></span>
+                                                    <button type="button" class="remove-file">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
                                                 </div>
-                                            </div>
-
-                                            <!-- Filtro por Status -->
-                                            <div class="filter-section">
-                                                <h3>Status</h3>
-                                                <div class="filter-options">
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipStatus" value="published">
-                                                        <span>Publicadas</span>
-                                                    </label>
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipStatus" value="draft">
-                                                        <span>Rascunhos</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <!-- Filtro por Data -->
-                                            <div class="filter-section">
-                                                <h3>Data de Publicação</h3>
-                                                <div class="filter-options">
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipDate" value="today">
-                                                        <span>Hoje</span>
-                                                    </label>
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipDate" value="week">
-                                                        <span>Esta semana</span>
-                                                    </label>
-                                                    <label class="filter-option">
-                                                        <input type="checkbox" name="tipDate" value="month">
-                                                        <span>Este mês</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <!-- Botão de Limpar Filtros -->
-                                            <div class="filter-section">
-                                                <button id="clearTipsFiltersBtn" class="btn-secondary btn-block">
-                                                    <i class="fas fa-eraser"></i> Limpar Filtros
-                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </aside>
-                            
-                            <!-- Conteúdo Principal -->
-                            <main class="admin-main-content">
-                                <!-- Cabeçalho das Dicas -->
-                                <div class="tips-header">
-                                    <div class="tips-title">
-                                        <h2>Dicas</h2>
-                                        <div class="tips-counter">
-                                            <span id="filteredTipsCount">0</span> dicas encontradas
-                                        </div>
-                                    </div>
-                                    <div class="tips-actions">
-                                        <button id="addTipBtn" class="btn-primary">
-                                            <i class="fas fa-plus"></i> Adicionar Dica
+                                        
+                                        <button type="button" class="btn-primary save-slide" data-slide="1">
+                                            <i class="fas fa-save"></i> Salvar Slide 1
                                         </button>
                                     </div>
                                 </div>
-
-                                <!-- Loading State -->
-                                <div id="tipsLoading" class="loading-spinner">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                    <p>Carregando dicas...</p>
+                    
+                                <!-- Slide 2 -->
+                                <div class="slide-card" data-slide="2">
+                                    <div class="slide-header">
+                                        <h3><i class="fas fa-image"></i> Slide 2</h3>
+                                        <span class="slide-status active">Ativo</span>
+                                    </div>
+                                    
+                                    <div class="slide-preview">
+                                        <img id="slide2Preview" src="../assets/images/slides/goldenBanhoDesconto.jpg" alt="Slide 2">
+                                        <div class="slide-overlay">
+                                            <div class="slide-title" id="slide2TitlePreview">
+                                                Banho & Tosa com 20% de desconto às quartas-feiras!
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slide-form">
+                                        <div class="form-group">
+                                            <label for="slide2Title">Título do Slide</label>
+                                            <input type="text" id="slide2Title" maxlength="100" 
+                                                   value="Banho & Tosa com 20% de desconto às quartas-feiras!"
+                                                   placeholder="Digite o título do slide">
+                                            <small class="char-count"><span id="slide2TitleCount">56</span>/100 caracteres</small>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="slide2Image">Imagem do Slide</label>
+                                            <div class="file-upload-container slide-upload">
+                                                <input type="file" id="slide2Image" accept="image/*">
+                                                <div class="upload-area">
+                                                    <i class="fas fa-cloud-upload-alt"></i>
+                                                    <span>Clique para selecionar ou arraste a imagem</span>
+                                                    <small>Formatos: JPG, PNG, GIF (Máx: 5MB)</small>
+                                                </div>
+                                                <div class="file-info" style="display: none;">
+                                                    <i class="fas fa-file-image"></i>
+                                                    <span class="file-name"></span>
+                                                    <button type="button" class="remove-file">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="button" class="btn-primary save-slide" data-slide="2">
+                                            <i class="fas fa-save"></i> Salvar Slide 2
+                                        </button>
+                                    </div>
                                 </div>
-
-                                <!-- Tips Grid -->
-                                <div id="adminTipsGrid" class="admin-tips-grid">
-                                    <!-- Tips will be loaded here -->
+                    
+                                <!-- Slide 3 -->
+                                <div class="slide-card" data-slide="3">
+                                    <div class="slide-header">
+                                        <h3><i class="fas fa-image"></i> Slide 3</h3>
+                                        <span class="slide-status active">Ativo</span>
+                                    </div>
+                                    
+                                    <div class="slide-preview">
+                                        <img id="slide3Preview" src="../assets/images/slides/gatoCasinha.png" alt="Slide 3">
+                                        <div class="slide-overlay">
+                                            <div class="slide-title" id="slide3TitlePreview">
+                                                Novos acessórios para seu pet chegaram!
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slide-form">
+                                        <div class="form-group">
+                                            <label for="slide3Title">Título do Slide</label>
+                                            <input type="text" id="slide3Title" maxlength="100" 
+                                                   value="Novos acessórios para seu pet chegaram!"
+                                                   placeholder="Digite o título do slide">
+                                            <small class="char-count"><span id="slide3TitleCount">42</span>/100 caracteres</small>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="slide3Image">Imagem do Slide</label>
+                                            <div class="file-upload-container slide-upload">
+                                                <input type="file" id="slide3Image" accept="image/*">
+                                                <div class="upload-area">
+                                                    <i class="fas fa-cloud-upload-alt"></i>
+                                                    <span>Clique para selecionar ou arraste a imagem</span>
+                                                    <small>Formatos: JPG, PNG, GIF (Máx: 5MB)</small>
+                                                </div>
+                                                <div class="file-info" style="display: none;">
+                                                    <i class="fas fa-file-image"></i>
+                                                    <span class="file-name"></span>
+                                                    <button type="button" class="remove-file">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="button" class="btn-primary save-slide" data-slide="3">
+                                            <i class="fas fa-save"></i> Salvar Slide 3
+                                        </button>
+                                    </div>
                                 </div>
-
-                                <!-- No Tips Message -->
-                                <div id="noTipsMessage" class="no-tips" style="display: none;">
-                                    <i class="fas fa-lightbulb"></i>
-                                    <h3>Nenhuma dica encontrada</h3>
-                                    <p>Não há dicas que correspondam aos filtros selecionados.</p>
-                                    <button id="addFirstTipBtn" class="btn-primary">
-                                        <i class="fas fa-plus"></i> Adicionar Primeira Dica
-                                    </button>
-                                </div>
-                            </main>
+                            </div>
                         </div>
                     </div>
 
@@ -784,6 +782,7 @@
     <script src="../js/services/auth-service.js"></script>
     <script src="../js/main.js"></script>
     <script src="../js/admin.js"></script>
+    <script src="../js/admin-filters.js"></script>
     <script src="../js/admin-token.js"></script>
 </body>
 </html>

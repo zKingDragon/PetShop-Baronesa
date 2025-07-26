@@ -57,26 +57,104 @@ class AdminPanel {
     this.init()
   }
 
+  
+/**
+ * Set up tab system for admin panel
+ */
+setupTabSystem() {
+    console.log('🔧 Configurando sistema de abas...');
+    
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    if (tabButtons.length === 0) {
+        console.warn('⚠️ Nenhum botão de aba encontrado');
+        return;
+    }
+
+    if (tabPanes.length === 0) {
+        console.warn('⚠️ Nenhum painel de aba encontrado');
+        return;
+    }
+
+    console.log(`📑 Encontrados ${tabButtons.length} botões e ${tabPanes.length} painéis`);
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const targetTab = button.getAttribute('data-tab');
+            console.log(`🔄 Alternando para aba: ${targetTab}`);
+            
+            // Remove active class from all buttons and panes
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+                console.log(`❌ Removendo active de: ${btn.getAttribute('data-tab')}`);
+            });
+            
+            tabPanes.forEach(pane => {
+                pane.classList.remove('active');
+                console.log(`❌ Ocultando painel: ${pane.id}`);
+            });
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            console.log(`✅ Ativando botão: ${targetTab}`);
+            
+            // Add active class to corresponding pane
+            const targetPane = document.getElementById(targetTab + 'Tab');
+            if (targetPane) {
+                targetPane.classList.add('active');
+                console.log(`✅ Exibindo painel: ${targetPane.id}`);
+                
+                // Se for a aba de slides, inicializar o gerenciador se necessário
+                if (targetTab === 'slides' && !window.adminSlidesManager) {
+                    console.log('🖼️ Inicializando gerenciador de slides...');
+                    window.adminSlidesManager = new AdminSlidesManager();
+                }
+            } else {
+                console.error(`❌ Painel não encontrado: ${targetTab}Tab`);
+            }
+        });
+    });
+
+    // Garantir que a primeira aba esteja ativa
+    const firstButton = tabButtons[0];
+    const firstPane = tabPanes[0];
+    
+    if (firstButton && !firstButton.classList.contains('active')) {
+        firstButton.classList.add('active');
+    }
+    
+    if (firstPane && !firstPane.classList.contains('active')) {
+        firstPane.classList.add('active');
+    }
+
+    console.log('✅ Sistema de abas configurado com sucesso');
+}
+
   /**
    * Initialize the admin panel
    */
-  async init() {
+  // Modifique o método init() para incluir o setupTabSystem:
+async init() {
     try {
-      // Set up event listeners
-      this.setupEventListeners()
+        // Set up event listeners
+        this.setupEventListeners()
+        this.setupTabSystem() // Adicione esta linha
 
-      // Load products
-      await this.loadProducts()
+        // Load products
+        await this.loadProducts()
 
-      // Update stats
-      this.updateStats()
+        // Update stats
+        this.updateStats()
 
-      console.log("Admin panel initialized successfully")
+        console.log("Admin panel initialized successfully")
     } catch (error) {
-      console.error("Error initializing admin panel:", error)
-      this.showToast("Erro ao inicializar painel administrativo", "error")
+        console.error("Error initializing admin panel:", error)
+        this.showToast("Erro ao inicializar painel administrativo", "error")
     }
-  }
+}
 
   /**
    * Set up all event listeners
@@ -182,27 +260,42 @@ class AdminPanel {
    * Load products from the database
    */
   async loadProducts() {
-    try {
-      this.setLoading(true)
-
-      // Check if ProductsService is available
-      if (!window.ProductsService) {
-        throw new Error("ProductsService not available")
-      }
-
-      this.products = await window.ProductsService.getAllProducts()
-      this.filteredProducts = [...this.products]
-
-      this.renderProducts()
-      this.updateProductsCount()
-    } catch (error) {
-      console.error("Error loading products:", error)
-      this.showToast("Erro ao carregar produtos", "error")
-    } finally {
-      this.setLoading(false)
+    // Se já temos produtos carregados e não estamos forçando reload, reutilizar
+    if (this.products.length > 0 && this.filteredProducts.length > 0) {
+        console.log('📦 Reutilizando produtos já carregados');
+        this.renderProducts();
+        this.updateProductsCount();
+        return;
     }
-  }
 
+    try {
+        this.setLoading(true);
+        console.log('📡 Carregando produtos do banco...');
+
+        // Check if ProductsService is available
+        if (!window.ProductsService) {
+            throw new Error("ProductsService not available");
+        }
+
+        this.products = await window.ProductsService.getAllProducts();
+        this.filteredProducts = [...this.products];
+
+        console.log(`✅ ${this.products.length} produtos carregados do banco`);
+
+        this.renderProducts();
+        this.updateProductsCount();
+    } catch (error) {
+        console.error("❌ Error loading products:", error);
+        this.showToast("Erro ao carregar produtos", "error");
+        
+        // Em caso de erro, garantir que a UI seja atualizada
+        this.products = [];
+        this.filteredProducts = [];
+        this.renderProducts();
+    } finally {
+        this.setLoading(false);
+    }
+}
   /**
    * Set loading state
    */
@@ -222,24 +315,55 @@ class AdminPanel {
    * Render products in the grid
    */
   renderProducts() {
-    if (!this.elements.productsGrid) return
+    console.log('🔄 Renderizando produtos...', {
+        filteredCount: this.filteredProducts.length,
+        totalCount: this.products.length
+    });
 
-    if (this.filteredProducts.length === 0) {
-      this.elements.productsGrid.style.display = "none"
-      this.elements.noProductsMessage.style.display = "block"
-      return
+    if (!this.elements.productsGrid) {
+        console.error('❌ Elemento productsGrid não encontrado');
+        return;
     }
 
-    this.elements.noProductsMessage.style.display = "none"
-    this.elements.productsGrid.style.display = "grid"
+    if (!this.elements.noProductsMessage) {
+        console.error('❌ Elemento noProductsMessage não encontrado');
+        return;
+    }
 
-    this.elements.productsGrid.innerHTML = this.filteredProducts
-      .map((product) => this.createProductCard(product))
-      .join("")
+    // Se não há produtos filtrados, mostrar mensagem
+    if (this.filteredProducts.length === 0) {
+        this.elements.productsGrid.style.display = "none";
+        this.elements.noProductsMessage.style.display = "block";
+        console.log('📭 Nenhum produto para exibir');
+        return;
+    }
 
-    // Add event listeners to product cards
-    this.setupProductCardListeners()
-  }
+    // Há produtos para mostrar
+    this.elements.noProductsMessage.style.display = "none";
+    this.elements.productsGrid.style.display = "grid";
+
+    // Renderizar produtos
+    try {
+        const productsHTML = this.filteredProducts
+            .map((product) => this.createProductCard(product))
+            .join("");
+
+        this.elements.productsGrid.innerHTML = productsHTML;
+        
+        // Add event listeners to product cards
+        this.setupProductCardListeners();
+        
+        console.log(`✅ ${this.filteredProducts.length} produtos renderizados`);
+    } catch (error) {
+        console.error('❌ Erro ao renderizar produtos:', error);
+        this.elements.productsGrid.innerHTML = `
+            <div class="error-message" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #dc3545;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Erro ao carregar produtos. Tente recarregar a página.</p>
+            </div>
+        `;
+    }
+}
 
   /**
    * Create HTML for a product card
@@ -823,7 +947,627 @@ class AdminPanel {
   }
 }
 
+/**
+ * Admin Slides Manager for Pet Shop Baronesa
+ * Handles slide management functionality
+ */
 
+class AdminSlidesManager {
+    constructor() {
+        this.slides = [];
+        this.tempFileData = {};
+        this.isLoading = false;
+        this.init();
+    }
+
+    /**
+     * Initialize the slides manager
+     */
+    init() {
+        console.log('🖼️ Inicializando gerenciador de slides...');
+        
+        this.loadSlidesData();
+        this.setupEventListeners();
+        this.setupFileUploads();
+        this.setupCharacterCounters();
+        
+        console.log('✅ Gerenciador de slides inicializado');
+    }
+
+    /**
+     * Load slides data from localStorage or use defaults
+     */
+    loadSlidesData() {
+        try {
+            const savedSlides = localStorage.getItem('petshop_baronesa_slides');
+            if (savedSlides) {
+                this.slides = { ...this.slides, ...JSON.parse(savedSlides) };
+                console.log('📁 Dados dos slides carregados do localStorage');
+            }
+            
+            this.updatePreviewsFromData();
+        } catch (error) {
+            console.error('❌ Erro ao carregar dados dos slides:', error);
+        }
+    }
+
+    /**
+     * Update previews from current data
+     */
+    updatePreviewsFromData() {
+        Object.keys(this.slides).forEach(slideKey => {
+            const slideNumber = slideKey.replace('slide', '');
+            const titleInput = document.getElementById(`slide${slideNumber}Title`);
+            const titlePreview = document.getElementById(`slide${slideNumber}TitlePreview`);
+            const imagePreview = document.getElementById(`slide${slideNumber}Preview`);
+            
+            if (titleInput && this.slides[slideKey].title) {
+                titleInput.value = this.slides[slideKey].title;
+                this.updateCharCount(slideNumber);
+            }
+            
+            if (titlePreview && this.slides[slideKey].title) {
+                titlePreview.textContent = this.slides[slideKey].title;
+            }
+            
+            if (imagePreview && this.slides[slideKey].image) {
+                imagePreview.src = this.slides[slideKey].image;
+            }
+        });
+    }
+
+    /**
+     * Setup event listeners
+     */
+    setupEventListeners() {
+        // Save slide buttons
+        document.querySelectorAll('.save-slide').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const slideNumber = e.target.getAttribute('data-slide');
+                this.saveSlide(slideNumber);
+            });
+        });
+
+        // Title input changes (real-time preview)
+        for (let i = 1; i <= 3; i++) {
+            const titleInput = document.getElementById(`slide${i}Title`);
+            if (titleInput) {
+                titleInput.addEventListener('input', () => {
+                    this.updateTitlePreview(i);
+                    this.updateCharCount(i);
+                });
+            }
+        }
+    }
+
+    /**
+     * Setup file upload functionality
+     */
+    setupFileUploads() {
+        for (let i = 1; i <= 3; i++) {
+            this.setupSingleFileUpload(i);
+        }
+    }
+
+    /**
+     * Setup file upload for a single slide
+     */
+    setupSingleFileUpload(slideNumber) {
+        const fileInput = document.getElementById(`slide${slideNumber}Image`);
+        const container = fileInput?.closest('.file-upload-container');
+        const fileInfo = container?.querySelector('.file-info');
+        const removeBtn = container?.querySelector('.remove-file');
+
+        if (!fileInput || !container) return;
+
+        // Drag and drop
+        container.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            container.classList.add('dragover');
+        });
+
+        container.addEventListener('dragleave', () => {
+            container.classList.remove('dragover');
+        });
+
+        container.addEventListener('drop', (e) => {
+            e.preventDefault();
+            container.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                this.handleFileSelection(slideNumber, files[0]);
+            }
+        });
+
+        // Click to select
+        container.addEventListener('click', () => {
+            if (!container.classList.contains('has-file')) {
+                fileInput.click();
+            }
+        });
+
+        // File selection
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                this.handleFileSelection(slideNumber, file);
+            }
+        });
+
+        // Remove file
+        removeBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.clearFile(slideNumber);
+        });
+    }
+
+    /**
+     * Handle file selection
+     */
+    async handleFileSelection(slideNumber, file) {
+        const container = document.querySelector(`#slide${slideNumber}Image`).closest('.file-upload-container');
+        const fileInfo = container.querySelector('.file-info');
+        const fileName = fileInfo.querySelector('.file-name');
+        const preview = document.getElementById(`slide${slideNumber}Preview`);
+
+        try {
+            // Validate file
+            if (!this.validateFile(file, container)) {
+                return;
+            }
+
+            // Show loading
+            container.classList.add('slide-loading');
+
+            // Convert to base64
+            const base64 = await this.fileToBase64(file);
+
+            // Update UI
+            container.classList.add('has-file');
+            container.classList.remove('error', 'slide-loading');
+            fileInfo.style.display = 'flex';
+            fileName.textContent = file.name;
+
+            // Update preview
+            if (preview) {
+                preview.src = base64;
+            }
+
+            // Store temporarily (will be saved when user clicks save)
+            this.tempFileData = this.tempFileData || {};
+            this.tempFileData[`slide${slideNumber}`] = base64;
+
+            this.showToast(`Imagem do Slide ${slideNumber} carregada com sucesso!`, 'success');
+
+        } catch (error) {
+            console.error('Erro ao processar arquivo:', error);
+            this.showError(container, 'Erro ao processar arquivo');
+        }
+    }
+
+    /**
+     * Validate file
+     */
+    validateFile(file, container) {
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+        // Clear previous errors
+        this.clearError(container);
+
+        // Check type
+        if (!allowedTypes.includes(file.type)) {
+            this.showError(container, 'Formato não suportado. Use JPG, PNG ou GIF.');
+            return false;
+        }
+
+        // Check size
+        if (file.size > maxSize) {
+            this.showError(container, 'Arquivo muito grande. Máximo 5MB.');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Show error message
+     */
+    showError(container, message) {
+        container.classList.add('error');
+        
+        let errorDiv = container.querySelector('.file-error');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.className = 'file-error';
+            container.appendChild(errorDiv);
+        }
+        
+        errorDiv.textContent = message;
+    }
+
+    /**
+     * Clear error message
+     */
+    clearError(container) {
+        container.classList.remove('error');
+        const errorDiv = container.querySelector('.file-error');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+    }
+
+    /**
+     * Clear file selection
+     */
+    clearFile(slideNumber) {
+        const fileInput = document.getElementById(`slide${slideNumber}Image`);
+        const container = fileInput.closest('.file-upload-container');
+        const fileInfo = container.querySelector('.file-info');
+        const preview = document.getElementById(`slide${slideNumber}Preview`);
+
+        // Reset input
+        fileInput.value = '';
+
+        // Reset UI
+        container.classList.remove('has-file', 'error');
+        fileInfo.style.display = 'none';
+        this.clearError(container);
+
+        // Restore original image
+        if (preview) {
+            preview.src = this.slides[`slide${slideNumber}`].image;
+        }
+
+        // Clear temp data
+        if (this.tempFileData && this.tempFileData[`slide${slideNumber}`]) {
+            delete this.tempFileData[`slide${slideNumber}`];
+        }
+    }
+
+    /**
+     * Setup character counters
+     */
+    setupCharacterCounters() {
+        for (let i = 1; i <= 3; i++) {
+            this.updateCharCount(i);
+        }
+    }
+
+    /**
+     * Update character count for a slide title
+     */
+    updateCharCount(slideNumber) {
+        const titleInput = document.getElementById(`slide${slideNumber}Title`);
+        const countSpan = document.getElementById(`slide${slideNumber}TitleCount`);
+        const countContainer = countSpan?.parentElement;
+
+        if (!titleInput || !countSpan) return;
+
+        const currentLength = titleInput.value.length;
+        const maxLength = 100;
+
+        countSpan.textContent = currentLength;
+
+        // Update styling based on length
+        if (countContainer) {
+            countContainer.classList.remove('warning', 'danger');
+            
+            if (currentLength > maxLength * 0.9) {
+                countContainer.classList.add('danger');
+            } else if (currentLength > maxLength * 0.7) {
+                countContainer.classList.add('warning');
+            }
+        }
+    }
+
+    /**
+     * Update title preview in real-time
+     */
+    updateTitlePreview(slideNumber) {
+        const titleInput = document.getElementById(`slide${slideNumber}Title`);
+        const titlePreview = document.getElementById(`slide${slideNumber}TitlePreview`);
+
+        if (titleInput && titlePreview) {
+            titlePreview.textContent = titleInput.value || 'Título do slide...';
+        }
+    }
+
+    /**
+     * Save slide data
+     */
+    async saveSlide(slideNumber) {
+    const saveButton = document.querySelector(`.save-slide[data-slide="${slideNumber}"]`);
+    const slideCard = saveButton?.closest('.slide-card');
+    const titleInput = document.getElementById(`slide${slideNumber}Title`);
+
+    if (!saveButton) {
+        console.error(`❌ Botão de salvar não encontrado para slide ${slideNumber}`);
+        this.showToast(`Erro: Botão não encontrado`, 'error');
+        return;
+    }
+
+    if (!slideCard) {
+        console.error(`❌ Card do slide não encontrado para slide ${slideNumber}`);
+        this.showToast(`Erro: Card do slide não encontrado`, 'error');
+        return;
+    }
+
+    if (!titleInput) {
+        console.error(`❌ Input de título não encontrado para slide ${slideNumber}`);
+        this.showToast(`Erro: Campo de título não encontrado`, 'error');
+        return;
+    }
+
+    try {
+        // Disable button and show loading
+        saveButton.disabled = true;
+        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+        slideCard.classList.add('slide-updating');
+
+        // Get form data
+        const title = titleInput.value.trim();
+
+        // Validate
+        if (!title) {
+            throw new Error('O título não pode estar vazio');
+        }
+
+        if (title.length > 100) {
+            throw new Error('O título não pode ter mais de 100 caracteres');
+        }
+
+        // Inicializar slides se não existir
+        if (!this.slides) {
+            this.slides = {};
+        }
+
+        // Inicializar slide específico se não existir
+        if (!this.slides[`slide${slideNumber}`]) {
+            this.slides[`slide${slideNumber}`] = {
+                title: '',
+                image: '../assets/images/gerais/iconeBaronesa.png'
+            };
+        }
+
+        // Prepare slide data
+        const slideData = {
+            title: title,
+            image: this.slides[`slide${slideNumber}`].image || '../assets/images/gerais/iconeBaronesa.png'
+        };
+
+        // Use new image if uploaded
+        if (this.tempFileData && this.tempFileData[`slide${slideNumber}`]) {
+            slideData.image = this.tempFileData[`slide${slideNumber}`];
+            delete this.tempFileData[`slide${slideNumber}`];
+        }
+
+        // Update slides data
+        this.slides[`slide${slideNumber}`] = slideData;
+
+        // Save to localStorage
+        localStorage.setItem('petshop_baronesa_slides', JSON.stringify(this.slides));
+
+        // Update preview
+        this.updateTitlePreview(slideNumber);
+
+        // Show success
+        slideCard.classList.add('slide-success');
+        this.showToast(`Slide ${slideNumber} salvo com sucesso!`, 'success');
+
+        // Reset file upload UI
+        this.resetFileUploadUI(slideNumber);
+
+        console.log(`✅ Slide ${slideNumber} salvo:`, slideData);
+
+    } catch (error) {
+        console.error(`❌ Erro ao salvar slide ${slideNumber}:`, error);
+        slideCard.classList.add('slide-error');
+        this.showToast(error.message || `Erro ao salvar slide ${slideNumber}`, 'error');
+    } finally {
+        // Reset button
+        saveButton.disabled = false;
+        saveButton.innerHTML = `<i class="fas fa-save"></i> Salvar Slide ${slideNumber}`;
+        
+        // Remove animation classes
+        setTimeout(() => {
+            slideCard.classList.remove('slide-updating', 'slide-success', 'slide-error');
+        }, 2000);
+    }
+}
+
+/**
+ * Reset file upload UI helper method
+ */
+resetFileUploadUI(slideNumber) {
+    try {
+        const fileInput = document.getElementById(`slide${slideNumber}Image`);
+        const container = fileInput?.closest('.file-upload-container');
+        const fileInfo = container?.querySelector('.file-info');
+
+        if (fileInput) {
+            fileInput.value = '';
+        }
+
+        if (container) {
+            container.classList.remove('has-file');
+        }
+
+        if (fileInfo) {
+            fileInfo.style.display = 'none';
+        }
+    } catch (error) {
+        console.warn(`⚠️ Erro ao resetar UI do upload para slide ${slideNumber}:`, error);
+    }
+}
+
+/**
+ * Load slides data from localStorage or use defaults
+ */
+loadSlidesData() {
+    try {
+        // Inicializar com dados padrão
+        this.slides = {
+            slide1: {
+                title: "Desconto especial na Ração Golden até domingo!",
+                image: "../assets/images/slides/caoPoteDesconto.jpg"
+            },
+            slide2: {
+                title: "Banho & Tosa com 20% de desconto às quartas-feiras!",
+                image: "../assets/images/slides/goldenBanhoDesconto.jpg"
+            },
+            slide3: {
+                title: "Novos acessórios para seu pet chegaram!",
+                image: "../assets/images/slides/gatoCasinha.png"
+            }
+        };
+
+        // Tentar carregar dados salvos
+        const savedSlides = localStorage.getItem('petshop_baronesa_slides');
+        if (savedSlides) {
+            const parsedSlides = JSON.parse(savedSlides);
+            this.slides = { ...this.slides, ...parsedSlides };
+            console.log('📁 Dados dos slides carregados do localStorage');
+        }
+        
+        this.updatePreviewsFromData();
+    } catch (error) {
+        console.error('❌ Erro ao carregar dados dos slides:', error);
+        // Manter dados padrão em caso de erro
+    }
+}
+
+/**
+ * Setup event listeners
+ */
+setupEventListeners() {
+    // Save slide buttons
+    document.querySelectorAll('.save-slide').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const slideNumber = e.target.getAttribute('data-slide') || e.currentTarget.getAttribute('data-slide');
+            console.log(`🔄 Salvando slide ${slideNumber}`);
+            this.saveSlide(slideNumber);
+        });
+    });
+
+    // Title input changes (real-time preview)
+    for (let i = 1; i <= 3; i++) {
+        const titleInput = document.getElementById(`slide${i}Title`);
+        if (titleInput) {
+            titleInput.addEventListener('input', () => {
+                this.updateTitlePreview(i);
+                this.updateCharCount(i);
+            });
+        }
+    }
+}
+
+    /**
+     * Convert file to base64
+     */
+    fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    /**
+     * Show toast notification
+     */
+    showToast(message, type = 'info') {
+        // Use existing toast system if available
+        if (window.adminPanel && typeof window.adminPanel.showToast === 'function') {
+            window.adminPanel.showToast(message, type);
+            return;
+        }
+
+        // Fallback toast implementation
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        `;
+        toast.textContent = message;
+
+        document.body.appendChild(toast);
+
+        // Animate in
+        setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Remove after 4 seconds
+        setTimeout(() => {
+            toast.style.transform = 'translateX(400px)';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 4000);
+    }
+
+    /**
+     * Get current slides data (for use by carousel)
+     */
+    getSlidesData() {
+        return this.slides;
+    }
+
+    /**
+     * Reset all slides to default
+     */
+    resetToDefaults() {
+        if (confirm('Tem certeza que deseja restaurar os slides padrão? Esta ação não pode ser desfeita.')) {
+            localStorage.removeItem('petshop_baronesa_slides');
+            location.reload();
+        }
+    }
+}
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log('🔧 Inicializando página admin...');
+  
+  // Aguarde a inicialização do Firebase e dos serviços
+  if (typeof window.FirebaseConfig !== "undefined" && window.FirebaseConfig.initializeFirebase) {
+    try {
+      const { db, auth } = await window.FirebaseConfig.initializeFirebase();
+      window.ProductsService.initialize(db, auth);
+      window.AuthService.initialize(auth);
+      console.log('✅ Firebase inicializado');
+    } catch (e) {
+      console.error("Erro ao inicializar Firebase:", e);
+    }
+  }
+
+  // Só então crie o painel admin
+  if (document.getElementById("adminProductsGrid")) {
+    window.adminPanel = new AdminPanel();
+    
+    // Tornar as funções de filtro disponíveis globalmente
+    window.applyProductFilters = (filters) => window.adminPanel.applyProductFilters(filters);
+    window.applyTipFilters = (filters) => window.adminPanel.applyTipFilters(filters);
+    
+    console.log('✅ Admin panel inicializado');
+  }
+});
+
+// Export for global access
+window.AdminPanel = AdminPanel;
+window.AdminSlidesManager = AdminSlidesManager;
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Aguarde a inicialização do Firebase e dos serviços
@@ -840,15 +1584,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Só então crie o painel admin
   if (document.getElementById("adminProductsGrid")) {
     window.adminPanel = new AdminPanel();
+    
+    // Tornar as funções de filtro disponíveis globalmente
+    window.applyProductFilters = (filters) => window.adminPanel.applyProductFilters(filters);
+    window.applyTipFilters = (filters) => window.adminPanel.applyTipFilters(filters);
   }
-});
-
-// Instanciar o painel admin
-const adminPanel = new AdminPanel()
-
-// Tornar as funções de filtro disponíveis globalmente
-window.applyProductFilters = (filters) => adminPanel.applyProductFilters(filters);
-window.applyTipFilters = (filters) => adminPanel.applyTipFilters(filters);
+}); //
 
 // Export for global access
 window.AdminPanel = AdminPanel;

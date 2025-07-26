@@ -520,6 +520,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 })
 
+
 // Exportar funções para uso global
 window.auth = {
     isAuthenticated,

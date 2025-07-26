@@ -769,149 +769,11 @@ async isUserAdmin() {
         const header = document.querySelector('header');
         if (header) {
             const adminBadge = document.createElement('div');
-            adminBadge.className = 'admin-badge';
-            adminBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Admin';
             header.appendChild(adminBadge);
         }
 
-        // Add admin quick actions
-        this.addAdminQuickActions();
     }
 
-    /**
-     * Add admin quick actions
-     */
-    addAdminQuickActions() {
-        // Remove existing quick actions if any
-        const existingQuickActions = document.getElementById('admin-quick-actions');
-        if (existingQuickActions) {
-            existingQuickActions.remove();
-        }
-        
-        const quickActions = document.createElement('div');
-        quickActions.id = 'admin-quick-actions';
-        quickActions.innerHTML = `
-            <div class="admin-quick-actions-panel">
-                <button onclick="window.adminMiddleware.quickAddProduct()">
-                    <i class="fas fa-plus"></i> Produto
-                </button>
-                <button onclick="window.adminMiddleware.quickUserManagement()">
-                    <i class="fas fa-users"></i> Usuários
-                </button>
-                <button onclick="window.adminMiddleware.showAdminHelp()">
-                    <i class="fas fa-question"></i> Ajuda
-                </button>
-            </div>
-        `;
-        
-        // Add styles for quick actions
-        const style = document.createElement('style');
-        style.textContent = `
-            #admin-quick-actions {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1000;
-            }
-            
-            .admin-quick-actions-panel {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                padding: 15px;
-                border: 1px solid #e9ecef;
-            }
-            
-            .admin-quick-actions-panel button {
-                background: #007bff;
-                color: white;
-                border: none;
-                padding: 8px 12px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 14px;
-                transition: background 0.3s;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            }
-            
-            .admin-quick-actions-panel button:hover {
-                background: #0056b3;
-            }
-            
-            .admin-badge {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: #28a745;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 4px;
-                font-size: 12px;
-                font-weight: bold;
-                z-index: 1001;
-            }
-            
-            .admin-badge i {
-                margin-right: 5px;
-            }
-            
-            @media (max-width: 768px) {
-                #admin-quick-actions {
-                    top: 10px;
-                    right: 10px;
-                }
-                
-                .admin-quick-actions-panel {
-                    padding: 10px;
-                }
-                
-                .admin-quick-actions-panel button {
-                    font-size: 12px;
-                    padding: 6px 10px;
-                }
-            }
-        `;
-        
-        document.head.appendChild(style);
-        document.body.appendChild(quickActions);
-    }
-
-    /**
-     * Quick add product
-     */
-    quickAddProduct() {
-        // Navigate to product add section
-        window.location.hash = '#add-product';
-    }
-
-    /**
-     * Quick user management
-     */
-    quickUserManagement() {
-        // Navigate to user management section
-        window.location.hash = '#user-management';
-    }
-
-    /**
-     * Show admin help
-     */
-    showAdminHelp() {
-        alert('Atalhos do Admin:\nCtrl+Alt+P: Adicionar Produto\nCtrl+Alt+U: Gerenciar Usuários\nCtrl+Alt+H: Mostrar Ajuda');
-    }
-
-    /**
-     * Show admin context menu
-     * @param {Event} e - Context menu event
-     */
-    showAdminContextMenu(e) {
-        // Implementation for admin context menu
-        console.log('Admin context menu at:', e.clientX, e.clientY);
-    }
 
     /**
      * Clear sensitive data
@@ -967,6 +829,10 @@ async isUserAdmin() {
     }
 }
 
+
+
+
+
 // Initialize admin middleware when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     window.adminMiddleware = new AdminMiddleware();
@@ -976,6 +842,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = AdminMiddleware;
 }
+
 
 // Export protectAdminPage function globally
 window.protectAdminPage = AdminMiddleware.protectAdminPage;

@@ -10,6 +10,7 @@ const CART_KEY = "petshop_baronesa_cart"
 const cartCountElements = document.querySelectorAll("#cartCount, #cartCountMobile")
 const cartItemsList = document.getElementById("cartItemsList")
 const cartSubtotal = document.getElementById("cartSubtotal")
+const cartFrete = document.getElementById("cartFrete")  
 const cartTotal = document.getElementById("cartTotal")
 const cartEmpty = document.getElementById("cartEmpty")
 const cartContent = document.getElementById("cartContent")
@@ -244,17 +245,25 @@ function addCartItemEventListeners() {
     })
   })
 }
-
 /**
  * Atualiza o resumo do carrinho (subtotal, total)
  */
 function updateCartSummary() {
-  if (!cartSubtotal || !cartTotal) return
+  if (!cartSubtotal || !cartTotal) return;
 
-  const total = calculateCartTotal()
+  const subtotal = calculateCartTotal();
+  let frete = 0;
 
-  cartSubtotal.textContent = `R$ ${total.toFixed(2)}`
-  cartTotal.textContent = `R$ ${total.toFixed(2)}`
+  // Pega o valor do frete já exibido
+  if (cartFrete && cartFrete.textContent) {
+    const freteText = cartFrete.textContent.replace(/[^\d,.-]/g, '').replace(',', '.');
+    frete = parseFloat(freteText) || 0;
+  }
+
+  const total = subtotal + frete;
+
+  cartSubtotal.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+  cartTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
 }
 
 /**
@@ -368,8 +377,6 @@ function initCart() {
       cartItems.forEach((item) => {
         message += `${item.quantity}x ${item.name}\n`
       })
-
-      message += `\nTotal: R$ ${total.toFixed(2).replace('.', ',')}\n\n`
 
       // Adiciona informações de endereço se disponível
       if (typeof addressManager !== 'undefined') {

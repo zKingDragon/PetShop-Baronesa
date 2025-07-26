@@ -279,20 +279,6 @@
     font-size: 0.9rem;
 }
 
-/* Botão Google */
-.btn-google {
-    background: white;
-    border: 2px solid #e0e0e0;
-    color: #666;
-    transition: all 0.3s ease;
-}
-
-.btn-google:hover {
-    border-color: #4285f4;
-    color: #4285f4;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(66, 133, 244, 0.2);
-}
 
 
 

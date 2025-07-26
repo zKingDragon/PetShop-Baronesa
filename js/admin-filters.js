@@ -9,8 +9,7 @@ function initAdminFilters() {
     // Inicializar filtros de produtos
     initProductFilters();
     
-    // Inicializar filtros de dicas
-    initTipFilters();
+
     
     // Inicializar botões de limpar filtros
     initClearFiltersButtons();
@@ -34,33 +33,12 @@ function initProductFilters() {
     });
 }
 
-function initTipFilters() {
-    const tipsSearchInput = document.getElementById('tipsSearchInput');
-    const tipCategoryFilters = document.querySelectorAll('input[name="tipCategory"]');
-    const tipStatusFilters = document.querySelectorAll('input[name="tipStatus"]');
-    const tipDateFilters = document.querySelectorAll('input[name="tipDate"]');
-    
-    // Event listeners para busca
-    if (tipsSearchInput) {
-        tipsSearchInput.addEventListener('input', debounce(filterTips, 300));
-    }
-    
-    // Event listeners para checkboxes
-    [...tipCategoryFilters, ...tipStatusFilters, ...tipDateFilters].forEach(filter => {
-        filter.addEventListener('change', filterTips);
-    });
-}
 
 function initClearFiltersButtons() {
     const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-    const clearTipsFiltersBtn = document.getElementById('clearTipsFiltersBtn');
     
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', clearProductFilters);
-    }
-    
-    if (clearTipsFiltersBtn) {
-        clearTipsFiltersBtn.addEventListener('click', clearTipFilters);
     }
 }
 
@@ -84,23 +62,6 @@ function filterProducts() {
     }
 }
 
-function filterTips() {
-    const searchTerm = document.getElementById('tipsSearchInput')?.value.toLowerCase() || '';
-    const selectedCategories = Array.from(document.querySelectorAll('input[name="tipCategory"]:checked')).map(cb => cb.value);
-    const selectedStatuses = Array.from(document.querySelectorAll('input[name="tipStatus"]:checked')).map(cb => cb.value);
-    const selectedDates = Array.from(document.querySelectorAll('input[name="tipDate"]:checked')).map(cb => cb.value);
-    
-    // Aqui você pode chamar a função de filtro das dicas
-    // Esta função deve estar definida no admin.js
-    if (window.applyTipFilters) {
-        window.applyTipFilters({
-            search: searchTerm,
-            categories: selectedCategories,
-            statuses: selectedStatuses,
-            dates: selectedDates
-        });
-    }
-}
 
 function clearProductFilters() {
     // Limpar campo de busca
@@ -119,22 +80,6 @@ function clearProductFilters() {
     filterProducts();
 }
 
-function clearTipFilters() {
-    // Limpar campo de busca
-    const tipsSearchInput = document.getElementById('tipsSearchInput');
-    if (tipsSearchInput) {
-        tipsSearchInput.value = '';
-    }
-    
-    // Desmarcar todos os checkboxes
-    const allFilters = document.querySelectorAll('input[name="tipCategory"], input[name="tipStatus"], input[name="tipDate"]');
-    allFilters.forEach(filter => {
-        filter.checked = false;
-    });
-    
-    // Aplicar filtros (que agora estarão vazios)
-    filterTips();
-}
 
 // Função utilitária para debounce
 function debounce(func, wait) {
@@ -152,21 +97,12 @@ function debounce(func, wait) {
 function initFilterToggle() {
     // Desktop filter collapse buttons
     const filterCollapseBtn = document.getElementById('filterCollapseBtn');
-    const tipsFilterCollapseBtn = document.getElementById('tipsFilterCollapseBtn');
     const filterContent = document.getElementById('filterContent');
-    const tipsFilterContent = document.getElementById('tipsFilterContent');
     
     // Desktop collapse functionality for products
     if (filterCollapseBtn && filterContent) {
         filterCollapseBtn.addEventListener('click', function() {
             toggleFilterContent(filterContent, filterCollapseBtn, 'productsFiltersExpanded');
-        });
-    }
-    
-    // Desktop collapse functionality for tips
-    if (tipsFilterCollapseBtn && tipsFilterContent) {
-        tipsFilterCollapseBtn.addEventListener('click', function() {
-            toggleFilterContent(tipsFilterContent, tipsFilterCollapseBtn, 'tipsFiltersExpanded');
         });
     }
     
@@ -198,12 +134,9 @@ function toggleFilterContent(filterContent, button, storageKey) {
 
 function initFilterStates() {
     const productsFiltersExpanded = localStorage.getItem('productsFiltersExpanded');
-    const tipsFiltersExpanded = localStorage.getItem('tipsFiltersExpanded');
     
     const filterContent = document.getElementById('filterContent');
-    const tipsFilterContent = document.getElementById('tipsFilterContent');
     const filterCollapseBtn = document.getElementById('filterCollapseBtn');
-    const tipsFilterCollapseBtn = document.getElementById('tipsFilterCollapseBtn');
     
     // Set initial state for products filters
     const shouldExpandProducts = productsFiltersExpanded !== 'false';
@@ -216,100 +149,308 @@ function initFilterStates() {
             filterCollapseBtn.setAttribute('aria-expanded', 'true');
         }
     }
-    
-    // Set initial state for tips filters
-    const shouldExpandTips = tipsFiltersExpanded !== 'false';
-    if (tipsFilterContent && tipsFilterCollapseBtn) {
-        if (!shouldExpandTips) {
-            tipsFilterContent.classList.add('collapsed');
-            tipsFilterCollapseBtn.classList.add('collapsed');
-            tipsFilterCollapseBtn.setAttribute('aria-expanded', 'false');
-        } else {
-            tipsFilterCollapseBtn.setAttribute('aria-expanded', 'true');
-        }
-    }
 }
 
 // Utility function to handle responsive behavior
 function handleResponsiveFilters() {
     const isMobile = window.innerWidth <= 1023;
     const adminSidebars = document.querySelectorAll('.admin-sidebar');
+    const filterToggleContainer = document.querySelector('.admin-filter-mobile-toggle');
+    const filterToggleBtn = document.getElementById('filterToggleBtn');
     
-    adminSidebars.forEach(sidebar => {
+    console.log(`📱 Ajustando responsividade ADMIN - Mobile: ${isMobile}, Sidebars: ${adminSidebars.length}`);
+    
+    adminSidebars.forEach((sidebar, index) => {
         if (isMobile) {
+            // Mobile: ocultar por padrão, menos se estiver ativo
+            if (!sidebar.classList.contains('active')) {
+                sidebar.style.display = 'none';
+            } else {
+                sidebar.style.display = 'block';
+            }
             sidebar.style.position = 'static';
             sidebar.style.maxHeight = 'none';
         } else {
+            // Desktop: sempre visível
+            sidebar.style.display = 'block';
+            sidebar.classList.remove('active');
             sidebar.style.position = 'sticky';
             sidebar.style.maxHeight = 'calc(100vh - 4rem)';
         }
     });
+    
+    // Mostrar/ocultar botão de toggle baseado no tamanho da tela
+    if (filterToggleContainer) {
+        filterToggleContainer.style.display = isMobile ? 'block' : 'none';
+    }
+    
+    // Resetar estado do botão se necessário
+    if (filterToggleBtn && !isMobile) {
+        filterToggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+        filterToggleBtn.setAttribute('aria-expanded', 'false');
+    }
 }
 
 // Handle window resize for responsive behavior
-window.addEventListener('resize', handleResponsiveFilters);
 
 // Initialize responsive behavior
 document.addEventListener('DOMContentLoaded', handleResponsiveFilters);
     
 
 // Handle window resize to manage mobile/desktop states
-window.addEventListener('resize', function() {
+window.addEventListener('resize', debounce(function() {
+    console.log('📱 Redimensionamento detectado - Nova largura:', window.innerWidth);
+    
     const isMobile = window.innerWidth <= 1023;
     const adminSidebars = document.querySelectorAll('.admin-sidebar');
     const filterToggleBtn = document.getElementById('filterToggleBtn');
-    const tipsFilterToggleBtn = document.getElementById('tipsFilterToggleBtn');
     
     if (!isMobile) {
         // Reset mobile states when switching to desktop
         adminSidebars.forEach(sidebar => {
             sidebar.classList.remove('active');
+            sidebar.style.display = 'block';
         });
         
         if (filterToggleBtn) {
             filterToggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
             filterToggleBtn.setAttribute('aria-expanded', 'false');
         }
-        
-        if (tipsFilterToggleBtn) {
-            tipsFilterToggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
-            tipsFilterToggleBtn.setAttribute('aria-expanded', 'false');
-        }
+    } else {
+        // Mobile mode - ocultar sidebars não ativas
+        adminSidebars.forEach(sidebar => {
+            if (!sidebar.classList.contains('active')) {
+                sidebar.style.display = 'none';
+            }
+        });
     }
-});
+    
+    // Aplicar comportamento responsivo
+    handleResponsiveFilters();
+}, 250));
 
 function initMobileFilterToggle() {
+    console.log('📱 Configurando toggle de filtros ADMIN mobile...');
+    
     // Mobile filter toggle for products
     const filterToggleBtn = document.getElementById('filterToggleBtn');
-    const adminSidebar = document.querySelector('.admin-layout .admin-sidebar');
+    const adminSidebar = document.querySelector('.admin-layout .admin-sidebar') || 
+                        document.querySelector('.admin-sidebar') ||
+                        document.querySelector('[class*="sidebar"]');
+    
+    console.log('🔍 Elementos ADMIN encontrados:', {
+        filterToggleBtn: !!filterToggleBtn,
+        adminSidebar: !!adminSidebar,
+        sidebarClass: adminSidebar?.className || 'não encontrado'
+    });
     
     if (filterToggleBtn && adminSidebar) {
-        filterToggleBtn.addEventListener('click', () => {
-            adminSidebar.classList.toggle('active');
-            
-            // Atualiza texto do botão
-            if (adminSidebar.classList.contains('active')) {
-                filterToggleBtn.innerHTML = '<i class="fas fa-times"></i> Fechar Filtros';
-            } else {
-                filterToggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
-            }
-        });
+        setupFilterToggle(filterToggleBtn, adminSidebar, 'produtos');
+    } else {
+        console.warn('⚠️ Elementos para toggle filtros ADMIN (produtos) não encontrados');
+        if (!filterToggleBtn) {
+            createAdminFilterButton();
+        }
     }
     
-    // Mobile filter toggle for tips
+    // Mobile filter toggle for tips (dicas)
     const tipsFilterToggleBtn = document.getElementById('tipsFilterToggleBtn');
-    const tipsAdminSidebar = document.querySelectorAll('.admin-layout .admin-sidebar')[1];
+    const tipsAdminSidebar = document.querySelectorAll('.admin-sidebar')[1];
+    
+    console.log('🔍 Elementos DICAS encontrados:', {
+        tipsFilterToggleBtn: !!tipsFilterToggleBtn,
+        tipsAdminSidebar: !!tipsAdminSidebar
+    });
     
     if (tipsFilterToggleBtn && tipsAdminSidebar) {
-        tipsFilterToggleBtn.addEventListener('click', () => {
-            tipsAdminSidebar.classList.toggle('active');
-            
-            // Atualiza texto do botão
-            if (tipsAdminSidebar.classList.contains('active')) {
-                tipsFilterToggleBtn.innerHTML = '<i class="fas fa-times"></i> Fechar Filtros';
-            } else {
-                tipsFilterToggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
-            }
-        });
+        setupFilterToggle(tipsFilterToggleBtn, tipsAdminSidebar, 'dicas');
     }
 }
+
+/**
+ * Configura um botão de toggle para uma sidebar específica
+ */
+function setupFilterToggle(toggleBtn, sidebar, type) {
+    // Remover listener existente para evitar duplicatas
+    const newBtn = toggleBtn.cloneNode(true);
+    toggleBtn.parentNode.replaceChild(newBtn, toggleBtn);
+    
+    // Configurar estado inicial
+    const isMobile = window.innerWidth <= 1023;
+    if (isMobile) {
+        sidebar.style.display = 'none';
+        sidebar.classList.remove('active');
+    }
+    
+    newBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log(`📱 Toggle filtros ${type.toUpperCase()} clicado`);
+        
+        const isActive = sidebar.classList.contains('active');
+        console.log(`Estado atual ${type} (ativo):`, isActive);
+        
+        if (isActive) {
+            // Ocultar filtros
+            sidebar.classList.remove('active');
+            sidebar.style.display = 'none';
+            newBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+            newBtn.setAttribute('aria-expanded', 'false');
+            console.log(`📱 Filtros ${type.toUpperCase()} ocultados`);
+        } else {
+            // Mostrar filtros
+            sidebar.classList.add('active');
+            sidebar.style.display = 'block';
+            newBtn.innerHTML = '<i class="fas fa-times"></i> Fechar Filtros';
+            newBtn.setAttribute('aria-expanded', 'true');
+            console.log(`📱 Filtros ${type.toUpperCase()} exibidos`);
+            
+            // Scroll suave para os filtros
+            setTimeout(() => {
+                sidebar.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        }
+    });
+    
+    console.log(`✅ Toggle filtros ${type.toUpperCase()} configurado com sucesso`);
+}
+
+/**
+ * Cria o botão de filtro admin se não existir
+ */
+function createAdminFilterButton() {
+    console.log('🔧 Criando botão de filtro ADMIN...');
+    
+    const adminLayout = document.querySelector('.admin-layout') || 
+                       document.querySelector('.admin-content') ||
+                       document.querySelector('main .container');
+    
+    if (!adminLayout) {
+        console.error('❌ Layout admin não encontrado para criar botão');
+        return;
+    }
+    
+    // Verificar se já existe um container de toggle
+    let filterToggleContainer = document.querySelector('.admin-filter-mobile-toggle');
+    
+    if (!filterToggleContainer) {
+        // Criar container do botão
+        filterToggleContainer = document.createElement('div');
+        filterToggleContainer.className = 'admin-filter-mobile-toggle';
+        filterToggleContainer.style.cssText = `
+            display: none;
+            margin-bottom: 1rem;
+            width: 100%;
+        `;
+        
+        // Criar botão
+        const filterBtn = document.createElement('button');
+        filterBtn.id = 'filterToggleBtn';
+        filterBtn.className = 'btn-secondary';
+        filterBtn.style.cssText = `
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--emerald-green);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        `;
+        filterBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+        filterBtn.setAttribute('aria-expanded', 'false');
+        
+        filterToggleContainer.appendChild(filterBtn);
+        
+        // Inserir no início do container
+        adminLayout.insertBefore(filterToggleContainer, adminLayout.firstChild);
+        
+        console.log('✅ Botão de filtro ADMIN criado');
+        
+        // Reconfigurar após criação
+        setTimeout(() => {
+            initMobileFilterToggle();
+        }, 100);
+    }
+}
+
+/**
+ * Função de debug para diagnosticar problemas com filtros admin
+ */
+const adminFiltersDebug = {
+    checkElements() {
+        console.log('🔧 === DEBUG FILTROS ADMIN ===');
+        
+        const filterToggleBtn = document.getElementById('filterToggleBtn');
+        const adminSidebars = document.querySelectorAll('.admin-sidebar');
+        const adminLayout = document.querySelector('.admin-layout');
+        const filterToggleContainer = document.querySelector('.admin-filter-mobile-toggle');
+        
+        console.log('📋 Elementos encontrados:', {
+            filterToggleBtn: !!filterToggleBtn,
+            adminSidebars: adminSidebars.length,
+            adminLayout: !!adminLayout,
+            filterToggleContainer: !!filterToggleContainer,
+            screenWidth: window.innerWidth,
+            isMobile: window.innerWidth <= 1023
+        });
+        
+        if (filterToggleBtn) {
+            console.log('🔘 Botão de filtro:', {
+                display: window.getComputedStyle(filterToggleBtn).display,
+                visibility: window.getComputedStyle(filterToggleBtn).visibility,
+                innerHTML: filterToggleBtn.innerHTML,
+                ariaExpanded: filterToggleBtn.getAttribute('aria-expanded')
+            });
+        }
+        
+        adminSidebars.forEach((sidebar, index) => {
+            console.log(`📋 Sidebar ${index}:`, {
+                display: window.getComputedStyle(sidebar).display,
+                visibility: window.getComputedStyle(sidebar).visibility,
+                hasActiveClass: sidebar.classList.contains('active'),
+                classes: sidebar.className
+            });
+        });
+        
+        return {
+            filterToggleBtn,
+            adminSidebars,
+            adminLayout,
+            filterToggleContainer
+        };
+    },
+    
+    forceShow() {
+        console.log('🔧 Forçando exibição dos filtros...');
+        const sidebar = document.querySelector('.admin-sidebar');
+        if (sidebar) {
+            sidebar.style.display = 'block';
+            sidebar.classList.add('active');
+            console.log('✅ Sidebar forçada a aparecer');
+        }
+    },
+    
+    testToggle() {
+        console.log('🔧 Testando toggle...');
+        const btn = document.getElementById('filterToggleBtn');
+        if (btn) {
+            btn.click();
+            console.log('✅ Clique simulado');
+        } else {
+            console.error('❌ Botão não encontrado para teste');
+        }
+    }
+};
+
+// Disponibilizar debug globalmente
+window.adminFiltersDebug = adminFiltersDebug;

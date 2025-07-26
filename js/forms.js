@@ -17,6 +17,24 @@ function initAppointmentForm() {
 
     console.log('✅ Formulário de agendamento encontrado');
 
+    // Adicionar evento para mostrar/ocultar campo de porte do cachorro
+    const petTypeSelect = document.getElementById('petType');
+    const dogSizeGroup = document.getElementById('dogSizeGroup');
+    const dogSizeSelect = document.getElementById('dogSize');
+
+    if (petTypeSelect && dogSizeGroup) {
+        petTypeSelect.addEventListener('change', function() {
+            if (this.value === 'Cão') {
+                dogSizeGroup.style.display = 'block';
+                dogSizeSelect.required = true;
+            } else {
+                dogSizeGroup.style.display = 'none';
+                dogSizeSelect.required = false;
+                dogSizeSelect.value = ''; // Limpar seleção quando oculto
+            }
+        });
+    }
+
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -25,14 +43,22 @@ function initAppointmentForm() {
         const data = {
             petName: formData.get('petName'),
             petType: formData.get('petType'),
+            dogSize: formData.get('dogSize') || '',
+            serviceType: formData.get('serviceType'),
             date: formData.get('date'),
             ownerName: formData.get('ownerName'),
             notes: formData.get('notes') || ''
         };
 
         // Validar dados
-        if (!data.petName || !data.petType || !data.date || !data.ownerName) {
+        if (!data.petName || !data.petType || !data.serviceType || !data.date || !data.ownerName) {
             alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+
+        // Validar porte do cachorro se for cão
+        if (data.petType === 'Cão' && !data.dogSize) {
+            alert('Por favor, selecione o porte do cachorro.');
             return;
         }
 
@@ -71,6 +97,13 @@ function createWhatsAppMessage(data) {
     message += `👤 *Dono: * ${data.ownerName}\n`;
     message += `🐕 *Pet: * ${data.petName}\n`;
     message += `🐾 *Tipo de pet: * ${data.petType}\n`;
+    
+    // Adicionar porte do cachorro se for cão
+    if (data.petType === 'Cão' && data.dogSize) {
+        message += `📏 *Porte: * ${data.dogSize}\n`;
+    }
+    
+    message += `✂️ *Serviço: * ${data.serviceType}\n`;
     message += `📅 *Quais horários teriam para o dia: * ${formattedDate}\n`;
     
     if (data.notes) {
@@ -87,7 +120,7 @@ function createWhatsAppMessage(data) {
  */
 function openWhatsApp(message) {
     // Número do WhatsApp do Pet Shop (substitua pelo número real)
-    const phoneNumber = '5513996825624'; // Formato: código do país + DDD + número
+    const phoneNumber = '551334559994'; // Formato: código do país + DDD + número
 
     // URL para WhatsApp Web
     const whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
@@ -335,14 +368,14 @@ function showAddressModal() {
         
         <form id="addressForm" class="address-form">
           <div class="form-group">
-            <label for="customerName">Nome Completo *</label>
+            <label for="customerName">Nome Completo</label>
             <input type="text" id="customerName" name="name" required 
                    value="${existingAddress.name || ''}" 
                    placeholder="Digite seu nome completo">
           </div>
           
           <div class="form-group">
-            <label for="streetName">Nome da Rua *</label>
+            <label for="streetName">Nome da Rua </label>
             <input type="text" id="streetName" name="street" required 
                    value="${existingAddress.street || ''}" 
                    placeholder="Ex: Rua das Flores">
@@ -350,14 +383,14 @@ function showAddressModal() {
           
           <div class="form-row">
             <div class="form-group">
-              <label for="streetNumber">Número *</label>
+              <label for="streetNumber">Número</label>
               <input type="text" id="streetNumber" name="number" required 
                      value="${existingAddress.number || ''}" 
                      placeholder="Ex: 123">
             </div>
             
             <div class="form-group">
-              <label for="complement">Complemento</label>
+              <label for="complement">Complemento (Opcional)</label>
               <input type="text" id="complement" name="complement" 
                      value="${existingAddress.complement || ''}" 
                      placeholder="Ex: Apto 45">
@@ -365,14 +398,27 @@ function showAddressModal() {
           </div>
           
           <div class="form-group">
-            <label for="neighborhood">Bairro *</label>
-            <input type="text" id="neighborhood" name="neighborhood" required 
-                   value="${existingAddress.neighborhood || ''}" 
-                   placeholder="Ex: Centro">
-          </div>
+            <label for="neighborhood">Bairro</label>
+            <select id="neighborhood" name="neighborhood" required>
+              <option value="" data-frete="0">Selecione o bairro</option>
+              <option value="Centro" data-frete="3">Centro </option>
+              <option value="Park D'aville" data-frete="3">Park D'aville </option>
+              <option value="Jardim Jangada" data-frete="3">Jardim Jangada </option>
+              <option value="Stella Maris" data-frete="3">Stella Maris </option>
+              <option value="Novo Horizonte" data-frete="4">Novo Horizonte </option>
+              <option value="Vila Romar" data-frete="4">Vila Romar </option>
+              <option value="São João Batista II" data-frete="4">São João Batista II </option>
+              <option value="Veneza" data-frete="4">Veneza </option>
+              <option value="Jardim Caraguava" data-frete="5">Jardim Caraguava</option>
+              <option value="Caraminguava" data-frete="5">Caraminguava</option>
+              <option value="Oasis" data-frete="6">Oasis </option>
+              <option value="Bougainville Res." data-frete="6">Bougainville Res. </option>
+              <option value="Villa Erminda" data-frete="6">Villa Erminda </option>
+            </select>
+           </div>
           
           <div class="form-group">
-            <label for="reference">Ponto de Referência</label>
+            <label for="reference">Ponto de Referência (Opcional)</label>
             <textarea id="reference" name="reference" rows="2" 
                       placeholder="Ex: Próximo ao supermercado">${existingAddress.reference || ''}</textarea>
           </div>
@@ -389,9 +435,21 @@ function showAddressModal() {
       </div>
     </div>
   `
+document.addEventListener('change', function (e) {
+  if (e.target && e.target.id === 'neighborhood') {
+    const selected = e.target.selectedOptions[0];
+    const frete = selected ? Number(selected.getAttribute('data-frete')) : 0;
+    const freteSpan = document.getElementById('cartFrete');
+    if (freteSpan) {
+      freteSpan.textContent = `R$ ${frete.toFixed(2).replace('.', ',')}`;
+    }
+    // Atualize o total do carrinho se necessário
+    if (typeof updateCartSummary === 'function') updateCartSummary();
+  }
+});
 
-  // Adicionar ao body
-  document.body.insertAdjacentHTML('beforeend', modalHTML)
+// Adicionar ao body
+document.body.insertAdjacentHTML('beforeend', modalHTML)
 
   // Adicionar estilos
   addAddressModalStyles()
@@ -451,9 +509,8 @@ function setupAddressFormEvents() {
     })
   }
 }
-
 /**
- * Atualiza a exibição do endereço no resumo do pedido
+ * Atualiza a exibição do endereço no resumo do pedido - VERSÃO ATUALIZADA COM BOTÃO LIMPAR
  */
 function updateAddressDisplay() {
   const addressSection = document.getElementById("addressSection")
@@ -470,9 +527,14 @@ function updateAddressDisplay() {
         <div class="address-header">
           <i class="fas fa-map-marker-alt"></i>
           <span>Endereço de Entrega</span>
-          <button class="edit-address-btn" onclick="showAddressModal()" title="Editar endereço">
-            <i class="fas fa-edit"></i>
-          </button>
+          <div class="address-actions">
+            <button class="edit-address-btn" onclick="showAddressModal()" title="Editar endereço">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="clear-address-btn" onclick="clearAddressInfo()" title="Limpar endereço">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
         </div>
         <div class="address-details">
           <p><strong>${address.name}</strong></p>
@@ -516,15 +578,109 @@ function updateAddressDisplay() {
 }
 
 /**
- * Mostra mensagem de sucesso após salvar endereço
+ * Limpa as informações do endereço com confirmação
  */
-function showAddressSuccessMessage() {
+function clearAddressInfo() {
+  // Modal de confirmação personalizado
+  showConfirmationModal({
+    title: 'Limpar Endereço',
+    message: 'Tem certeza que deseja remover as informações de endereço?',
+    confirmText: 'Sim, Limpar',
+    cancelText: 'Cancelar',
+    onConfirm: () => {
+      // Limpar dados do localStorage
+      clearAddressData()
+      
+      // Atualizar interface
+      updateAddressDisplay()
+      
+      // Mostrar mensagem de sucesso
+      showAddressClearMessage()
+    }
+  })
+}
+
+/**
+ * Mostra modal de confirmação personalizado
+ */
+function showConfirmationModal({ title, message, confirmText, cancelText, onConfirm }) {
+  // Remover modal existente se houver
+  const existingModal = document.getElementById("confirmationModal")
+  if (existingModal) {
+    existingModal.remove()
+  }
+
+  // Criar o modal
+  const modalHTML = `
+    <div id="confirmationModal" class="confirmation-modal">
+      <div class="confirmation-modal-content">
+        <div class="confirmation-modal-header">
+          <h3><i class="fas fa-question-circle"></i> ${title}</h3>
+          <button class="confirmation-modal-close" onclick="closeConfirmationModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="confirmation-modal-body">
+          <div class="confirmation-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <p>${message}</p>
+        </div>
+        
+        <div class="confirmation-modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeConfirmationModal()">
+            <i class="fas fa-times"></i> ${cancelText}
+          </button>
+          <button type="button" class="btn-danger" onclick="confirmAction()">
+            <i class="fas fa-check"></i> ${confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  `
+
+  // Adicionar ao body
+  document.body.insertAdjacentHTML('beforeend', modalHTML)
+
+  // Adicionar estilos
+  addConfirmationModalStyles()
+
+  // Salvar callback
+  window.confirmationCallback = onConfirm
+}
+
+/**
+ * Fecha o modal de confirmação
+ */
+function closeConfirmationModal() {
+  const modal = document.getElementById("confirmationModal")
+  if (modal) {
+    modal.remove()
+  }
+  window.confirmationCallback = null
+}
+
+/**
+ * Executa a ação confirmada
+ */
+function confirmAction() {
+  if (window.confirmationCallback) {
+    window.confirmationCallback()
+  }
+  closeConfirmationModal()
+}
+
+/**
+ * Mostra mensagem de sucesso após limpar endereço
+ */
+function showAddressClearMessage() {
   // Criar notificação
   const notification = document.createElement('div')
-  notification.className = 'address-notification success'
+  notification.className = 'address-notification clear'
   notification.innerHTML = `
-    <i class="fas fa-check-circle"></i>
-    <span>Endereço salvo com sucesso!</span>
+    <i class="fas fa-trash-alt"></i>
+    <span>Endereço removido com sucesso!</span>
   `
   
   // Adicionar ao body
@@ -546,270 +702,21 @@ function showAddressSuccessMessage() {
   }, 3000)
 }
 
-/**
- * Adiciona os estilos CSS para o modal de endereço
- */
-function addAddressModalStyles() {
-  // Verificar se os estilos já foram adicionados
-  if (document.getElementById('addressModalStyles')) return
-  
-  const style = document.createElement('style')
-  style.id = 'addressModalStyles'
-  style.textContent = `
-    .address-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      animation: fadeIn 0.3s ease;
-    }
-    
-    .address-modal-content {
-      background: white;
-      border-radius: 8px;
-      padding: 0;
-      max-width: 500px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-      animation: slideIn 0.3s ease;
-    }
-    
-    .address-modal-header {
-      background: #005f73;
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 8px 8px 0 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .address-modal-header h2 {
-      margin: 0;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .address-modal-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 4px;
-      transition: background 0.3s ease;
-    }
-    
-    .address-modal-close:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    
-    .address-form {
-      padding: 1.5rem;
-    }
-    
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #333;
-    }
-    
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-    }
-    
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #005f73;
-      box-shadow: 0 0 0 2px rgba(0, 95, 115, 0.1);
-    }
-    
-    .address-form-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: flex-end;
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid #eee;
-    }
-    
-    .address-info {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-    
-    .address-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-      color: #005f73;
-      font-weight: 500;
-    }
-    
-    .address-header i {
-      margin-right: 0.5rem;
-    }
-    
-    .edit-address-btn {
-      background: none;
-      border: none;
-      color: #007bff;
-      cursor: pointer;
-      padding: 0.25rem;
-      border-radius: 3px;
-      transition: background 0.3s ease;
-    }
-    
-    .edit-address-btn:hover {
-      background: rgba(0, 123, 255, 0.1);
-    }
-    
-    .address-details p {
-      margin: 0.25rem 0;
-      color: #333;
-    }
-    
-    .address-reference {
-      color: #666;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-    
-    .address-reference i {
-      margin-right: 0.25rem;
-    }
-    
-    .address-required {
-      background: #fff3cd;
-      border: 1px solid #ffeaa7;
-      border-radius: 6px;
-      padding: 1.5rem;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    
-    .address-icon {
-      font-size: 2rem;
-      color: #856404;
-      margin-bottom: 1rem;
-    }
-    
-    .address-message h3 {
-      margin: 0 0 0.5rem 0;
-      color: #856404;
-    }
-    
-    .address-message p {
-      margin: 0 0 1rem 0;
-      color: #856404;
-    }
-    
-    .btn-address {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .btn-address:hover {
-      background: #0056b3;
-    }
-    
-    .address-notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #28a745;
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 4px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-    }
-    
-    .address-notification.show {
-      transform: translateX(0);
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    @keyframes slideIn {
-      from { transform: translateY(-20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    @media (max-width: 768px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-      
-      .address-form-actions {
-        flex-direction: column;
-      }
-      
-      .address-modal-content {
-        width: 95%;
-        margin: 1rem;
-      }
-      
-      .address-notification {
-        right: 10px;
-        left: 10px;
-      }
-    }
-  `
+/**               
   
   document.head.appendChild(style)
 }
 
-// Exportar funções para uso global
+/**
+ * Adiciona estilos específicos para o modal de confirmação
+ */
+function addConfirmationModalStyles() {
+  // Os estilos já estão incluídos na função addAddressModalStyles
+  // Esta função é mantida para compatibilidade
+  addAddressModalStyles()
+}
+
+// Exportar funções para uso global - VERSÃO ATUALIZADA
 window.addressManager = {
   showAddressModal,
   closeAddressModal,
@@ -817,5 +724,14 @@ window.addressManager = {
   isAddressComplete,
   getAddressData,
   saveAddressData,
-  clearAddressData
+  clearAddressData,
+  clearAddressInfo,
+  showConfirmationModal,
+  closeConfirmationModal
 }
+
+// Adicionar funções globais para os onclick
+window.clearAddressInfo = clearAddressInfo
+window.showConfirmationModal = showConfirmationModal
+window.closeConfirmationModal = closeConfirmationModal
+window.confirmAction = confirmAction
