@@ -37,7 +37,7 @@ function initAppointmentForm() {
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         // Coletar dados do formulário
         const formData = new FormData(form);
         const data = {
@@ -66,7 +66,7 @@ function initAppointmentForm() {
         const selectedDate = new Date(data.date);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         if (selectedDate < today) {
             alert('Por favor, selecione uma data futura.');
             return;
@@ -74,7 +74,7 @@ function initAppointmentForm() {
 
         // Criar mensagem para WhatsApp
         const message = createWhatsAppMessage(data);
-        
+
         // Abrir WhatsApp
         openWhatsApp(message);
     });
@@ -92,26 +92,26 @@ function initAppointmentForm() {
  */
 function createWhatsAppMessage(data) {
     const formattedDate = new Date(data.date).toLocaleDateString('pt-BR');
-    
+
     let message = `🐾 *AGENDAMENTO BANHO & TOSA*\n\n`;
     message += `👤 *Dono: * ${data.ownerName}\n`;
     message += `🐕 *Pet: * ${data.petName}\n`;
     message += `🐾 *Tipo de pet: * ${data.petType}\n`;
-    
+
     // Adicionar porte do cachorro se for cão
     if (data.petType === 'Cão' && data.dogSize) {
         message += `📏 *Porte: * ${data.dogSize}\n`;
     }
-    
+
     message += `✂️ *Serviço: * ${data.serviceType}\n`;
     message += `📅 *Quais horários teriam para o dia: * ${formattedDate}\n`;
-    
+
     if (data.notes) {
         message += `📝 *Observações: * ${data.notes}\n`;
     }
-    
+
     message += `\nGostaria de confirmar o agendamento! 😊`;
-    
+
     return encodeURIComponent(message);
 }
 
@@ -124,7 +124,7 @@ function openWhatsApp(message) {
 
     // URL para WhatsApp Web
     const whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
-    
+
     // Abrir em nova aba
     window.open(whatsappURL, '_blank');
 }
@@ -132,7 +132,7 @@ function openWhatsApp(message) {
 // Inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
     // ...existing code...
-    
+
     // Inicializar formulário de agendamento se estiver na página
     initAppointmentForm();
 });
@@ -188,7 +188,7 @@ function initCadastroForm() {
       } catch (error) {
         console.error('Erro ao cadastrar:', error)
         let errorMessage = "Erro ao cadastrar: "
-        
+
         // Mensagens de erro mais específicas
         switch (error.code) {
           case 'auth/email-already-in-use':
@@ -203,7 +203,7 @@ function initCadastroForm() {
           default:
             errorMessage += error.message || "Tente novamente."
         }
-        
+
         alert(errorMessage)
       }
     })
@@ -243,7 +243,7 @@ function showSuccessMessage() {
                 max-width: 32rem;
                 margin: 0 auto;
             }
-            
+
             .success-icon {
                 display: inline-flex;
                 align-items: center;
@@ -254,24 +254,24 @@ function showSuccessMessage() {
                 border-radius: 9999px;
                 margin-bottom: 1rem;
             }
-            
+
             .success-icon i {
                 color: white;
                 font-size: 2rem;
             }
-            
+
             .success-message h2 {
                 font-weight: 700;
                 color: #005f73;
                 margin-bottom: 0.5rem;
                 font-size: 1.5rem;
             }
-            
+
             .success-message p {
                 color: #6b7280;
                 margin-bottom: 1.5rem;
             }
-            
+
             .success-message .btn-primary {
                 display: inline-block;
             }
@@ -335,10 +335,10 @@ function clearAddressData() {
  */
 function isAddressComplete() {
   const address = getAddressData()
-  return address && 
-         address.name && 
-         address.street && 
-         address.number && 
+  return address &&
+         address.name &&
+         address.street &&
+         address.number &&
          address.neighborhood
 }
 
@@ -365,38 +365,38 @@ function showAddressModal() {
             <i class="fas fa-times"></i>
           </button>
         </div>
-        
+
         <form id="addressForm" class="address-form">
           <div class="form-group">
             <label for="customerName">Nome Completo</label>
-            <input type="text" id="customerName" name="name" required 
-                   value="${existingAddress.name || ''}" 
+            <input type="text" id="customerName" name="name" required
+                   value="${existingAddress.name || ''}"
                    placeholder="Digite seu nome completo">
           </div>
-          
+
           <div class="form-group">
             <label for="streetName">Nome da Rua </label>
-            <input type="text" id="streetName" name="street" required 
-                   value="${existingAddress.street || ''}" 
+            <input type="text" id="streetName" name="street" required
+                   value="${existingAddress.street || ''}"
                    placeholder="Ex: Rua das Flores">
           </div>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label for="streetNumber">Número</label>
-              <input type="text" id="streetNumber" name="number" required 
-                     value="${existingAddress.number || ''}" 
+              <input type="text" id="streetNumber" name="number" required
+                     value="${existingAddress.number || ''}"
                      placeholder="Ex: 123">
             </div>
-            
+
             <div class="form-group">
               <label for="complement">Complemento (Opcional)</label>
-              <input type="text" id="complement" name="complement" 
-                     value="${existingAddress.complement || ''}" 
+              <input type="text" id="complement" name="complement"
+                     value="${existingAddress.complement || ''}"
                      placeholder="Ex: Apto 45">
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="neighborhood">Bairro</label>
             <select id="neighborhood" name="neighborhood" required>
@@ -416,13 +416,13 @@ function showAddressModal() {
               <option value="Villa Erminda" data-frete="6">Villa Erminda </option>
             </select>
            </div>
-          
+
           <div class="form-group">
             <label for="reference">Ponto de Referência (Opcional)</label>
-            <textarea id="reference" name="reference" rows="2" 
+            <textarea id="reference" name="reference" rows="2"
                       placeholder="Ex: Próximo ao supermercado">${existingAddress.reference || ''}</textarea>
           </div>
-          
+
           <div class="address-form-actions">
             <button type="button" class="btn-secondary" onclick="closeAddressModal()">
               <i class="fas fa-times"></i> Cancelar
@@ -473,11 +473,11 @@ function closeAddressModal() {
  */
 function setupAddressFormEvents() {
   const addressForm = document.getElementById("addressForm")
-  
+
   if (addressForm) {
     addressForm.addEventListener("submit", (e) => {
       e.preventDefault()
-      
+
       // Coletar dados do formulário
       const formData = new FormData(addressForm)
       const addressData = {
@@ -488,22 +488,22 @@ function setupAddressFormEvents() {
         neighborhood: formData.get('neighborhood').trim(),
         reference: formData.get('reference').trim()
       }
-      
+
       // Validar campos obrigatórios
       if (!addressData.name || !addressData.street || !addressData.number || !addressData.neighborhood) {
         alert('Por favor, preencha todos os campos obrigatórios.')
         return
       }
-      
+
       // Salvar dados
       saveAddressData(addressData)
-      
+
       // Fechar modal
       closeAddressModal()
-      
+
       // Atualizar interface
       updateAddressDisplay()
-      
+
       // Mostrar mensagem de sucesso
       showAddressSuccessMessage()
     })
@@ -515,11 +515,11 @@ function setupAddressFormEvents() {
 function updateAddressDisplay() {
   const addressSection = document.getElementById("addressSection")
   const checkoutButton = document.getElementById("checkoutButton")
-  
+
   if (!addressSection) return
-  
+
   const address = getAddressData()
-  
+
   if (address && isAddressComplete()) {
     // Endereço completo - mostrar dados e habilitar finalizar compra
     addressSection.innerHTML = `
@@ -544,7 +544,7 @@ function updateAddressDisplay() {
         </div>
       </div>
     `
-    
+
     // Habilitar botão de finalizar compra
     if (checkoutButton) {
       checkoutButton.disabled = false
@@ -567,7 +567,7 @@ function updateAddressDisplay() {
         </button>
       </div>
     `
-    
+
     // Desabilitar botão de finalizar compra
     if (checkoutButton) {
       checkoutButton.disabled = true
@@ -590,10 +590,10 @@ function clearAddressInfo() {
     onConfirm: () => {
       // Limpar dados do localStorage
       clearAddressData()
-      
+
       // Atualizar interface
       updateAddressDisplay()
-      
+
       // Mostrar mensagem de sucesso
       showAddressClearMessage()
     }
@@ -620,14 +620,14 @@ function showConfirmationModal({ title, message, confirmText, cancelText, onConf
             <i class="fas fa-times"></i>
           </button>
         </div>
-        
+
         <div class="confirmation-modal-body">
           <div class="confirmation-icon">
             <i class="fas fa-exclamation-triangle"></i>
           </div>
           <p>${message}</p>
         </div>
-        
+
         <div class="confirmation-modal-actions">
           <button type="button" class="btn-secondary" onclick="closeConfirmationModal()">
             <i class="fas fa-times"></i> ${cancelText}
@@ -682,15 +682,15 @@ function showAddressClearMessage() {
     <i class="fas fa-trash-alt"></i>
     <span>Endereço removido com sucesso!</span>
   `
-  
+
   // Adicionar ao body
   document.body.appendChild(notification)
-  
+
   // Mostrar animação
   setTimeout(() => {
     notification.classList.add('show')
   }, 100)
-  
+
   // Remover após 3 segundos
   setTimeout(() => {
     notification.classList.remove('show')
@@ -702,8 +702,8 @@ function showAddressClearMessage() {
   }, 3000)
 }
 
-/**               
-  
+/**
+
   document.head.appendChild(style)
 }
 
