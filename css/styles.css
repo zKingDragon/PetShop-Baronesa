@@ -191,26 +191,26 @@ img {
     padding: 0.75rem 0;
     gap: 0.5rem;
   }
-  
+
   .header-content .search-form {
     display: none;
   }
-  
+
   .logo-circle {
     width: 35px;
     height: 35px;
     margin-right: 0.5rem;
   }
-  
+
   .logo-text {
     font-size: 1.1rem;
   }
-  
+
   .btn-signup {
     font-size: 0.875rem;
     padding: 0.5rem 1rem;
   }
-  
+
   .user-dropdown-toggle {
     max-width: 140px;
   }
@@ -221,22 +221,22 @@ img {
     padding: 0.5rem 0;
     gap: 0.3rem;
   }
-  
+
   .logo-circle {
     width: 30px;
     height: 30px;
     margin-right: 0.4rem;
   }
-  
+
   .logo-text {
     font-size: 1rem;
   }
-  
+
   .btn-signup {
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
   }
-  
+
   .user-dropdown-toggle {
     max-width: 120px;
   }
@@ -248,28 +248,28 @@ img {
     padding: 0.4rem 0;
     gap: 0.2rem;
   }
-  
+
   .logo-circle {
     width: 25px;
     height: 25px;
     margin-right: 0.3rem;
   }
-  
+
   .logo-text {
     font-size: 0.9rem;
   }
-  
+
   .btn-signup {
     font-size: 0.75rem;
     padding: 0.3rem 0.6rem;
   }
-  
+
   .user-dropdown-toggle {
     max-width: 100px;
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
   }
-  
+
   .menu-toggle {
     font-size: 1.2rem;
   }
@@ -280,12 +280,12 @@ img {
   .header-content {
     padding: 0.75rem 0;
   }
-  
+
   .logo-circle {
     width: 35px;
     height: 35px;
   }
-  
+
   .logo-text {
     font-size: 1.1rem;
   }
@@ -1785,7 +1785,7 @@ img {
     font-size: 0.9rem;
     margin: 0 20px;
   }
-  
+
   .toast.show {
     transform: translateX(-50%);
   }
@@ -1885,23 +1885,23 @@ img {
     max-width: 90vw;
     align-items: center;
   }
-  
+
   .toast-notification {
     transform: translateY(100%);
     min-width: auto;
     width: 100%;
     max-width: 100%;
   }
-  
+
   .toast-notification.show {
     transform: translateY(0);
   }
-  
+
   .toast-content {
     justify-content: center;
     text-align: center;
   }
-  
+
   .toast-message {
     font-size: 15px;
   }
@@ -1912,11 +1912,11 @@ img {
     width: calc(100vw - 20px);
     bottom: 15px;
   }
-  
+
   .toast-notification {
     padding: 14px 12px;
   }
-  
+
   .toast-message {
     font-size: 14px;
   }
@@ -2117,12 +2117,12 @@ img {
     font-size: 0.875rem;
     margin-left: 0.5rem;
   }
-  
+
   .user-dropdown-menu {
     width: 10rem;
     right: -1rem;
   }
-  
+
   .user-dropdown-menu .dropdown-item {
     padding: 0.6rem 0.8rem;
     font-size: 0.875rem;
@@ -2134,17 +2134,17 @@ img {
     padding: 0.3rem 0.6rem;
     font-size: 0.8rem;
   }
-  
+
   .user-dropdown-menu {
     width: 9rem;
     right: -0.5rem;
   }
-  
+
   .user-dropdown-menu .dropdown-item {
     padding: 0.5rem 0.6rem;
     font-size: 0.8rem;
   }
-  
+
   .user-dropdown-toggle .user-name {
     max-width: 80px;
     overflow: hidden;
@@ -2153,7 +2153,7 @@ img {
   }
 }
 
-  
+
 
 /* Login */
 .login-container {
@@ -4113,26 +4113,26 @@ img {
     padding: 0.75rem 0;
     gap: 0.5rem;
   }
-  
+
   .header-content .search-form {
     display: none;
   }
-  
+
   .logo-circle {
     width: 35px;
     height: 35px;
     margin-right: 0.5rem;
   }
-  
+
   .logo-text {
     font-size: 1.1rem;
   }
-  
+
   .btn-signup {
     font-size: 0.875rem;
     padding: 0.5rem 1rem;
   }
-  
+
   .user-dropdown-toggle {
     max-width: 140px;
   }
@@ -4143,22 +4143,22 @@ img {
     padding: 0.5rem 0;
     gap: 0.3rem;
   }
-  
+
   .logo-circle {
     width: 30px;
     height: 30px;
     margin-right: 0.4rem;
   }
-  
+
   .logo-text {
     font-size: 1rem;
   }
-  
+
   .btn-signup {
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
   }
-  
+
   .user-dropdown-toggle {
     max-width: 120px;
   }
@@ -4170,28 +4170,28 @@ img {
     padding: 0.4rem 0;
     gap: 0.2rem;
   }
-  
+
   .logo-circle {
     width: 25px;
     height: 25px;
     margin-right: 0.3rem;
   }
-  
+
   .logo-text {
     font-size: 0.9rem;
   }
-  
+
   .btn-signup {
     font-size: 0.75rem;
     padding: 0.3rem 0.6rem;
   }
-  
+
   .user-dropdown-toggle {
     max-width: 100px;
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
   }
-  
+
   .menu-toggle {
     font-size: 1.2rem;
   }
@@ -4202,12 +4202,12 @@ img {
   .header-content {
     padding: 0.75rem 0;
   }
-  
+
   .logo-circle {
     width: 35px;
     height: 35px;
   }
-  
+
   .logo-text {
     font-size: 1.1rem;
   }
@@ -5706,7 +5706,7 @@ img {
     font-size: 0.9rem;
     margin: 0 20px;
   }
-  
+
   .toast.show {
     transform: translateX(-50%);
   }
@@ -5806,23 +5806,23 @@ img {
     max-width: 90vw;
     align-items: center;
   }
-  
+
   .toast-notification {
     transform: translateY(100%);
     min-width: auto;
     width: 100%;
     max-width: 100%;
   }
-  
+
   .toast-notification.show {
     transform: translateY(0);
   }
-  
+
   .toast-content {
     justify-content: center;
     text-align: center;
   }
-  
+
   .toast-message {
     font-size: 15px;
   }
@@ -5833,11 +5833,11 @@ img {
     width: calc(100vw - 20px);
     bottom: 15px;
   }
-  
+
   .toast-notification {
     padding: 14px 12px;
   }
-  
+
   .toast-message {
     font-size: 14px;
   }
@@ -6039,12 +6039,12 @@ img {
     font-size: 0.875rem;
     margin-left: 1rem;
   }
-  
+
   .user-dropdown-menu {
     width: 10rem;
     right: -1rem;
   }
-  
+
   .user-dropdown-menu .dropdown-item {
     padding: 0.6rem 0.8rem;
     font-size: 0.875rem;
@@ -6056,17 +6056,17 @@ img {
     padding: 0.3rem 0.6rem;
     font-size: 0.8rem;
   }
-  
+
   .user-dropdown-menu {
     width: 9rem;
     right: -0.5rem;
   }
-  
+
   .user-dropdown-menu .dropdown-item {
     padding: 0.5rem 0.6rem;
     font-size: 0.8rem;
   }
-  
+
   .user-dropdown-toggle .user-name {
     max-width: 80px;
     overflow: hidden;
@@ -6075,7 +6075,7 @@ img {
   }
 }
 
-  
+
 
 /* Login */
 .login-container {
@@ -7247,25 +7247,25 @@ img {
         width: 95%;
         max-width: 24rem;
     }
-    
+
     .modal-actions {
         flex-direction: column;
         gap: 0.75rem;
     }
-    
+
     .modal-actions button {
         width: 100%;
         min-width: unset;
     }
-    
+
     .delete-warning {
         padding: 1rem;
     }
-    
+
     .delete-warning i {
         font-size: 2.5rem;
     }
-    
+
     .modal-body {
         padding: 1.5rem;
     }
@@ -7317,7 +7317,7 @@ img {
       z-index: 9999;
       animation: fadeIn 0.3s ease;
     }
-    
+
     .address-modal-content {
       background: white;
       border-radius: 8px;
@@ -7328,7 +7328,7 @@ img {
       overflow-y: auto;
       animation: slideIn 0.3s ease;
     }
-    
+
     .address-modal-header {
       background: #005f73;
       color: white;
@@ -7338,7 +7338,7 @@ img {
       justify-content: space-between;
       align-items: center;
     }
-    
+
     .address-modal-header h2 {
       margin: 0;
       font-size: 1.2rem;
@@ -7346,7 +7346,7 @@ img {
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .address-modal-close {
       background: none;
       border: none;
@@ -7357,32 +7357,32 @@ img {
       border-radius: 4px;
       transition: background 0.3s ease;
     }
-    
+
     .address-modal-close:hover {
       background: rgba(255, 255, 255, 0.1);
     }
-    
+
     .address-form {
       padding: 1.5rem;
     }
-    
+
     .form-group {
       margin-bottom: 1rem;
     }
-    
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
-    
+
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
       color: #333;
     }
-    
+
     .form-group input,
     .form-group textarea {
       width: 100%;
@@ -7392,14 +7392,14 @@ img {
       font-size: 1rem;
       transition: border-color 0.3s ease;
     }
-    
+
     .form-group input:focus,
     .form-group textarea:focus {
       outline: none;
       border-color: #005f73;
       box-shadow: 0 0 0 2px rgba(0, 95, 115, 0.1);
     }
-    
+
     .address-form-actions {
       display: flex;
       gap: 1rem;
@@ -7408,7 +7408,7 @@ img {
       padding-top: 1rem;
       border-top: 1px solid #eee;
     }
-    
+
     .address-info {
       background: #f0f9ff;
       border: 1px solid #0ea5e9;
@@ -7416,7 +7416,7 @@ img {
       padding: 1rem;
       margin-bottom: 1rem;
     }
-    
+
     .address-header {
       display: flex;
       align-items: center;
@@ -7425,20 +7425,20 @@ img {
       color: #005f73;
       font-weight: 600;
     }
-    
+
     .address-header i {
       margin-right: 0.5rem;
     }
-    
+
     .address-header span {
       flex: 1;
     }
-    
+
     .address-actions {
       display: flex;
       gap: 0.5rem;
     }
-    
+
     .edit-address-btn,
     .clear-address-btn {
       background: none;
@@ -7453,45 +7453,45 @@ img {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column; 
+      flex-direction: column;
       gap: 0.25rem;
     }
-    
+
     .edit-address-btn {
       color: var(--emerald-green);
     }
-    
+
     .edit-address-btn:hover {
       background: rgba(52, 211, 153, 0.1);
       color: var(--emerald-dark);
     }
-    
+
     .clear-address-btn {
       color: #dc3545;
     }
-    
+
     .clear-address-btn:hover {
       background: rgba(220, 53, 69, 0.1);
       color: #c82333;
     }
-    
+
     .address-details p {
       margin: 0.25rem 0;
       color: #333;
       font-size: 0.875rem;
     }
-    
+
     .address-reference {
       color: #6b7280;
       font-size: 0.875rem;
       margin-top: 0.5rem;
       font-style: italic;
     }
-    
+
     .address-reference i {
       margin-right: 0.25rem;
     }
-    
+
     .address-required {
       background: #fef3c7;
       border: 1px solid #f59e0b;
@@ -7500,25 +7500,25 @@ img {
       text-align: center;
       margin-bottom: 1rem;
     }
-    
+
     .address-icon {
       font-size: 2rem;
       color: #f59e0b;
       margin-bottom: 1rem;
     }
-    
+
     .address-message h3 {
       margin: 0 0 0.5rem 0;
       color: var(--petroleum-blue);
       font-size: 1rem;
     }
-    
+
     .address-message p {
       margin: 0 0 1rem 0;
       color: #6b7280;
       font-size: 0.875rem;
     }
-    
+
     .btn-address {
       background: var(--emerald-green);
       color: white;
@@ -7533,11 +7533,11 @@ img {
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .btn-address:hover {
       background: var(--emerald-dark);
     }
-    
+
     /* Modal de Confirmação */
     .confirmation-modal {
       position: fixed;
@@ -7552,7 +7552,7 @@ img {
       z-index: 10000;
       animation: fadeIn 0.3s ease;
     }
-    
+
     .confirmation-modal-content {
       background: white;
       border-radius: 12px;
@@ -7562,7 +7562,7 @@ img {
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
-    
+
     .confirmation-modal-header {
       background: #f8f9fa;
       padding: 1rem 1.5rem;
@@ -7571,7 +7571,7 @@ img {
       justify-content: space-between;
       align-items: center;
     }
-    
+
     .confirmation-modal-header h3 {
       margin: 0;
       font-size: 1.1rem;
@@ -7580,11 +7580,11 @@ img {
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .confirmation-modal-header i {
       color: #f39c12;
     }
-    
+
     .confirmation-modal-close {
       background: none;
       border: none;
@@ -7594,28 +7594,28 @@ img {
       border-radius: 4px;
       transition: background 0.3s ease;
     }
-    
+
     .confirmation-modal-close:hover {
       background: rgba(108, 117, 125, 0.1);
     }
-    
+
     .confirmation-modal-body {
       padding: 1.5rem;
       text-align: center;
     }
-    
+
     .confirmation-icon {
       font-size: 3rem;
       color: #f39c12;
       margin-bottom: 1rem;
     }
-    
+
     .confirmation-modal-body p {
       margin: 0;
       color: #495057;
       line-height: 1.5;
     }
-    
+
     .confirmation-modal-actions {
       padding: 1rem 1.5rem;
       background: #f8f9fa;
@@ -7624,7 +7624,7 @@ img {
       justify-content: flex-end;
       border-top: 1px solid #e9ecef;
     }
-    
+
     .confirmation-modal-actions button {
       padding: 0.5rem 1rem;
       border-radius: 6px;
@@ -7637,30 +7637,30 @@ img {
       gap: 0.5rem;
       border: 1px solid transparent;
     }
-    
+
     .confirmation-modal-actions .btn-secondary {
       background: #f8f9fa;
       color: #6c757d;
       border-color: #dee2e6;
     }
-    
+
     .confirmation-modal-actions .btn-secondary:hover {
       background: #e9ecef;
       color: #495057;
       border-color: #adb5bd;
     }
-    
+
     .confirmation-modal-actions .btn-danger {
       background: #dc3545;
       color: white;
       border-color: #dc3545;
     }
-    
+
     .confirmation-modal-actions .btn-danger:hover {
       background: #c82333;
       border-color: #bd2130;
     }
-    
+
     /* Notificações */
     .address-notification {
       position: fixed;
@@ -7677,69 +7677,69 @@ img {
       transition: transform 0.3s ease;
       font-weight: 500;
     }
-    
+
     .address-notification.success {
       background: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
     }
-    
+
     .address-notification.clear {
       background: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
-    
+
     .address-notification.show {
       transform: translateX(0);
     }
-    
+
     .address-notification i {
       font-size: 1.1rem;
     }
-    
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
-    
+
     @keyframes slideIn {
       from { transform: translateY(-20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-    
+
     @media (max-width: 770px) {
       .form-row {
         grid-template-columns: 1fr;
       }
-      
+
       .address-form-actions,
       .confirmation-modal-actions {
         flex-direction: column;
       }
-      
+
       .address-modal-content,
       .confirmation-modal-content {
         width: 95%;
         margin: 1rem;
       }
-      
+
       .address-notification {
         right: 10px;
         left: 10px;
         transform: translateY(-100%);
       }
-      
+
       .address-notification.show {
         transform: translateY(0);
       }
-      
+
       .address-actions {
         flex-direction: column;
         gap: 0.25rem;
         align-items: flex-end;
       }
-      
+
       .edit-address-btn,
       .clear-address-btn {
         padding: 0.25rem;
