@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pet Shop Baronesa - Cuidando do seu pet com amor</title>
     <meta name="description" content="Pet Shop Baronesa - Produtos e serviços para seu pet com todo carinho que ele merece">
-    <link rel="shortcut icon" type="image/png" href="assets/images/gerais/iconeBaronesa.png"> 
+    <link rel="shortcut icon" type="image/png" href="assets/images/gerais/iconeBaronesa.png">
         <link rel="stylesheet" href="css/styles.css">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,7 +18,7 @@
             <span>Carregando...</span>
         </div>
     </div>
-    
+
     <!-- Cabeçalho -->
     <div id="header"></div>
 
@@ -54,7 +54,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Botões de navegação -->
                     <button class="carousel-btn prev" id="prevBtn">
                         <i class="fas fa-chevron-left"></i>
@@ -62,7 +62,7 @@
                     <button class="carousel-btn next" id="nextBtn">
                         <i class="fas fa-chevron-right"></i>
                     </button>
-                    
+
                     <!-- Indicadores -->
                     <div class="carousel-indicators" id="carouselIndicators">
                         <button class="indicator active" data-slide="0"></button>
@@ -113,24 +113,24 @@
                 <div id="guest-cta" class="guest-only" style="display: none;">
                     <!-- Guest promotion content will be added by JavaScript -->
                 </div>
-                
+
                 <!-- User-only promotions -->
                 <div id="user-promotions" class="user-only" style="display: none;">
                     <!-- User promotion content will be added by JavaScript -->
                 </div>
-                
+
                 <!-- Personalized greeting for logged-in users -->
                 <div id="personalized-greeting" class="user-only" style="display: none;">
                     <!-- Personalized greeting will be added by JavaScript -->
                 </div>
-                
+
                 <!-- Admin badge -->
                 <div id="admin-badge" class="admin-only" style="display: none;">
                     <!-- Admin badge will be added by JavaScript -->
                 </div>
             </div>
         </section>
-       
+
         <!-- Depoimentos -->
         <section class="section bg-petroleum-light">
             <div class="container">
@@ -200,7 +200,7 @@
             </div>
         </section>
 
-        
+
 
     <!-- Rodapé -->
     <div id="footer"></div>
@@ -213,38 +213,38 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/services/auth-service.js"></script>
     <script src="js/toast.js"></script>
-    
+
     <script src="js/main.js"></script>
-    
+
     <script src="js/auth.js"></script>
     <script src="js/header-auth.js"></script>
-    
+
     <!-- Scripts complementares -->
     <script src="js/carousel.js"></script>
-    
+
     <script>
         // Inicialização específica para a página inicial
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🏠 Index page DOM loaded');
-            
+
             // Aguarda um pouco mais para garantir que todos os sistemas estejam carregados
             setTimeout(function() {
                 console.log('🔍 Index page: Verificando sistemas...');
-                
+
                 // Verifica Firebase
                 if (typeof firebase !== 'undefined') {
                     console.log('✅ Firebase carregado na index');
                 } else {
                     console.error('❌ Firebase não carregado na index');
                 }
-                
+
                 // Verifica Auth Service
                 if (window.auth) {
                     console.log('✅ Auth service carregado na index');
                 } else {
                     console.error('❌ Auth service não carregado na index');
                 }
-                
+
                 // Verifica Header Auth
                 if (window.headerAuth) {
                     console.log('✅ Header auth carregado na index');
@@ -256,7 +256,7 @@
                 } else {
                     console.error('❌ Header auth não carregado na index');
                 }
-                
+
                 // Verifica se há usuário logado
                 if (typeof firebase !== 'undefined' && firebase.auth) {
                     const currentUser = firebase.auth().currentUser;
@@ -266,15 +266,15 @@
                         console.log('👤 Nenhum usuário logado na index');
                     }
                 }
-                
+
                 // Verifica elementos do header
                 setTimeout(() => {
                     const signupBtn = document.querySelector('.btn-signup');
                     const userDropdowns = document.querySelectorAll('.user-dropdown');
-                    
+
                     console.log('🔘 Botão cadastro encontrado:', !!signupBtn);
                     console.log('📋 Dropdowns de usuário encontrados:', userDropdowns.length);
-                    
+
                     if (userDropdowns.length > 1) {
                         console.warn('⚠️ Múltiplos dropdowns encontrados, removendo extras...');
                         for (let i = 1; i < userDropdowns.length; i++) {
@@ -282,7 +282,7 @@
                         }
                     }
                 }, 1000);
-                
+
             }, 2000); // Aguarda 2 segundos para tudo carregar
         });
     </script>
