@@ -57,13 +57,13 @@ class AdminPanel {
     this.init()
   }
 
-  
+
 /**
  * Set up tab system for admin panel
  */
 setupTabSystem() {
     console.log('🔧 Configurando sistema de abas...');
-    
+
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanes = document.querySelectorAll('.tab-pane');
 
@@ -82,31 +82,31 @@ setupTabSystem() {
     tabButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
-            
+
             const targetTab = button.getAttribute('data-tab');
             console.log(`🔄 Alternando para aba: ${targetTab}`);
-            
+
             // Remove active class from all buttons and panes
             tabButtons.forEach(btn => {
                 btn.classList.remove('active');
                 console.log(`❌ Removendo active de: ${btn.getAttribute('data-tab')}`);
             });
-            
+
             tabPanes.forEach(pane => {
                 pane.classList.remove('active');
                 console.log(`❌ Ocultando painel: ${pane.id}`);
             });
-            
+
             // Add active class to clicked button
             button.classList.add('active');
             console.log(`✅ Ativando botão: ${targetTab}`);
-            
+
             // Add active class to corresponding pane
             const targetPane = document.getElementById(targetTab + 'Tab');
             if (targetPane) {
                 targetPane.classList.add('active');
                 console.log(`✅ Exibindo painel: ${targetPane.id}`);
-                
+
                 // Se for a aba de slides, inicializar o gerenciador se necessário
                 if (targetTab === 'slides' && !window.adminSlidesManager) {
                     console.log('🖼️ Inicializando gerenciador de slides...');
@@ -121,11 +121,11 @@ setupTabSystem() {
     // Garantir que a primeira aba esteja ativa
     const firstButton = tabButtons[0];
     const firstPane = tabPanes[0];
-    
+
     if (firstButton && !firstButton.classList.contains('active')) {
         firstButton.classList.add('active');
     }
-    
+
     if (firstPane && !firstPane.classList.contains('active')) {
         firstPane.classList.add('active');
     }
@@ -287,7 +287,7 @@ async init() {
     } catch (error) {
         console.error("❌ Error loading products:", error);
         this.showToast("Erro ao carregar produtos", "error");
-        
+
         // Em caso de erro, garantir que a UI seja atualizada
         this.products = [];
         this.filteredProducts = [];
@@ -349,10 +349,10 @@ async init() {
             .join("");
 
         this.elements.productsGrid.innerHTML = productsHTML;
-        
+
         // Add event listeners to product cards
         this.setupProductCardListeners();
-        
+
         console.log(`✅ ${this.filteredProducts.length} produtos renderizados`);
     } catch (error) {
         console.error('❌ Erro ao renderizar produtos:', error);
@@ -382,11 +382,11 @@ async init() {
           <div class="product-category">${product.category}</div>
           ${onSale ? `<div class="product-tag sale-tag">Promoção</div>` : ""}
         </div>
-        
+
         <div class="product-info">
           <h3>${product.name}</h3>
           <p class="product-description">${product.description}</p>
-          
+
           <div class="product-details">
             <div class="product-type">
               <i class="fas fa-tag"></i>
@@ -399,7 +399,7 @@ async init() {
               }
             </div>
           </div>
-          
+
           <div class="product-actions">
             <button class="btn-secondary btn-sm edit-product-btn" data-product-id="${product.id}">
               <i class="fas fa-edit"></i> Editar
@@ -543,16 +543,16 @@ async init() {
 
     // Reset form
     this.elements.productForm.reset()
-    
+
     // Reset form states
     this.resetFormStates()
-    
+
     // Reset image preview
     this.updateImagePreview("")
 
     this.elements.productModal.style.display = "flex"
     document.body.style.overflow = "hidden"
-    
+
     // Focar no primeiro campo
     setTimeout(() => {
       document.getElementById('productName')?.focus()
@@ -567,24 +567,24 @@ async init() {
     document.querySelectorAll('.form-group').forEach(group => {
       group.classList.remove('error', 'success')
     })
-    
+
     // Remove mensagens de erro
     document.querySelectorAll('.error-message').forEach(msg => {
       msg.remove()
     })
-    
+
     // Reset toggle de promoção
     const salePriceInput = document.getElementById('productSalePrice')
     if (salePriceInput) {
       salePriceInput.disabled = true
       salePriceInput.parentElement.style.opacity = '0.6'
     }
-    
+
     // Reset file upload
     const fileInput = document.getElementById('productImage')
     const fileInfo = document.getElementById('fileInfo')
     const uploadContainer = fileInput?.closest('.file-upload-container')
-    
+
     if (fileInput) fileInput.value = ''
     if (fileInfo) fileInfo.style.display = 'none'
     if (uploadContainer) {
@@ -612,14 +612,14 @@ async init() {
       document.getElementById("productType").value = product.type || ""
       document.getElementById("productPrice").value = product.price || ""
       document.getElementById("productDescription").value = product.description || ""
-      
+
       // Promoção
       const onSaleCheckbox = document.getElementById("productOnSale")
       const salePriceInput = document.getElementById("productSalePrice")
-      
+
       onSaleCheckbox.checked = !!product.promocional
       salePriceInput.value = product.precoPromo || ""
-      
+
       // Habilitar/desabilitar preço promocional baseado no estado da promoção
       if (product.promocional) {
         salePriceInput.disabled = false
@@ -632,13 +632,13 @@ async init() {
       // Limpar input de arquivo (não pode ser preenchido programaticamente)
       const fileInput = document.getElementById("productImage")
       fileInput.value = ""
-      
+
       // Esconder info de arquivo
       const fileInfo = document.getElementById("fileInfo")
       if (fileInfo) {
         fileInfo.style.display = "none"
       }
-      
+
       // Resetar container de upload
       const uploadContainer = fileInput.closest('.file-upload-container')
       if (uploadContainer) {
@@ -650,12 +650,12 @@ async init() {
 
       this.elements.productModal.style.display = "flex"
       document.body.style.overflow = "hidden"
-      
+
       // Focar no primeiro campo
       setTimeout(() => {
         document.getElementById('productName')?.focus()
       }, 100)
-      
+
     } catch (error) {
       console.error("Error opening edit modal:", error)
       this.showToast("Erro ao carregar dados do produto", "error")
@@ -721,16 +721,16 @@ async init() {
       try {
         const fileInput = document.getElementById('productImage')
         const file = fileInput.files && fileInput.files[0]
-        
+
         if (file) {
           // Nova imagem foi selecionada
           if (typeof FileUploadManager === 'undefined') {
             throw new Error('FileUploadManager não está disponível');
           }
-          
+
           const fileUploadManager = new FileUploadManager()
           productData.image = await fileUploadManager.fileToBase64(file)
-          
+
           // Feedback de sucesso
           this.showToast('Imagem processada com sucesso!', 'success')
         } else {
@@ -746,7 +746,7 @@ async init() {
       } catch (error) {
         console.error('Erro ao processar imagem:', error)
         this.showToast('Erro ao processar imagem. Usando imagem padrão.', 'warning')
-        
+
         // Em caso de erro, preservar imagem existente ou usar padrão
         if (this.currentEditingProduct && this.currentEditingProduct.image) {
           productData.image = this.currentEditingProduct.image
@@ -901,17 +901,17 @@ async init() {
                             product.type.toLowerCase().includes(searchLower);
         if (!matchesSearch) return false;
       }
-      
+
       // Filtro por categoria
       if (filters.categories.length > 0) {
         if (!filters.categories.includes(product.category)) return false;
       }
-      
+
       // Filtro por promoção
       if (filters.promocional) {
         if (!product.onSale) return false;
       }
-      
+
       // Filtro por faixa de preço
       if (filters.priceRanges.length > 0) {
         const price = parseFloat(product.price);
@@ -926,15 +926,15 @@ async init() {
         });
         if (!matchesPrice) return false;
       }
-      
+
       // Filtro por tipo
       if (filters.types.length > 0) {
         if (!filters.types.includes(product.type)) return false;
       }
-      
+
       return true;
     });
-    
+
     this.renderProducts();
     this.updateProductsCount();
   }
@@ -965,12 +965,12 @@ class AdminSlidesManager {
      */
     init() {
         console.log('🖼️ Inicializando gerenciador de slides...');
-        
+
         this.loadSlidesData();
         this.setupEventListeners();
         this.setupFileUploads();
         this.setupCharacterCounters();
-        
+
         console.log('✅ Gerenciador de slides inicializado');
     }
 
@@ -984,7 +984,7 @@ class AdminSlidesManager {
                 this.slides = { ...this.slides, ...JSON.parse(savedSlides) };
                 console.log('📁 Dados dos slides carregados do localStorage');
             }
-            
+
             this.updatePreviewsFromData();
         } catch (error) {
             console.error('❌ Erro ao carregar dados dos slides:', error);
@@ -1000,16 +1000,16 @@ class AdminSlidesManager {
             const titleInput = document.getElementById(`slide${slideNumber}Title`);
             const titlePreview = document.getElementById(`slide${slideNumber}TitlePreview`);
             const imagePreview = document.getElementById(`slide${slideNumber}Preview`);
-            
+
             if (titleInput && this.slides[slideKey].title) {
                 titleInput.value = this.slides[slideKey].title;
                 this.updateCharCount(slideNumber);
             }
-            
+
             if (titlePreview && this.slides[slideKey].title) {
                 titlePreview.textContent = this.slides[slideKey].title;
             }
-            
+
             if (imagePreview && this.slides[slideKey].image) {
                 imagePreview.src = this.slides[slideKey].image;
             }
@@ -1073,7 +1073,7 @@ class AdminSlidesManager {
         container.addEventListener('drop', (e) => {
             e.preventDefault();
             container.classList.remove('dragover');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 this.handleFileSelection(slideNumber, files[0]);
@@ -1176,14 +1176,14 @@ class AdminSlidesManager {
      */
     showError(container, message) {
         container.classList.add('error');
-        
+
         let errorDiv = container.querySelector('.file-error');
         if (!errorDiv) {
             errorDiv = document.createElement('div');
             errorDiv.className = 'file-error';
             container.appendChild(errorDiv);
         }
-        
+
         errorDiv.textContent = message;
     }
 
@@ -1253,7 +1253,7 @@ class AdminSlidesManager {
         // Update styling based on length
         if (countContainer) {
             countContainer.classList.remove('warning', 'danger');
-            
+
             if (currentLength > maxLength * 0.9) {
                 countContainer.classList.add('danger');
             } else if (currentLength > maxLength * 0.7) {
@@ -1369,7 +1369,7 @@ class AdminSlidesManager {
         // Reset button
         saveButton.disabled = false;
         saveButton.innerHTML = `<i class="fas fa-save"></i> Salvar Slide ${slideNumber}`;
-        
+
         // Remove animation classes
         setTimeout(() => {
             slideCard.classList.remove('slide-updating', 'slide-success', 'slide-error');
@@ -1430,7 +1430,7 @@ loadSlidesData() {
             this.slides = { ...this.slides, ...parsedSlides };
             console.log('📁 Dados dos slides carregados do localStorage');
         }
-        
+
         this.updatePreviewsFromData();
     } catch (error) {
         console.error('❌ Erro ao carregar dados dos slides:', error);
@@ -1540,7 +1540,7 @@ setupEventListeners() {
 }
 document.addEventListener("DOMContentLoaded", async () => {
   console.log('🔧 Inicializando página admin...');
-  
+
   // Aguarde a inicialização do Firebase e dos serviços
   if (typeof window.FirebaseConfig !== "undefined" && window.FirebaseConfig.initializeFirebase) {
     try {
@@ -1556,11 +1556,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Só então crie o painel admin
   if (document.getElementById("adminProductsGrid")) {
     window.adminPanel = new AdminPanel();
-    
+
     // Tornar as funções de filtro disponíveis globalmente
     window.applyProductFilters = (filters) => window.adminPanel.applyProductFilters(filters);
     window.applyTipFilters = (filters) => window.adminPanel.applyTipFilters(filters);
-    
+
     console.log('✅ Admin panel inicializado');
   }
 });
@@ -1584,7 +1584,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Só então crie o painel admin
   if (document.getElementById("adminProductsGrid")) {
     window.adminPanel = new AdminPanel();
-    
+
     // Tornar as funções de filtro disponíveis globalmente
     window.applyProductFilters = (filters) => window.adminPanel.applyProductFilters(filters);
     window.applyTipFilters = (filters) => window.adminPanel.applyTipFilters(filters);

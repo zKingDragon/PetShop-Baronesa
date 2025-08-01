@@ -390,23 +390,23 @@
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-    
+
     .slide-card {
         margin: 0 1rem;
     }
-    
+
     .slide-preview {
         height: 150px;
     }
-    
+
     .slide-overlay {
         padding: 1.5rem 1rem 1rem;
     }
-    
+
     .slide-title {
         font-size: 0.9rem;
     }
-    
+
     .slide-form {
         padding: 1rem;
     }
@@ -416,24 +416,24 @@
     .slides-grid {
         margin: 0;
     }
-    
+
     .slide-card {
         margin: 0;
         border-radius: 8px;
     }
-    
+
     .slide-header {
         padding: 0.75rem 1rem;
     }
-    
+
     .slide-header h3 {
         font-size: 1rem;
     }
-    
+
     .slide-form {
         padding: 0.75rem;
     }
-    
+
     .char-count {
         font-size: 0.8rem;
     }

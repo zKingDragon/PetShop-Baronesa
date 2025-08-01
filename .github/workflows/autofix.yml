@@ -37,5 +37,5 @@ jobs:
           body: |
             Este Pull Request foi criado automaticamente pelo [autofix](https://github.com/autofix-dev/autofix).
             Corrige problemas detectados nas pastas configuradas.
-            
+
             _Merge apenas se os testes estiverem passando._

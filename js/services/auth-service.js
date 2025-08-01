@@ -163,15 +163,15 @@ class AuthService {
    */
   async hasRole(requiredRole) {
     const userRole = await this.getUserRole()
-    
+
     if (requiredRole === 'user') {
       return userRole === 'admin' // Only admin can access user-restricted content
     }
-    
+
     if (requiredRole === 'admin') {
       return userRole === 'admin'
     }
-    
+
     return true // For 'guest' or any other role
   }
 
@@ -204,14 +204,14 @@ class AuthService {
 
     try {
       const userCredential = await this.auth.createUserWithEmailAndPassword(email, password)
-      
+
       // Update display name
       if (displayName) {
         await userCredential.user.updateProfile({
           displayName: displayName
         })
       }
-      
+
       console.log("User created successfully")
       return userCredential.user
     } catch (error) {

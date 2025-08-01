@@ -9,7 +9,7 @@ class FileUploadManager {
     initializeUploads() {
         // Upload de produto
         this.setupFileUpload('productImage', 'fileInfo', 'removeFile', 'imagePreview');
-        
+
         // Upload de dica
         this.setupFileUpload('tipImage', 'tipFileInfo', 'removeTipFile', 'tipImagePreview');
     }
@@ -36,7 +36,7 @@ class FileUploadManager {
         container.addEventListener('drop', (e) => {
             e.preventDefault();
             container.classList.remove('dragover');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 this.handleFile(files[0], fileInput, fileInfo, container, preview);
@@ -88,11 +88,11 @@ class FileUploadManager {
     displayFileInfo(file, fileInfo) {
         const fileName = fileInfo.querySelector('.file-name');
         const fileSize = fileInfo.querySelector('.file-size');
-        
+
         if (fileName) {
             fileName.textContent = file.name;
         }
-        
+
         if (fileSize) {
             fileSize.textContent = this.formatFileSize(file.size);
         }
@@ -100,11 +100,11 @@ class FileUploadManager {
 
     formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
-        
+
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
-        
+
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
@@ -114,13 +114,13 @@ class FileUploadManager {
             if (preview) {
                 preview.style.opacity = '0';
                 preview.style.transition = 'opacity 0.3s ease';
-                
+
                 setTimeout(() => {
                     preview.src = e.target.result;
                     preview.style.opacity = '1';
                 }, 100);
             }
-            
+
             // Atualizar preview global se disponível
             if (window.updateProductImagePreview) {
                 window.updateProductImagePreview(e.target.result);
@@ -133,19 +133,19 @@ class FileUploadManager {
     clearFileWithAnimation(fileInput, fileInfo, container, preview) {
         // Adicionar animação de saída
         fileInfo.classList.add('removing');
-        
+
         // Aguardar animação antes de remover
         setTimeout(() => {
             // Limpar input
             fileInput.value = '';
-            
+
             // Esconder file info
             fileInfo.style.display = 'none';
             fileInfo.classList.remove('removing', 'success', 'error');
-            
+
             // Atualizar container
             container.classList.remove('has-file', 'error');
-            
+
             // Restaurar preview padrão com animação
             if (preview) {
                 preview.style.opacity = '0';
@@ -154,16 +154,16 @@ class FileUploadManager {
                     preview.style.opacity = '1';
                 }, 150);
             }
-            
+
             // Remover mensagens de erro
             this.clearError(container);
-            
+
             // Mostrar mensagem de sucesso
             this.showSuccessMessage(container, 'Arquivo removido!', 2000);
-            
+
             // Focar no input para melhor UX
             fileInput.focus();
-            
+
         }, 300); // Tempo da animação CSS
     }
 
@@ -193,7 +193,7 @@ class FileUploadManager {
 
     showError(container, message) {
         container.classList.add('error');
-        
+
         // Remover erro anterior
         this.clearError(container);
 
@@ -263,7 +263,7 @@ class FileUploadManager {
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar FileUploadManager
     new FileUploadManager();
-    
+
     // Inicializar melhorias do formulário
     initializeFormEnhancements();
 });
@@ -272,7 +272,7 @@ function initializeFormEnhancements() {
     // Toggle de promoção
     const promoToggle = document.getElementById('productOnSale');
     const salePriceInput = document.getElementById('productSalePrice');
-    
+
     if (promoToggle && salePriceInput) {
         promoToggle.addEventListener('change', function() {
             if (this.checked) {
@@ -303,7 +303,7 @@ function initializeFormEnhancements() {
     // Modal animations
     const modal = document.getElementById('productModal');
     const modalContent = modal?.querySelector('.modal-content');
-    
+
     if (modal && modalContent) {
         // Smooth open/close
         modal.addEventListener('click', function(e) {
@@ -311,7 +311,7 @@ function initializeFormEnhancements() {
                 closeProductModal();
             }
         });
-        
+
         // Escape key to close
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && modal.style.display === 'block') {
@@ -324,20 +324,20 @@ function initializeFormEnhancements() {
 function validateField(e) {
     const field = e.target;
     const formGroup = field.closest('.form-group');
-    
+
     if (!formGroup) return;
-    
+
     // Remove previous error states
     formGroup.classList.remove('error', 'success');
     const existingError = formGroup.querySelector('.error-message');
     if (existingError) existingError.remove();
-    
+
     // Check if field is valid
     if (field.checkValidity()) {
         formGroup.classList.add('success');
     } else {
         formGroup.classList.add('error');
-        
+
         // Add error message
         const errorMessage = document.createElement('div');
         errorMessage.className = 'error-message';
@@ -349,7 +349,7 @@ function validateField(e) {
 function clearFieldError(e) {
     const field = e.target;
     const formGroup = field.closest('.form-group');
-    
+
     if (formGroup) {
         formGroup.classList.remove('error');
         const errorMessage = formGroup.querySelector('.error-message');
@@ -372,10 +372,10 @@ function getFieldErrorMessage(field) {
 
 function formatPrice(e) {
     let value = e.target.value;
-    
+
     // Remove caracteres não numéricos exceto ponto
     value = value.replace(/[^\d.]/g, '');
-    
+
     // Limita a 2 casas decimais
     const parts = value.split('.');
     if (parts.length > 2) {
@@ -384,7 +384,7 @@ function formatPrice(e) {
     if (parts[1] && parts[1].length > 2) {
         value = parts[0] + '.' + parts[1].substring(0, 2);
     }
-    
+
     e.target.value = value;
 }
 
@@ -393,9 +393,9 @@ function openProductModal(product = null) {
     const modal = document.getElementById('productModal');
     const modalTitle = document.getElementById('modalTitle');
     const form = document.getElementById('productForm');
-    
+
     if (!modal) return;
-    
+
     if (product) {
         modalTitle.innerHTML = '<i class="fas fa-edit"></i> Editar Produto';
         // Preencher campos com dados do produto
@@ -408,10 +408,10 @@ function openProductModal(product = null) {
         // Reset estados visuais
         resetFormStates();
     }
-    
+
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
-    
+
     // Focus no primeiro campo
     setTimeout(() => {
         document.getElementById('productName')?.focus();
@@ -421,7 +421,7 @@ function openProductModal(product = null) {
 function closeProductModal() {
     const modal = document.getElementById('productModal');
     const modalContent = modal?.querySelector('.modal-content');
-    
+
     if (modalContent) {
         modalContent.style.animation = 'modalSlideOut 0.3s ease-in';
         setTimeout(() => {
@@ -437,19 +437,19 @@ function resetFormStates() {
     document.querySelectorAll('.form-group').forEach(group => {
         group.classList.remove('error', 'success');
     });
-    
+
     // Remove mensagens de erro
     document.querySelectorAll('.error-message').forEach(msg => {
         msg.remove();
     });
-    
+
     // Reset toggle de promoção
     const salePriceInput = document.getElementById('productSalePrice');
     if (salePriceInput) {
         salePriceInput.disabled = true;
         salePriceInput.parentElement.style.opacity = '0.6';
     }
-    
+
     // Reset preview de imagem
     const imagePreview = document.getElementById('imagePreview');
     if (imagePreview) {

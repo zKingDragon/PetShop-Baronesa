@@ -31,13 +31,13 @@ class AdminTokenManager {
 
             // Converter para base64
             const payloadBase64 = btoa(JSON.stringify(payload));
-            
+
             // Criar assinatura (simplificada - em produção use algo mais seguro)
             const signature = this.createSignature(payloadBase64);
-            
+
             // Formato: payload.signature
             return `${payloadBase64}.${signature}`;
-            
+
         } catch (error) {
             console.error('Erro ao gerar token admin:', error);
             return null;
@@ -57,33 +57,33 @@ class AdminTokenManager {
         try {
             // Separar payload e assinatura
             const [payloadBase64, signature] = token.split('.');
-            
+
             if (!payloadBase64 || !signature) {
                 return null;
             }
-            
+
             // Verificar assinatura
             const expectedSignature = this.createSignature(payloadBase64);
             if (signature !== expectedSignature) {
                 console.warn('Assinatura de token admin inválida');
                 return null;
             }
-            
+
             // Decodificar payload
             const payload = JSON.parse(atob(payloadBase64));
-            
+
             // Verificar expiração
             if (payload.exp < Date.now()) {
                 console.warn('Token admin expirado');
                 return null;
             }
-            
+
             return {
                 uid: payload.uid,
                 email: payload.email,
                 role: payload.role
             };
-            
+
         } catch (error) {
             console.error('Erro ao verificar token admin:', error);
             return null;
@@ -123,13 +123,13 @@ class AdminTokenManager {
         // Função simplificada de hash - em produção use algo mais seguro
         let hash = 0;
         const str = payloadBase64 + this.tokenSecret;
-        
+
         for (let i = 0; i < str.length; i++) {
             const char = str.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;
             hash = hash & hash; // Converter para 32bit integer
         }
-        
+
         return Math.abs(hash).toString(36);
     }
 
@@ -140,7 +140,7 @@ class AdminTokenManager {
     isAdminByToken() {
         const token = this.getToken();
         if (!token) return false;
-        
+
         const userData = this.verifyToken(token);
         return !!userData && userData.role === 'admin';
     }
