@@ -33,22 +33,22 @@ async function resetIndexedDB() {
     try {
       // Tentar limpar IndexedDB relacionado ao Firestore
       const request = indexedDB.deleteDatabase('firebaseLocalStorageDb');
-      
+
       request.onsuccess = function() {
         console.log('✅ IndexedDB limpo com sucesso');
         resolve();
       };
-      
+
       request.onerror = function() {
         console.warn('⚠️ Erro ao limpar IndexedDB');
         resolve(); // Continuar mesmo com erro
       };
-      
+
       request.onblocked = function() {
         console.warn('⚠️ IndexedDB bloqueado por outra conexão');
         resolve(); // Continuar mesmo com erro
       };
-      
+
       // Timeout de segurança
       setTimeout(() => {
         resolve();
@@ -67,12 +67,12 @@ async function resetIndexedDB() {
 async function initializeFirebase(forceClearIndexedDB = false) {
   try {
     console.log('🔄 Inicializando Firebase...');
-    
+
     // Limpar IndexedDB se forçado (usar com cuidado)
     if (forceClearIndexedDB) {
       await resetIndexedDB();
     }
-    
+
     // Check if Firebase is already initialized
     if (!firebase.apps.length) {
       app = firebase.initializeApp(firebaseConfig)
@@ -93,14 +93,14 @@ async function initializeFirebase(forceClearIndexedDB = false) {
     // Tenta habilitar persistência apenas se ainda não tentou
     if (!persistenceAttempted) {
       persistenceAttempted = true;
-      
+
       try {
         // Usar cache apenas, sem persistência completa
         await db.settings({
           cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
         });
         console.log('✅ Cache do Firestore configurado');
-        
+
         // Tentar persistência de forma assíncrona
         setTimeout(async () => {
           try {
@@ -145,15 +145,15 @@ function setupConsoleFilter() {
     const originalWarn = console.warn;
     console.warn = function(...args) {
       // Não mostrar aviso específico de persistência
-      if (args[0] && typeof args[0] === 'string' && 
-          (args[0].includes('Persistence can only be enabled') || 
+      if (args[0] && typeof args[0] === 'string' &&
+          (args[0].includes('Persistence can only be enabled') ||
            args[0].includes('Múltiplas abas abertas'))) {
         return; // Suprimir este aviso específico
       }
       // Passar outros avisos normalmente
       originalWarn.apply(console, args);
     };
-    
+
     console.log('✅ Filtro de console configurado');
   } catch (error) {
     console.error('❌ Erro ao configurar filtro de console:', error);
@@ -199,7 +199,7 @@ function getApp() {
  */
 async function clearCacheAndReinitialize() {
   console.log('🔄 Limpando cache e reinicializando Firebase...');
-  
+
   // Tentar desconectar primeiro
   try {
     if (db) {
@@ -210,7 +210,7 @@ async function clearCacheAndReinitialize() {
   } catch (error) {
     console.warn('⚠️ Erro ao terminar Firestore:', error);
   }
-  
+
   // Limpar auth
   try {
     if (auth) {
@@ -219,15 +219,15 @@ async function clearCacheAndReinitialize() {
   } catch (error) {
     console.warn('⚠️ Erro ao fazer logout:', error);
   }
-  
+
   // Limpar variáveis
   app = null;
   db = null;
   auth = null;
-  
+
   // Resetar IndexedDB
   await resetIndexedDB();
-  
+
   // Reinicializar com flag de limpeza
   return initializeFirebase(true);
 }
