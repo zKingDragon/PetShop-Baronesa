@@ -71,11 +71,11 @@
 
                             <div class="stat-card">
                                 <div class="stat-icon">
-                                    <i class="fas fa-dollar-sign"></i>
+                                    <i class="fas fa-percent"></i>
                                 </div>
                                 <div class="stat-content">
-                                    <h3 id="averagePrice">R$ 0,00</h3>
-                                    <p>Preço Médio</p>
+                                    <h3 id="promoProductsCount">0</h3>
+                                    <p>Produtos em Promoção</p>
                                 </div>
                             </div>
                         </div>
@@ -247,8 +247,7 @@
                             <div class="slides-header">
                                 <h2><i class="fas fa-images"></i> Gerenciar Slides do Carrossel</h2>
                                 <p>Gerencie os 3 slides principais que aparecem na página inicial</p>
-                            </div>
-                    
+                                
                             <div class="slides-grid">
                                 <!-- Slide 1 -->
                                 <div class="slide-card" data-slide="1">
@@ -278,7 +277,7 @@
                                         <div class="form-group">
                                             <label for="slide1Image">Imagem do Slide</label>
                                             <div class="file-upload-container slide-upload">
-                                                <input type="file" id="slide1Image" accept="image/*">
+                                                <input type="file" id="slide1Image" accept="image/*" style="display: none;">
                                                 <div class="upload-area">
                                                     <i class="fas fa-cloud-upload-alt"></i>
                                                     <span>Clique para selecionar ou arraste a imagem</span>
@@ -328,7 +327,7 @@
                                         <div class="form-group">
                                             <label for="slide2Image">Imagem do Slide</label>
                                             <div class="file-upload-container slide-upload">
-                                                <input type="file" id="slide2Image" accept="image/*">
+                                                <input type="file" id="slide2Image" accept="image/*" style="display: none;">
                                                 <div class="upload-area">
                                                     <i class="fas fa-cloud-upload-alt"></i>
                                                     <span>Clique para selecionar ou arraste a imagem</span>
@@ -378,7 +377,7 @@
                                         <div class="form-group">
                                             <label for="slide3Image">Imagem do Slide</label>
                                             <div class="file-upload-container slide-upload">
-                                                <input type="file" id="slide3Image" accept="image/*">
+                                                <input type="file" id="slide3Image" accept="image/*" style="display: none;">
                                                 <div class="upload-area">
                                                     <i class="fas fa-cloud-upload-alt"></i>
                                                     <span>Clique para selecionar ou arraste a imagem</span>
@@ -779,6 +778,7 @@
     <script src="../js/header-auth.js"></script>
     <script src="../js/admin-middleware.js"></script>
     <script src="../js/services/products.js"></script>
+    <script src="../js/services/slides.js"></script>
     <script src="../js/services/auth-service.js"></script>
     <script src="../js/main.js"></script>
     <script src="../js/admin.js"></script>

@@ -1,56 +1,109 @@
+<!-- Remova toda a estrutura atual e substitua por esta versão organizada: -->
+
 <!-- Rodapé -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <!-- Localização -->
-                <div class="footer-column">
-                    <h3>Localização</h3>
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+
+            <!-- Coluna 2: Loja Principal -->
+            <div class="footer-column">
+                <h3><i class="fas fa-store"></i> Loja Principal</h3>
+                <div class="store-location">
                     <div class="address">
                         <i class="fas fa-map-marker-alt"></i>
-                        <p>Av. Padre Leonardo Nunes, 1182, Peruíbe, SP, Brazil</p>
+                        <p>Av. Padre Leonardo Nunes, 1182<br>Peruíbe, SP</p>
                     </div>
                     <div class="map-container">
                         <iframe 
-                          src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d454.49228003796446!2d-47.00027360557932!3d-24.31378925218086!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d0278b4c1b9c85%3A0xe029451a04934039!2sPet%20Shop%20Baronesa%20Banho%20e%20Tosa!5e0!3m2!1spt-BR!2sbr!4v1753204678898!5m2!1spt-BR!2sbr" style="width: 100%; height: 100%;"></iframe>"
+                            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d454.49228003796446!2d-47.00027360557932!3d-24.31378925218086!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d0278b4c1b9c85%3A0xe029451a04934039!2sPet%20Shop%20Baronesa%20Banho%20e%20Tosa!5e0!3m2!1spt-BR!2sbr!4v1753204678898!5m2!1spt-BR!2sbr"
+                            title="Mapa da Loja Principal"
+                            loading="lazy"
+                            style="width: 100%; height: 150px; border: 0; border-radius: 8px;">
                         </iframe>
                     </div>
                 </div>
+            </div>
 
-                <!-- Horário de Atendimento -->
-                <div class="footer-column">
-                    <h3>Horário de Atendimento</h3>
-                    <div class="hours">
-                        <i class="far fa-clock"></i>
+            <!-- Coluna 3: Loja Centro -->
+            <div class="footer-column">
+                <h3><i class="fas fa-store"></i> Loja Mercadão</h3>
+                <div class="store-location">
+                    <div class="address">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>R. Profa. Teresinha Rodrigues Kalil, 881<br>Peruíbe, SP</p>
+                    </div>
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3656.123456789!2d-47.001234!3d-24.312345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDE4JzQ0LjQiUyA0N8KwMDAnMDQuNCJX!5e0!3m2!1spt-BR!2sbr!4v1234567890123!5m2!1spt-BR!2sbr"
+                            title="Mapa da Loja Centro"
+                            loading="lazy"
+                            style="width: 100%; height: 150px; border: 0; border-radius: 8px;">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna 4: Contato & Atendimento -->
+            <div class="footer-column">
+                <h3><i class="fas fa-clock"></i> Atendimento</h3>
+                <div class="hours">
+                    <div class="schedule-item">
+                        <i class="fas fa-calendar-week"></i>
                         <div>
-                            <p>Segunda a Sábado: 08h às 18h30</p>
-                            <p>Domingo: Fechado</p>
+                            <strong>Segunda a Sábado</strong>
+                            <span>08h00 às 18h30</span>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <i class="fas fa-calendar-times"></i>
+                        <div>
+                            <strong>Domingo</strong>
+                            <span>Fechado</span>
                         </div>
                     </div>
                 </div>
-
-                <!-- Links Rápidos -->
-                <div class="footer-column">
-                    <h3>Links Rápidos</h3>
+                
+                <h4 style="margin-top: 1.5rem; margin-bottom: 1rem;">
+                    <i class="fas fa-phone-alt"></i>
+                        <i class="fas fa-link"></i> Links Rápidos
+                    </h4>
                     <ul class="quick-links">
-                        <!-- Links públicos (sempre visíveis) -->
-                        <li><a href="catalogo.html">Catálogo</a></li>
-                        <li><a href="banho-tosa.html">Banho & Tosa</a></li>
-                        <li><a href="carrinho.html">Carrinho</a></li>
+                        <li><a href="catalogo.html"><i class="fas fa-box"></i> Catálogo</a></li>
+                        <li><a href="banho-tosa.html"><i class="fas fa-bath"></i> Banho & Tosa</a></li>
+                        <li><a href="carrinho.html"><i class="fas fa-shopping-cart"></i> Carrinho</a></li>
                     </ul>
                 </div>
 
-                <!-- Contato -->
+                <!-- Coluna 4: Contato & Redes Sociais -->
                 <div class="footer-column">
-                    <h3>Contato</h3>
-                    <div class="contact-phone">
-                        <i class="fas fa-phone"></i>
-                        <a href="https://wa.me/551334559994">(13) 99682-5624</a>
+                    <h3><i class="fas fa-phone-alt"></i> Contato</h3>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fab fa-whatsapp"></i>
+                            <div>
+                                <strong>WhatsApp</strong>
+                                <a href="https://wa.me/551334559994">(13) 99682-5624</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>E-mail</strong>
+                                <a href="mailto:contato@petbaronesa.com">contato@petbaronesa.com</a>
+                            </div>
+                        </div>
                     </div>
+
+                    <h4 style="margin-top: 1.5rem; margin-bottom: 1rem;">
+                        <i class="fas fa-share-alt"></i> Redes Sociais
+                    </h4>
                     <div class="social-icons">
-                        <a href="https://www.instagram.com/petbaronesa/" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.instagram.com/petbaronesa/" target="_blank" rel="noopener noreferrer" title="Instagram">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="https://www.facebook.com/baronesa.petshop?locale=pt_BR" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.facebook.com/baronesa.petshop?locale=pt_BR" target="_blank" rel="noopener noreferrer" title="Facebook">
                             <i class="fab fa-facebook-f"></i>
                         </a>
                     </div>

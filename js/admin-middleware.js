@@ -752,13 +752,6 @@ async isUserAdmin() {
             }
         });
 
-        // Add context menu for admin actions
-        document.addEventListener('contextmenu', (e) => {
-            if (this.userRole === 'admin') {
-                // Add admin context menu
-                this.showAdminContextMenu(e);
-            }
-        });
     }
 
     /**
@@ -825,6 +818,188 @@ async isUserAdmin() {
         } catch (error) {
             console.error('Error checking admin access:', error);
             return false;
+        }
+    }
+
+    /**
+     * Show admin context menu
+     * @param {Event} e - Right-click event
+     */
+    showAdminContextMenu(e) {
+        e.preventDefault();
+
+        // Remove existing context menu
+        const existingMenu = document.querySelector('.admin-context-menu');
+        if (existingMenu) {
+            existingMenu.remove();
+        }
+
+        // Create context menu
+        const contextMenu = document.createElement('div');
+        contextMenu.className = 'admin-context-menu';
+        contextMenu.style.cssText = `
+            position: fixed;
+            top: ${e.clientY}px;
+            left: ${e.clientX}px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            min-width: 180px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        `;
+
+        // Menu items
+        const menuItems = [
+            {
+                label: '🏠 Ir para Admin',
+                action: () => window.location.href = '/html/admin.html'
+            },
+            {
+                label: '📊 Dashboard',
+                action: () => this.showAdminStats()
+            },
+            {
+                label: '🔄 Recarregar Cache',
+                action: () => this.clearCache()
+            },
+            {
+                label: '🚪 Logout Admin',
+                action: () => this.logoutAdmin()
+            }
+        ];
+
+        // Add menu items
+        menuItems.forEach(item => {
+            const menuItem = document.createElement('div');
+            menuItem.style.cssText = `
+                padding: 12px 16px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                font-size: 14px;
+                border-bottom: 1px solid #f0f0f0;
+            `;
+            menuItem.textContent = item.label;
+            
+            menuItem.addEventListener('mouseenter', () => {
+                menuItem.style.backgroundColor = '#f8f9fa';
+            });
+            
+            menuItem.addEventListener('mouseleave', () => {
+                menuItem.style.backgroundColor = 'white';
+            });
+            
+            menuItem.addEventListener('click', () => {
+                item.action();
+                contextMenu.remove();
+            });
+            
+            contextMenu.appendChild(menuItem);
+        });
+
+        // Add to document
+        document.body.appendChild(contextMenu);
+
+        // Remove on click outside
+        const removeMenu = (event) => {
+            if (!contextMenu.contains(event.target)) {
+                contextMenu.remove();
+                document.removeEventListener('click', removeMenu);
+            }
+        };
+        
+        setTimeout(() => {
+            document.addEventListener('click', removeMenu);
+        }, 0);
+    }
+
+    /**
+     * Show admin statistics overlay
+     */
+    showAdminStats() {
+        const statsOverlay = document.createElement('div');
+        statsOverlay.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            z-index: 10001;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+        `;
+        
+        statsOverlay.innerHTML = `
+            <h4>🔧 Admin Stats</h4>
+            <p><strong>Usuário:</strong> ${this.userEmail || 'N/A'}</p>
+            <p><strong>Role:</strong> ${this.userRole || 'N/A'}</p>
+            <p><strong>Página:</strong> ${window.location.pathname}</p>
+            <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+            <button onclick="this.parentElement.remove()" style="
+                background: #dc3545;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-top: 10px;
+            ">Fechar</button>
+        `;
+        
+        document.body.appendChild(statsOverlay);
+        
+        // Auto remove after 10 seconds
+        setTimeout(() => {
+            if (statsOverlay.parentElement) {
+                statsOverlay.remove();
+            }
+        }, 10000);
+    }
+
+    /**
+     * Clear admin cache
+     */
+    clearCache() {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userEmail');
+        
+        // Show notification
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10001;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        `;
+        notification.textContent = '🗑️ Cache limpo com sucesso!';
+        
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    /**
+     * Logout admin user
+     */
+    async logoutAdmin() {
+        try {
+            await this.authService.logout();
+            this.clearCache();
+            window.location.href = '/html/admin-login.html';
+        } catch (error) {
+            console.error('Error logging out:', error);
+            // Force logout even if there's an error
+            this.clearCache();
+            window.location.href = '/html/admin-login.html';
         }
     }
 }

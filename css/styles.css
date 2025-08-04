@@ -487,6 +487,191 @@ img {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: var(--border-radius);
   overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.map-container iframe {
+  border: 0;
+  border-radius: var(--border-radius);
+  transition: transform 0.3s ease;
+}
+
+.map-container:hover iframe {
+  transform: scale(1.02);
+}
+
+.store-location {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius);
+  border-left: 3px solid var(--emerald-green);
+}
+
+.store-location:last-child {
+  margin-bottom: 0;
+}
+
+.store-location h4 {
+  color: var(--emerald-light);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.store-location h4 i {
+  color: var(--emerald-green);
+}
+
+.company-description {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.company-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.feature-item i {
+  color: var(--emerald-green);
+  width: 1.2rem;
+  flex-shrink: 0;
+}
+
+.schedule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.schedule-item i {
+  color: var(--emerald-green);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.schedule-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.schedule-item strong {
+  color: white;
+  font-size: 0.95rem;
+}
+
+.schedule-item span {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.contact-item i {
+  color: var(--emerald-green);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+
+.contact-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.contact-item strong {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.contact-item a {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+}
+
+.contact-item a:hover {
+  color: var(--emerald-light);
+}
+
+.quick-links li a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.quick-links li a i {
+  color: var(--emerald-green);
+  width: 1rem;
+}
+
+.social-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.social-icons a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.social-icons a:hover {
+  background-color: var(--emerald-green);
+  color: white;
+  transform: translateX(5px);
+}
+
+.social-icons a i {
+  font-size: 1.2rem;
+  color: var(--emerald-green);
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover i {
+  color: white;
+}
+
+.social-icons a span {
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .map-placeholder {
@@ -3248,46 +3433,6 @@ img {
     font-size: 0.875rem;
 }
 
-/* Checkbox Toggle - MELHORADO */
-.toggle-checkbox {
-    appearance: none;
-    width: 56px;
-    height: 32px;
-    background: #e5e7eb;
-    border-radius: 16px;
-    position: relative;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.toggle-checkbox:checked {
-    background: var(--emerald-green);
-    border-color: var(--emerald-dark);
-}
-
-.toggle-checkbox::before {
-    content: '';
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    background: white;
-    border-radius: 50%;
-    top: 2px;
-    left: 2px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.toggle-checkbox:checked::before {
-    transform: translateX(24px);
-}
-
-.toggle-checkbox:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.2);
-}
-
 /* Form Sections - MELHORADO */
 .form-section {
     background: #f8fafc;
@@ -3679,9 +3824,11 @@ img {
 }
 
 /* Checkbox Toggle - MELHORADO */
+
 .toggle-checkbox {
     appearance: none;
-    width: 56px;
+    -webkit-appearance: none;
+    width: 70px !important;
     height: 32px;
     background: #e5e7eb;
     border-radius: 16px;
@@ -3689,13 +3836,16 @@ img {
     cursor: pointer;
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    outline: none;
 }
 
+/* Estado ativo/checked */
 .toggle-checkbox:checked {
-    background: var(--emerald-green);
+    background: var(--emerald-green) !important;
     border-color: var(--emerald-dark);
 }
 
+/* Bolinha do toggle */
 .toggle-checkbox::before {
     content: '';
     position: absolute;
@@ -3709,13 +3859,99 @@ img {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Bolinha quando ativo */
 .toggle-checkbox:checked::before {
-    transform: translateX(24px);
+    transform: translateX(38px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* Estados de foco e hover */
 .toggle-checkbox:focus {
     outline: none;
     box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.2);
+}
+
+.toggle-checkbox:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-checkbox:checked:hover {
+    background: var(--emerald-dark) !important;
+}
+
+/* Para garantir que funcione em diferentes navegadores */
+.toggle-checkbox[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Estado disabled */
+.toggle-checkbox:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toggle-checkbox:disabled::before {
+    background: #f3f4f6;
+}
+
+/* Toggle Checkbox - Responsivo */
+@media (max-width: 770px) {
+    .toggle-checkbox {
+        width: 50px !important;
+        height: 28px;
+        border-radius: 14px;
+    }
+
+    .toggle-checkbox::before {
+        width: 20px;
+        height: 20px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .toggle-checkbox:checked::before {
+        transform: translateX(32px); /* 60 - 28 = 32 */
+    }
+}
+
+@media (max-width: 480px) {
+    .toggle-checkbox {
+        width: 50px !important;
+        height: 24px;
+        border-radius: 12px;
+    }
+
+    .toggle-checkbox::before {
+        width: 16px;
+        height: 16px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .toggle-checkbox:checked::before {
+        transform: translateX(15px); /* 50 - 24 = 26 */
+    }
+}
+
+@media (max-width: 320px) {
+    .toggle-checkbox {
+        width: 45px !important;
+        height: 22px;
+        border-radius: 11px;
+    }
+
+    .toggle-checkbox::before {
+        width: 14px;
+        height: 14px;
+        top: 2px;
+        left: 2px;
+    }
+
+    .toggle-checkbox:checked::before {
+        transform: translateX(23px); /* 45 - 22 = 23 */
+    }
 }
 
 /* Form Sections - MELHORADO */
@@ -7760,4 +7996,31 @@ img {
 
 #dogSizeGroup[style*="display: block"] {
     max-height: 200px;
+}
+
+/* Carousel Loading Styles */
+.carousel-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(245, 245, 245, 0.9);
+  z-index: 10;
+}
+
+.carousel-loading .loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--petroleum-blue);
+}
+
+.carousel-loading .loading-spinner span {
+  font-size: 0.9rem;
+  font-weight: 500;
 }

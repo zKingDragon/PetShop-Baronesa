@@ -758,20 +758,26 @@ function clearAllFiltersAndActivateAllBtn() {
  */
 function applyFiltersFromURL() {
   const urlParams = new URLSearchParams(window.location.search)
+  console.log('🔗 Parâmetros da URL:', window.location.search)
 
   // Obtém categoria da URL
   const categoryParam = urlParams.get("categoria")
   if (categoryParam) {
+    console.log('🏷️ Categoria detectada na URL:', categoryParam)
     const checkbox = document.querySelector(`input[name="category"][value="${categoryParam}"]`)
     if (checkbox) {
       checkbox.checked = true
       filterState.categories.push(categoryParam)
+      console.log('✅ Filtro de categoria aplicado:', categoryParam)
+    } else {
+      console.warn('⚠️ Categoria não encontrada nos filtros:', categoryParam)
     }
   }
 
   // Obtém termo de busca da URL
   const searchParam = urlParams.get("busca")
   if (searchParam) {
+    console.log('🔍 Termo de busca detectado na URL:', searchParam)
     if (searchInput) searchInput.value = searchParam
     if (searchInputMobile) searchInputMobile.value = searchParam
     filterState.search = searchParam
@@ -779,6 +785,7 @@ function applyFiltersFromURL() {
 
   // Aplica filtros se houver parâmetros encontrados
   if (categoryParam || searchParam) {
+    console.log('⚡ Aplicando filtros da URL...')
     applyFilters()
   }
 }

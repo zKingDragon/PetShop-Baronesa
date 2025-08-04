@@ -9,6 +9,7 @@ class AdminPanel {
     this.filteredProducts = []
     this.currentEditingProduct = null
     this.isLoading = false
+    this.eventListenersConfigured = false // Evitar event listeners duplicados
 
     // DOM elements
     this.elements = {
@@ -34,7 +35,7 @@ class AdminPanel {
       // Stats
       totalProductsCount: document.getElementById("totalProductsCount"),
       categoriesCount: document.getElementById("categoriesCount"),
-      averagePrice: document.getElementById("averagePrice"),
+      promoProductsCount: document.getElementById("promoProductsCount"),
 
       // Modals
       productModal: document.getElementById("productModal"),
@@ -86,6 +87,9 @@ setupTabSystem() {
             const targetTab = button.getAttribute('data-tab');
             console.log(`🔄 Alternando para aba: ${targetTab}`);
             
+            // Salvar aba ativa no localStorage
+            localStorage.setItem('activeAdminTab', targetTab);
+            
             // Remove active class from all buttons and panes
             tabButtons.forEach(btn => {
                 btn.classList.remove('active');
@@ -102,7 +106,15 @@ setupTabSystem() {
             console.log(`✅ Ativando botão: ${targetTab}`);
             
             // Add active class to corresponding pane
-            const targetPane = document.getElementById(targetTab + 'Tab');
+            let targetPane;
+            if (targetTab === 'products') {
+                targetPane = document.getElementById('products-tab');
+            } else if (targetTab === 'slides') {
+                targetPane = document.getElementById('slidesTab');
+            } else {
+                targetPane = document.getElementById(targetTab + 'Tab');
+            }
+            
             if (targetPane) {
                 targetPane.classList.add('active');
                 console.log(`✅ Exibindo painel: ${targetPane.id}`);
@@ -112,25 +124,126 @@ setupTabSystem() {
                     console.log('🖼️ Inicializando gerenciador de slides...');
                     window.adminSlidesManager = new AdminSlidesManager();
                 }
+                
+                // Se for a aba de produtos, garantir que os produtos sejam carregados
+                if (targetTab === 'products') {
+                    console.log('📦 Aba de produtos ativada');
+                    // Forçar reload dos produtos para garantir dados atualizados
+                    this.loadProducts(true);
+                }
             } else {
-                console.error(`❌ Painel não encontrado: ${targetTab}Tab`);
+                console.error(`❌ Painel não encontrado para aba: ${targetTab}`);
             }
         });
     });
 
-    // Garantir que a primeira aba esteja ativa
-    const firstButton = tabButtons[0];
-    const firstPane = tabPanes[0];
+    // Verificar se há uma aba salva no localStorage
+    const savedTab = localStorage.getItem('activeAdminTab');
+    let activeButton, activePane;
     
-    if (firstButton && !firstButton.classList.contains('active')) {
-        firstButton.classList.add('active');
+    if (savedTab) {
+        // Tentar restaurar a aba salva
+        activeButton = document.querySelector(`[data-tab="${savedTab}"]`);
+        if (savedTab === 'products') {
+            activePane = document.getElementById('products-tab');
+        } else if (savedTab === 'slides') {
+            activePane = document.getElementById('slidesTab');
+        } else {
+            activePane = document.getElementById(savedTab + 'Tab');
+        }
+        
+        if (activeButton && activePane) {
+            console.log(`🔄 Restaurando aba salva: ${savedTab}`);
+        } else {
+            console.warn(`⚠️ Não foi possível restaurar aba salva: ${savedTab}`);
+            activeButton = null;
+            activePane = null;
+        }
     }
     
-    if (firstPane && !firstPane.classList.contains('active')) {
-        firstPane.classList.add('active');
+    // Se não conseguiu restaurar, usar a primeira aba
+    if (!activeButton || !activePane) {
+        activeButton = tabButtons[0];
+        if (activeButton) {
+            const firstTab = activeButton.getAttribute('data-tab');
+            if (firstTab === 'products') {
+                activePane = document.getElementById('products-tab');
+            } else if (firstTab === 'slides') {
+                activePane = document.getElementById('slidesTab');
+            } else {
+                activePane = document.getElementById(firstTab + 'Tab');
+            }
+        }
+    }
+    
+    // Remover active de todas as tabs primeiro
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabPanes.forEach(pane => pane.classList.remove('active'));
+    
+    // Ativar a tab escolhida
+    if (activeButton && activePane) {
+        activeButton.classList.add('active');
+        activePane.classList.add('active');
+        
+        const activeTabName = activeButton.getAttribute('data-tab');
+        console.log(`✅ Aba ativa: ${activeTabName}`);
+        
+        // Se a aba de slides está ativa, inicializar o gerenciador
+        if (activeTabName === 'slides' && !window.adminSlidesManager) {
+            console.log('🖼️ Aba slides ativa na inicialização - criando gerenciador...');
+            try {
+                window.adminSlidesManager = new AdminSlidesManager();
+                console.log('✅ AdminSlidesManager criado com sucesso');
+            } catch (error) {
+                console.error('❌ Erro ao criar AdminSlidesManager:', error);
+            }
+        }
     }
 
     console.log('✅ Sistema de abas configurado com sucesso');
+}
+
+/**
+ * Switch to specific tab
+ * @param {string} tabName - Name of the tab to switch to
+ */
+switchToTab(tabName) {
+    const button = document.querySelector(`[data-tab="${tabName}"]`);
+    if (button) {
+        button.click();
+        console.log(`🔄 Alternando para aba: ${tabName}`);
+    } else {
+        console.error(`❌ Botão de aba não encontrado: ${tabName}`);
+    }
+}
+
+/**
+ * Get current active tab
+ * @returns {string|null} - Name of current active tab
+ */
+getCurrentTab() {
+    const activeButton = document.querySelector('.tab-button.active');
+    return activeButton ? activeButton.getAttribute('data-tab') : null;
+}
+
+/**
+ * Initialize tab keyboard navigation
+ */
+setupTabKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+        // Ctrl + 1 = Products tab
+        if (e.ctrlKey && e.key === '1') {
+            e.preventDefault();
+            this.switchToTab('products');
+        }
+        // Ctrl + 2 = Slides tab
+        else if (e.ctrlKey && e.key === '2') {
+            e.preventDefault();
+            this.switchToTab('slides');
+        }
+    });
+    
+    console.log('⌨️ Navegação por teclado configurada (Ctrl+1: Produtos, Ctrl+2: Slides)');
 }
 
   /**
@@ -142,6 +255,7 @@ async init() {
         // Set up event listeners
         this.setupEventListeners()
         this.setupTabSystem() // Adicione esta linha
+        this.setupTabKeyboardNavigation() // Adicionar navegação por teclado
 
         // Load products
         await this.loadProducts()
@@ -160,6 +274,14 @@ async init() {
    * Set up all event listeners
    */
   setupEventListeners() {
+    console.log('🔧 Configurando event listeners...');
+    
+    // Verificar se já foram configurados para evitar duplicação
+    if (this.eventListenersConfigured) {
+      console.log('⚠️ Event listeners já configurados, pulando...');
+      return;
+    }
+
     // Add product buttons
     this.elements.addProductBtn?.addEventListener("click", () => this.openAddProductModal())
     this.elements.addProductBtnMobile?.addEventListener("click", () => this.openAddProductModal())
@@ -211,6 +333,10 @@ async init() {
 
     // Form event listeners
     this.setupFormEventListeners()
+    
+    // Marcar como configurado para evitar duplicação
+    this.eventListenersConfigured = true;
+    console.log('✅ Todos os event listeners configurados');
   }
 
   /**
@@ -244,24 +370,66 @@ async init() {
    * Set up form event listeners
    */
   setupFormEventListeners() {
-    // Product form submission
-    this.elements.productForm?.addEventListener("submit", (e) => {
-      e.preventDefault()
-      this.saveProduct()
-    })
+    // Verificar se os event listeners já foram adicionados para evitar duplicação
+    if (this.elements.productForm && !this.elements.productForm.dataset.listenersAdded) {
+      // Product form submission
+      this.elements.productForm.addEventListener("submit", (e) => {
+        e.preventDefault()
+        console.log('📝 Formulário de produto submetido');
+        this.saveProduct()
+      })
+      
+      // Marcar como configurado para evitar duplicação
+      this.elements.productForm.dataset.listenersAdded = 'true';
+      console.log('✅ Event listeners do formulário configurados');
+    }
+
+    // Toggle de promoção
+    const onSaleCheckbox = document.getElementById("productOnSale");
+    const salePriceInput = document.getElementById("productSalePrice");
+    
+    if (onSaleCheckbox && !onSaleCheckbox.dataset.listenersAdded) {
+      onSaleCheckbox.addEventListener("change", (e) => {
+        console.log('🏷️ Toggle de promoção alterado:', e.target.checked);
+        
+        if (salePriceInput) {
+          if (e.target.checked) {
+            // Habilitar campo de preço promocional
+            salePriceInput.disabled = false;
+            salePriceInput.parentElement.style.opacity = '1';
+            salePriceInput.focus();
+            console.log('✅ Campo de preço promocional habilitado');
+          } else {
+            // Desabilitar campo de preço promocional
+            salePriceInput.disabled = true;
+            salePriceInput.value = '';
+            salePriceInput.parentElement.style.opacity = '0.6';
+            console.log('❌ Campo de preço promocional desabilitado');
+          }
+        }
+      });
+      
+      onSaleCheckbox.dataset.listenersAdded = 'true';
+      console.log('✅ Event listener do toggle de promoção configurado');
+    }
 
     // Image preview
-    document.getElementById("productImage")?.addEventListener("input", (e) => {
-      this.updateImagePreview(e.target.value)
-    })
+    const imageInput = document.getElementById("productImage");
+    if (imageInput && !imageInput.dataset.listenersAdded) {
+      imageInput.addEventListener("input", (e) => {
+        this.updateImagePreview(e.target.value)
+      })
+      imageInput.dataset.listenersAdded = 'true';
+    }
   }
 
   /**
    * Load products from the database
    */
-  async loadProducts() {
+  async loadProducts(forceReload = false) {
+    // Se forceReload for true, sempre recarregar do banco
     // Se já temos produtos carregados e não estamos forçando reload, reutilizar
-    if (this.products.length > 0 && this.filteredProducts.length > 0) {
+    if (!forceReload && this.products.length > 0 && this.filteredProducts.length > 0) {
         console.log('📦 Reutilizando produtos já carregados');
         this.renderProducts();
         this.updateProductsCount();
@@ -270,7 +438,7 @@ async init() {
 
     try {
         this.setLoading(true);
-        console.log('📡 Carregando produtos do banco...');
+        console.log(`📡 Carregando produtos do banco... ${forceReload ? '(forçado)' : ''}`);
 
         // Check if ProductsService is available
         if (!window.ProductsService) {
@@ -364,6 +532,15 @@ async init() {
         `;
     }
 }
+
+  /**
+   * Função auxiliar para calcular o preço efetivo do produto
+   */
+  getEffectivePrice(product) {
+    return (product.promocional && product.precoPromo && product.precoPromo < product.price) 
+      ? parseFloat(product.precoPromo) 
+      : parseFloat(product.price);
+  }
 
   /**
    * Create HTML for a product card
@@ -517,8 +694,9 @@ async init() {
   updateStats() {
     const totalProducts = this.products.length
     const categories = [...new Set(this.products.map((p) => p.category))].length
-    const averagePrice =
-      totalProducts > 0 ? this.products.reduce((sum, p) => sum + (p.price || 0), 0) / totalProducts : 0
+    const promoProducts = this.products.filter(p => 
+      p.promocional && p.precoPromo && p.precoPromo < p.price
+    ).length
 
     if (this.elements.totalProductsCount) {
       this.elements.totalProductsCount.textContent = totalProducts
@@ -528,8 +706,8 @@ async init() {
       this.elements.categoriesCount.textContent = categories
     }
 
-    if (this.elements.averagePrice) {
-      this.elements.averagePrice.textContent = `R$ ${averagePrice.toFixed(2)}`
+    if (this.elements.promoProductsCount) {
+      this.elements.promoProductsCount.textContent = promoProducts
     }
   }
 
@@ -694,7 +872,17 @@ async init() {
    * Save product (create or update)
    */
   async saveProduct() {
+    // Verificar se já está salvando para evitar duplicação
+    if (this.isSaving) {
+      console.warn('⚠️ Salvamento já em andamento, ignorando...');
+      return;
+    }
+
     try {
+      // Marcar como salvando
+      this.isSaving = true;
+      console.log('💾 Iniciando salvamento de produto...');
+
       // Disable save button
       this.elements.saveBtn.disabled = true
       this.elements.saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...'
@@ -782,7 +970,7 @@ async init() {
       }
 
       // Reload products and close modal
-      await this.loadProducts()
+      await this.loadProducts(true) // forceReload = true
       this.updateStats()
       this.closeProductModal()
     } catch (error) {
@@ -794,6 +982,10 @@ async init() {
       this.elements.saveBtn.innerHTML = this.currentEditingProduct
         ? '<i class="fas fa-save"></i> Salvar Alterações'
         : '<i class="fas fa-save"></i> Salvar Produto'
+      
+      // Reset saving flag
+      this.isSaving = false
+      console.log('💾 Finalizando salvamento de produto...')
     }
   }
 
@@ -813,8 +1005,8 @@ async init() {
 
       this.showToast("Produto excluído com sucesso!", "success")
 
-      // Reload products and close modal
-      await this.loadProducts()
+      // Reload products from database and close modal
+      await this.loadProducts(true) // forceReload = true
       this.updateStats()
       this.closeDeleteModal()
     } catch (error) {
@@ -891,6 +1083,8 @@ async init() {
 
   // Função para aplicar filtros de produtos (chamada pelo admin-filters.js)
   applyProductFilters(filters) {
+    console.log('🔍 Aplicando filtros:', filters);
+    
     this.filteredProducts = this.products.filter(product => {
       // Filtro por busca
       if (filters.search) {
@@ -909,18 +1103,23 @@ async init() {
       
       // Filtro por promoção
       if (filters.promocional) {
-        if (!product.onSale) return false;
+        // Verifica se o produto está em promoção (tem promocional = true e preço promocional válido)
+        if (!product.promocional || !product.precoPromo || product.precoPromo >= product.price) {
+          return false;
+        }
       }
       
       // Filtro por faixa de preço
       if (filters.priceRanges.length > 0) {
-        const price = parseFloat(product.price);
+        // Usa o preço efetivo: preço promocional se estiver em promoção, senão preço original
+        const effectivePrice = this.getEffectivePrice(product);
+        
         const matchesPrice = filters.priceRanges.some(range => {
           switch(range) {
-            case '0-50': return price <= 50;
-            case '50-100': return price > 50 && price <= 100;
-            case '100-150': return price > 100 && price <= 150;
-            case '150+': return price > 150;
+            case '0-50': return effectivePrice <= 50;
+            case '50-100': return effectivePrice > 50 && effectivePrice <= 100;
+            case '100-150': return effectivePrice > 100 && effectivePrice <= 150;
+            case '150+': return effectivePrice > 150;
             default: return true;
           }
         });
@@ -934,6 +1133,8 @@ async init() {
       
       return true;
     });
+    
+    console.log(`✅ Filtro aplicado: ${this.filteredProducts.length} produtos de ${this.products.length} total`);
     
     this.renderProducts();
     this.updateProductsCount();
@@ -957,16 +1158,17 @@ class AdminSlidesManager {
         this.slides = [];
         this.tempFileData = {};
         this.isLoading = false;
+        this.slidesService = new SlidesService();
         this.init();
     }
 
     /**
      * Initialize the slides manager
      */
-    init() {
+    async init() {
         console.log('🖼️ Inicializando gerenciador de slides...');
         
-        this.loadSlidesData();
+        await this.loadSlidesData();
         this.setupEventListeners();
         this.setupFileUploads();
         this.setupCharacterCounters();
@@ -975,19 +1177,47 @@ class AdminSlidesManager {
     }
 
     /**
-     * Load slides data from localStorage or use defaults
+     * Load slides data from database
      */
-    loadSlidesData() {
+    async loadSlidesData() {
         try {
-            const savedSlides = localStorage.getItem('petshop_baronesa_slides');
-            if (savedSlides) {
-                this.slides = { ...this.slides, ...JSON.parse(savedSlides) };
-                console.log('📁 Dados dos slides carregados do localStorage');
-            }
+            this.isLoading = true;
+            console.log('📊 Carregando slides do banco de dados...');
+
+            const slides = await this.slidesService.getAllSlides();
             
+            // Converter array de slides para formato usado pelo manager
+            this.slides = {};
+            slides.forEach(slide => {
+                this.slides[`slide${slide.slideNumber}`] = {
+                    id: slide.id,
+                    title: slide.title,
+                    image: slide.image,
+                    slideNumber: slide.slideNumber,
+                    isActive: slide.isActive,
+                    order: slide.order
+                };
+            });
+
+            console.log('✅ Slides carregados:', Object.keys(this.slides).length);
             this.updatePreviewsFromData();
+            
         } catch (error) {
-            console.error('❌ Erro ao carregar dados dos slides:', error);
+            console.error('❌ Erro ao carregar slides:', error);
+            
+            // Fallback para localStorage se banco falhar
+            try {
+                const savedSlides = localStorage.getItem('petshop_baronesa_slides');
+                if (savedSlides) {
+                    this.slides = { ...this.slides, ...JSON.parse(savedSlides) };
+                    console.log('📁 Fallback: dados carregados do localStorage');
+                    this.updatePreviewsFromData();
+                }
+            } catch (localError) {
+                console.error('❌ Erro no fallback localStorage:', localError);
+            }
+        } finally {
+            this.isLoading = false;
         }
     }
 
@@ -1027,6 +1257,30 @@ class AdminSlidesManager {
                 this.saveSlide(slideNumber);
             });
         });
+
+        // Initialize default slides button
+        const initDefaultBtn = document.getElementById('initDefaultSlidesBtn');
+        if (initDefaultBtn) {
+            console.log('✅ Botão de inicializar slides encontrado');
+            initDefaultBtn.addEventListener('click', () => {
+                console.log('🔘 Botão de inicializar clicked!');
+                this.initializeDefaultSlides();
+            });
+        } else {
+            console.warn('⚠️ Botão initDefaultSlidesBtn não encontrado');
+        }
+
+        // Reload slides button
+        const loadSlidesBtn = document.getElementById('loadSlidesBtn');
+        if (loadSlidesBtn) {
+            console.log('✅ Botão de recarregar slides encontrado');
+            loadSlidesBtn.addEventListener('click', () => {
+                console.log('🔘 Botão de recarregar clicked!');
+                this.loadSlidesData();
+            });
+        } else {
+            console.warn('⚠️ Botão loadSlidesBtn não encontrado');
+        }
 
         // Title input changes (real-time preview)
         for (let i = 1; i <= 3; i++) {
@@ -1278,104 +1532,134 @@ class AdminSlidesManager {
      * Save slide data
      */
     async saveSlide(slideNumber) {
-    const saveButton = document.querySelector(`.save-slide[data-slide="${slideNumber}"]`);
-    const slideCard = saveButton?.closest('.slide-card');
-    const titleInput = document.getElementById(`slide${slideNumber}Title`);
+        const saveButton = document.querySelector(`.save-slide[data-slide="${slideNumber}"]`);
+        const slideCard = saveButton?.closest('.slide-card');
+        const titleInput = document.getElementById(`slide${slideNumber}Title`);
 
-    if (!saveButton) {
-        console.error(`❌ Botão de salvar não encontrado para slide ${slideNumber}`);
-        this.showToast(`Erro: Botão não encontrado`, 'error');
-        return;
-    }
-
-    if (!slideCard) {
-        console.error(`❌ Card do slide não encontrado para slide ${slideNumber}`);
-        this.showToast(`Erro: Card do slide não encontrado`, 'error');
-        return;
-    }
-
-    if (!titleInput) {
-        console.error(`❌ Input de título não encontrado para slide ${slideNumber}`);
-        this.showToast(`Erro: Campo de título não encontrado`, 'error');
-        return;
-    }
-
-    try {
-        // Disable button and show loading
-        saveButton.disabled = true;
-        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
-        slideCard.classList.add('slide-updating');
-
-        // Get form data
-        const title = titleInput.value.trim();
-
-        // Validate
-        if (!title) {
-            throw new Error('O título não pode estar vazio');
+        if (!saveButton) {
+            console.error(`❌ Botão de salvar não encontrado para slide ${slideNumber}`);
+            this.showToast(`Erro: Botão não encontrado`, 'error');
+            return;
         }
 
-        if (title.length > 100) {
-            throw new Error('O título não pode ter mais de 100 caracteres');
+        if (!slideCard) {
+            console.error(`❌ Card do slide não encontrado para slide ${slideNumber}`);
+            this.showToast(`Erro: Card do slide não encontrado`, 'error');
+            return;
         }
 
-        // Inicializar slides se não existir
-        if (!this.slides) {
-            this.slides = {};
+        if (!titleInput) {
+            console.error(`❌ Input de título não encontrado para slide ${slideNumber}`);
+            this.showToast(`Erro: Campo de título não encontrado`, 'error');
+            return;
         }
 
-        // Inicializar slide específico se não existir
-        if (!this.slides[`slide${slideNumber}`]) {
-            this.slides[`slide${slideNumber}`] = {
-                title: '',
-                image: '../assets/images/gerais/iconeBaronesa.png'
+        try {
+            // Disable button and show loading
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            slideCard.classList.add('slide-updating');
+
+            // Get form data
+            const title = titleInput.value.trim();
+
+            // Validate
+            if (!title) {
+                throw new Error('O título não pode estar vazio');
+            }
+
+            if (title.length > 100) {
+                throw new Error('O título não pode ter mais de 100 caracteres');
+            }
+
+            // Inicializar slides se não existir
+            if (!this.slides) {
+                this.slides = {};
+            }
+
+            // Inicializar slide específico se não existir
+            if (!this.slides[`slide${slideNumber}`]) {
+                this.slides[`slide${slideNumber}`] = {
+                    title: '',
+                    image: '../assets/images/gerais/iconeBaronesa.png',
+                    slideNumber: parseInt(slideNumber),
+                    order: parseInt(slideNumber)
+                };
+            }
+
+            // Prepare slide data
+            const slideData = {
+                title: title,
+                image: this.slides[`slide${slideNumber}`].image || '../assets/images/gerais/iconeBaronesa.png',
+                slideNumber: parseInt(slideNumber),
+                order: parseInt(slideNumber),
+                isActive: true
             };
+
+            // Use new image if uploaded
+            if (this.tempFileData && this.tempFileData[`slide${slideNumber}`]) {
+                slideData.image = this.tempFileData[`slide${slideNumber}`];
+                delete this.tempFileData[`slide${slideNumber}`];
+            }
+
+            // Save to database using upsert
+            const slideId = await this.slidesService.upsertSlide(parseInt(slideNumber), slideData);
+            
+            // Update local slides data
+            this.slides[`slide${slideNumber}`] = {
+                ...slideData,
+                id: slideId
+            };
+
+            // Backup to localStorage
+            localStorage.setItem('petshop_baronesa_slides', JSON.stringify(this.slides));
+
+            // Update preview
+            this.updateTitlePreview(slideNumber);
+
+            // Show success
+            slideCard.classList.add('slide-success');
+            this.showToast(`Slide ${slideNumber} salvo no banco de dados!`, 'success');
+
+            // Reset file upload UI
+            this.resetFileUploadUI(slideNumber);
+
+            console.log(`✅ Slide ${slideNumber} salvo no banco:`, slideData);
+
+        } catch (error) {
+            console.error(`❌ Erro ao salvar slide ${slideNumber}:`, error);
+            slideCard.classList.add('slide-error');
+            
+            // Fallback: save to localStorage only
+            try {
+                const slideData = {
+                    title: titleInput.value.trim(),
+                    image: this.slides[`slide${slideNumber}`]?.image || '../assets/images/gerais/iconeBaronesa.png'
+                };
+                
+                if (this.tempFileData && this.tempFileData[`slide${slideNumber}`]) {
+                    slideData.image = this.tempFileData[`slide${slideNumber}`];
+                    delete this.tempFileData[`slide${slideNumber}`];
+                }
+                
+                this.slides[`slide${slideNumber}`] = slideData;
+                localStorage.setItem('petshop_baronesa_slides', JSON.stringify(this.slides));
+                
+                this.showToast(`Slide ${slideNumber} salvo localmente (banco indisponível)`, 'warning');
+            } catch (fallbackError) {
+                this.showToast(error.message || `Erro ao salvar slide ${slideNumber}`, 'error');
+            }
+        } finally {
+            // Reset button
+            saveButton.disabled = false;
+            saveButton.innerHTML = `<i class="fas fa-save"></i> Salvar Slide ${slideNumber}`;
+            
+            // Remove animation classes
+            setTimeout(() => {
+                slideCard.classList.remove('slide-updating', 'slide-success', 'slide-error');
+            }, 2000);
         }
-
-        // Prepare slide data
-        const slideData = {
-            title: title,
-            image: this.slides[`slide${slideNumber}`].image || '../assets/images/gerais/iconeBaronesa.png'
-        };
-
-        // Use new image if uploaded
-        if (this.tempFileData && this.tempFileData[`slide${slideNumber}`]) {
-            slideData.image = this.tempFileData[`slide${slideNumber}`];
-            delete this.tempFileData[`slide${slideNumber}`];
-        }
-
-        // Update slides data
-        this.slides[`slide${slideNumber}`] = slideData;
-
-        // Save to localStorage
-        localStorage.setItem('petshop_baronesa_slides', JSON.stringify(this.slides));
-
-        // Update preview
-        this.updateTitlePreview(slideNumber);
-
-        // Show success
-        slideCard.classList.add('slide-success');
-        this.showToast(`Slide ${slideNumber} salvo com sucesso!`, 'success');
-
-        // Reset file upload UI
-        this.resetFileUploadUI(slideNumber);
-
-        console.log(`✅ Slide ${slideNumber} salvo:`, slideData);
-
-    } catch (error) {
-        console.error(`❌ Erro ao salvar slide ${slideNumber}:`, error);
-        slideCard.classList.add('slide-error');
-        this.showToast(error.message || `Erro ao salvar slide ${slideNumber}`, 'error');
-    } finally {
-        // Reset button
-        saveButton.disabled = false;
-        saveButton.innerHTML = `<i class="fas fa-save"></i> Salvar Slide ${slideNumber}`;
-        
-        // Remove animation classes
-        setTimeout(() => {
-            slideCard.classList.remove('slide-updating', 'slide-success', 'slide-error');
-        }, 2000);
     }
-}
 
 /**
  * Reset file upload UI helper method
@@ -1466,19 +1750,18 @@ setupEventListeners() {
     /**
      * Convert file to base64
      */
-    fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    }
-
-    /**
-     * Show toast notification
-     */
-    showToast(message, type = 'info') {
+fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+/**
+ * Show toast notification
+ */
+showToast(message, type = 'info') {
         // Use existing toast system if available
         if (window.adminPanel && typeof window.adminPanel.showToast === 'function') {
             window.adminPanel.showToast(message, type);
@@ -1522,6 +1805,60 @@ setupEventListeners() {
     }
 
     /**
+     * Initialize default slides in database
+     */
+    async initializeDefaultSlides() {
+        console.log('🚀 Método initializeDefaultSlides chamado!');
+        
+        const initBtn = document.getElementById('initDefaultSlidesBtn');
+        
+        try {
+            // Verificações de segurança
+            if (!window.SlidesService) {
+                throw new Error('SlidesService não está disponível. Verifique se o script foi carregado.');
+            }
+            
+            if (!this.slidesService) {
+                console.log('📦 Criando nova instância do SlidesService...');
+                this.slidesService = new SlidesService();
+            }
+            
+            if (!window.db) {
+                throw new Error('Firebase database não está disponível. Verifique a configuração do Firebase.');
+            }
+            
+            console.log('✅ Verificações passaram, iniciando processo...');
+            
+            if (initBtn) {
+                initBtn.disabled = true;
+                initBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inicializando...';
+            }
+
+            this.showToast('Inicializando slides padrão no banco de dados...', 'info');
+            
+            console.log('📡 Chamando slidesService.initializeDefaultSlides()...');
+            await this.slidesService.initializeDefaultSlides();
+            
+            console.log('✅ Slides inicializados, recarregando dados...');
+            // Recarregar dados após inicialização
+            await this.loadSlidesData();
+            
+            this.showToast('Slides padrão inicializados com sucesso!', 'success');
+            console.log('🎉 Processo concluído com sucesso!');
+            
+        } catch (error) {
+            console.error('❌ Erro detalhado ao inicializar slides:', error);
+            console.error('Stack trace:', error.stack);
+            this.showToast('Erro ao inicializar slides padrão: ' + error.message, 'error');
+        } finally {
+            if (initBtn) {
+                initBtn.disabled = false;
+                initBtn.innerHTML = '<i class="fas fa-database"></i> Inicializar Slides Padrão no Banco';
+            }
+        }
+    }
+
+    /**
      * Get current slides data (for use by carousel)
      */
     getSlidesData() {
@@ -1538,6 +1875,8 @@ setupEventListeners() {
         }
     }
 }
+
+// ÚNICA INICIALIZAÇÃO - NÃO DUPLICAR
 document.addEventListener("DOMContentLoaded", async () => {
   console.log('🔧 Inicializando página admin...');
   
@@ -1553,8 +1892,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Só então crie o painel admin
-  if (document.getElementById("adminProductsGrid")) {
+  // Só então crie o painel admin UMA ÚNICA VEZ
+  if (document.getElementById("adminProductsGrid") && !window.adminPanel) {
     window.adminPanel = new AdminPanel();
     
     // Tornar as funções de filtro disponíveis globalmente
@@ -1567,29 +1906,143 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Export for global access
 window.AdminPanel = AdminPanel;
+window.AdminSlidesManager = AdminSlidesManager;// Export for global access
+window.AdminPanel = AdminPanel;
 window.AdminSlidesManager = AdminSlidesManager;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // Aguarde a inicialização do Firebase e dos serviços
-  if (typeof window.FirebaseConfig !== "undefined" && window.FirebaseConfig.initializeFirebase) {
-    try {
-      const { db, auth } = await window.FirebaseConfig.initializeFirebase();
-      window.ProductsService.initialize(db, auth);
-      window.AuthService.initialize(auth);
-    } catch (e) {
-      console.error("Erro ao inicializar Firebase:", e);
-    }
-  }
-
-  // Só então crie o painel admin
-  if (document.getElementById("adminProductsGrid")) {
-    window.adminPanel = new AdminPanel();
+// Adicione esta função para garantir que o toggle funcione corretamente
+document.addEventListener('DOMContentLoaded', function() {
+    // Forçar atualização visual dos toggles
+    const toggles = document.querySelectorAll('.toggle-checkbox');
     
-    // Tornar as funções de filtro disponíveis globalmente
-    window.applyProductFilters = (filters) => window.adminPanel.applyProductFilters(filters);
-    window.applyTipFilters = (filters) => window.adminPanel.applyTipFilters(filters);
-  }
-}); //
+    toggles.forEach(toggle => {
+        // Função para atualizar estilo
+        function updateToggleStyle() {
+            if (toggle.checked) {
+                toggle.style.backgroundColor = 'var(--emerald-green)';
+                toggle.style.borderColor = 'var(--emerald-dark)';
+            } else {
+                toggle.style.backgroundColor = '#e5e7eb';
+                toggle.style.borderColor = 'transparent';
+            }
+        }
+        
+        // Atualizar no carregamento
+        updateToggleStyle();
+        
+        // Atualizar quando mudar
+        toggle.addEventListener('change', updateToggleStyle);
+        
+        // Atualizar quando clicar
+        toggle.addEventListener('click', function() {
+            setTimeout(updateToggleStyle, 50);
+        });
+    });
+});
 
-// Export for global access
-window.AdminPanel = AdminPanel;
+// Global functions for easy access
+window.initializeSlides = async function() {
+    try {
+        console.log('🚀 Inicializando slides via função global...');
+        
+        // Verificações mais detalhadas
+        console.log('🔍 Verificando dependências...');
+        console.log('- window.SlidesService:', !!window.SlidesService);
+        console.log('- window.db:', !!window.db);
+        console.log('- window.firebase:', !!window.firebase);
+        
+        if (!window.SlidesService) {
+            throw new Error('SlidesService não está disponível. Verifique se o script slides.js foi carregado.');
+        }
+        
+        if (!window.db) {
+            throw new Error('Firebase database não está disponível. Verifique a configuração do Firebase.');
+        }
+        
+        console.log('✅ Dependências verificadas, criando serviço...');
+        const slidesService = new SlidesService();
+        
+        console.log('📡 Chamando initializeDefaultSlides...');
+        await slidesService.initializeDefaultSlides();
+        
+        console.log('✅ Slides inicializados com sucesso!');
+        
+        // Se houver uma instância do AdminSlidesManager, recarregar
+        if (window.adminSlidesManager) {
+            console.log('🔄 Recarregando dados no AdminSlidesManager...');
+            await window.adminSlidesManager.loadSlidesData();
+        }
+        
+        return 'Slides inicializados com sucesso!';
+    } catch (error) {
+        console.error('❌ Erro detalhado ao inicializar slides:', error);
+        console.error('Stack trace:', error.stack);
+        return 'Erro: ' + error.message;
+    }
+};
+
+window.loadSlidesFromDB = async function() {
+    try {
+        console.log('📊 Carregando slides do banco...');
+        
+        if (!window.SlidesService) {
+            throw new Error('SlidesService não está disponível');
+        }
+        
+        const slidesService = new SlidesService();
+        const slides = await slidesService.getAllSlides();
+        
+        console.log('📋 Slides encontrados:', slides);
+        return slides;
+    } catch (error) {
+        console.error('❌ Erro ao carregar slides:', error);
+        return 'Erro: ' + error.message;
+    }
+};
+
+window.addSlideManually = async function(slideNumber, title, imagePath) {
+    try {
+        console.log(`➕ Adicionando slide ${slideNumber} manualmente...`);
+        
+        if (!window.SlidesService) {
+            throw new Error('SlidesService não está disponível');
+        }
+        
+        const slidesService = new SlidesService();
+        const slideData = {
+            title: title || `Slide ${slideNumber}`,
+            image: imagePath || '../assets/images/gerais/iconeBaronesa.png',
+            slideNumber: parseInt(slideNumber),
+            order: parseInt(slideNumber),
+            isActive: true
+        };
+        
+        const slideId = await slidesService.upsertSlide(parseInt(slideNumber), slideData);
+        
+        console.log(`✅ Slide ${slideNumber} adicionado com ID:`, slideId);
+        return slideId;
+    } catch (error) {
+        console.error(`❌ Erro ao adicionar slide ${slideNumber}:`, error);
+        return 'Erro: ' + error.message;
+    }
+};
+
+window.debugSlides = function() {
+    console.log('🔍 === DEBUG SLIDES ===');
+    console.log('1. SlidesService disponível:', !!window.SlidesService);
+    console.log('2. Firebase db disponível:', !!window.db);
+    console.log('3. AdminSlidesManager instance:', !!window.adminSlidesManager);
+    console.log('4. Botão initDefaultSlidesBtn:', !!document.getElementById('initDefaultSlidesBtn'));
+    console.log('5. Botão loadSlidesBtn:', !!document.getElementById('loadSlidesBtn'));
+    console.log('6. Tab slides ativa:', document.getElementById('slidesTab')?.classList.contains('active'));
+    console.log('7. Scripts carregados:', Array.from(document.querySelectorAll('script')).map(s => s.src).filter(s => s.includes('slides')));
+    
+    // Verificar se a aba de slides está visível
+    const slidesTab = document.getElementById('slidesTab');
+    if (slidesTab) {
+        console.log('8. Slides tab style.display:', slidesTab.style.display);
+        console.log('9. Slides tab classList:', Array.from(slidesTab.classList));
+    }
+    
+    return 'Debug concluído - verifique o console';
+};

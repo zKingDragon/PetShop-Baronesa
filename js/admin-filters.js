@@ -22,8 +22,37 @@ function initProductFilters() {
     const priceFilters = document.querySelectorAll('input[name="priceRanges"]');
     const typeFilters = document.querySelectorAll('input[name="type"]');
     
+    // Previne submissão de qualquer formulário que contenha os filtros
+    const filterContainer = document.querySelector('.admin-sidebar');
+    if (filterContainer) {
+        filterContainer.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('⚠️ Submissão de formulário bloqueada nos filtros');
+            return false;
+        });
+        
+        // Adiciona listener de keydown no container para capturar qualquer Enter
+        filterContainer.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                e.preventDefault();
+                console.log('⚠️ Enter bloqueado no campo:', e.target.id || e.target.name);
+                return false;
+            }
+        });
+    }
+    
     // Event listeners para busca
     if (searchInput) {
+        // Previne submissão do formulário ao pressionar Enter
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                console.log('⚠️ Enter bloqueado no campo de busca');
+                return false;
+            }
+        });
+        
+        // Filtro em tempo real enquanto digita
         searchInput.addEventListener('input', debounce(filterProducts, 300));
     }
     
@@ -405,12 +434,12 @@ const adminFiltersDebug = {
         });
         
         if (filterToggleBtn) {
-            console.log('🔘 Botão de filtro:', {
-                display: window.getComputedStyle(filterToggleBtn).display,
-                visibility: window.getComputedStyle(filterToggleBtn).visibility,
-                innerHTML: filterToggleBtn.innerHTML,
-                ariaExpanded: filterToggleBtn.getAttribute('aria-expanded')
-            });
+console.log('🔘 Botão de filtro:', {
+    display: window.getComputedStyle(filterToggleBtn).display,
+    visibility: window.getComputedStyle(filterToggleBtn).visibility,
+    innerHTML: filterToggleBtn.innerHTML,
+    ariaExpanded: filterToggleBtn.getAttribute('aria-expanded')
+});
         }
         
         adminSidebars.forEach((sidebar, index) => {

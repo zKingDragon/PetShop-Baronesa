@@ -1,5 +1,8 @@
+console.log('📋 forms.js carregado')
+
 // Função para inicializar os formulários
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('📋 DOM carregado, inicializando formulários')
   initAppointmentForm()
   initCadastroForm()
   initPasswordToggles()
@@ -326,7 +329,9 @@ function saveAddressData(addressData) {
  * Limpa os dados de endereço do localStorage
  */
 function clearAddressData() {
+  console.log('🗑️ Removendo dados do localStorage...')
   localStorage.removeItem(ADDRESS_KEY)
+  console.log('✅ Dados removidos do localStorage')
 }
 
 /**
@@ -581,6 +586,8 @@ function updateAddressDisplay() {
  * Limpa as informações do endereço com confirmação
  */
 function clearAddressInfo() {
+  console.log('🗑️ clearAddressInfo chamada')
+  
   // Modal de confirmação personalizado
   showConfirmationModal({
     title: 'Limpar Endereço',
@@ -588,14 +595,19 @@ function clearAddressInfo() {
     confirmText: 'Sim, Limpar',
     cancelText: 'Cancelar',
     onConfirm: () => {
+      console.log('✅ Confirmação para limpar endereço')
+      
       // Limpar dados do localStorage
       clearAddressData()
+      console.log('🗑️ Dados removidos do localStorage')
       
       // Atualizar interface
       updateAddressDisplay()
+      console.log('🔄 Interface atualizada')
       
       // Mostrar mensagem de sucesso
       showAddressClearMessage()
+      console.log('✅ Mensagem de sucesso exibida')
     }
   })
 }
@@ -702,16 +714,20 @@ function showAddressClearMessage() {
   }, 3000)
 }
 
-/**               
-  
-  document.head.appendChild(style)
+/**
+ * Adiciona estilos específicos para os modais de endereço
+ */
+function addAddressModalStyles() {
+  // Os estilos já estão incluídos no CSS principal
+  // Esta função é mantida para compatibilidade, mas não precisa fazer nada
+  // pois os estilos estão em styles.css
 }
 
 /**
  * Adiciona estilos específicos para o modal de confirmação
  */
 function addConfirmationModalStyles() {
-  // Os estilos já estão incluídos na função addAddressModalStyles
+  // Os estilos já estão incluídos no CSS principal
   // Esta função é mantida para compatibilidade
   addAddressModalStyles()
 }
@@ -735,3 +751,12 @@ window.clearAddressInfo = clearAddressInfo
 window.showConfirmationModal = showConfirmationModal
 window.closeConfirmationModal = closeConfirmationModal
 window.confirmAction = confirmAction
+window.updateAddressDisplay = updateAddressDisplay
+window.showAddressModal = showAddressModal
+window.closeAddressModal = closeAddressModal
+
+console.log('✅ Funções globais exportadas:', {
+  clearAddressInfo: typeof window.clearAddressInfo,
+  updateAddressDisplay: typeof window.updateAddressDisplay,
+  showAddressModal: typeof window.showAddressModal
+})
