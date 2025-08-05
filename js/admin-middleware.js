@@ -14,7 +14,7 @@ class AdminMiddleware {
             '/html/admin.html',
             'admin.html'
         ];
-        
+
         this.init();
     }
 
@@ -24,12 +24,12 @@ class AdminMiddleware {
     async init() {
         try {
             console.log('Initializing admin middleware...');
-            
+
             // Check if we're on a protected page
             if (this.isProtectedRoute()) {
                 await this.checkPageAccess();
             }
-            
+
             this.setupEventListeners();
             this.isInitialized = true;
             console.log('Admin middleware initialized');
@@ -76,8 +76,8 @@ class AdminMiddleware {
      */
     isProtectedRoute() {
         const currentPath = window.location.pathname;
-        return this.protectedRoutes.some(route => 
-            currentPath.endsWith(route) || 
+        return this.protectedRoutes.some(route =>
+            currentPath.endsWith(route) ||
             currentPath.includes(route)
         );
     }
@@ -88,15 +88,15 @@ class AdminMiddleware {
     async checkPageAccess() {
         try {
             console.log('[checkPageAccess] Checking page access...');
-            
+
             // Wait for auth system to be available
             await this.waitForAuthSystem();
             console.log('[checkPageAccess] Auth system ready');
-            
+
             // Check if user is authenticated
             const isAuthenticated = this.isUserAuthenticated();
             console.log('[checkPageAccess] Is authenticated:', isAuthenticated);
-            
+
             if (!isAuthenticated) {
                 console.warn('[checkPageAccess] User not authenticated, redirecting to login');
                 this.redirectToLogin();
@@ -106,7 +106,7 @@ class AdminMiddleware {
             // Check if user has admin privileges
             const isAdmin = await this.isUserAdmin();
             console.log('[checkPageAccess] Is admin:', isAdmin);
-            
+
             if (!isAdmin) {
                 console.warn('[checkPageAccess] User is not admin, access denied');
                 this.handleAccessDenied();
@@ -128,30 +128,30 @@ class AdminMiddleware {
         console.log('[waitForAuthSystem] Waiting for auth system...');
         let retryCount = 0;
         const maxRetries = 50; // Reduzido para 5 segundos
-        
+
         return new Promise((resolve) => {
             const checkAuth = () => {
                 // Check if our auth functions are loaded (mais importante que Firebase)
-                const authFunctionsReady = typeof getCurrentUser === 'function' && 
-                                         typeof getCurrentUserType === 'function' && 
+                const authFunctionsReady = typeof getCurrentUser === 'function' &&
+                                         typeof getCurrentUserType === 'function' &&
                                          typeof isAdmin === 'function';
-                
+
                 // Check if Firebase is loaded (opcional para o teste)
                 const firebaseReady = window.firebase && window.firebase.auth;
-                
+
                 console.log(`[waitForAuthSystem] Check ${retryCount + 1}/${maxRetries} - Auth Functions: ${authFunctionsReady}, Firebase: ${firebaseReady}`);
-                
+
                 // Continua se as funções auth estão prontas OU se atingiu o máximo de tentativas
                 if (authFunctionsReady || retryCount >= maxRetries) {
                     console.log('[waitForAuthSystem] Auth system ready or timeout reached');
                     resolve();
                     return;
                 }
-                
+
                 retryCount++;
                 setTimeout(checkAuth, 100);
             };
-            
+
             checkAuth();
         });
     }
@@ -162,7 +162,7 @@ class AdminMiddleware {
      */
     isUserAuthenticated() {
         console.log('[isUserAuthenticated] Checking authentication...');
-        
+
         // Método 1: Use getCurrentUser function se disponível
         if (typeof getCurrentUser === 'function') {
             const user = getCurrentUser();
@@ -212,14 +212,14 @@ class AdminMiddleware {
 async isUserAdmin() {
     try {
         console.log('[isUserAdmin] 🔍 Verificando status de admin...');
-        
+
         if (!this.currentUser) {
             console.log('[isUserAdmin] ❌ Sem usuário atual');
             return false;
         }
-        
+
         console.log('[isUserAdmin] 👤 Verificando:', this.currentUser.email);
-        
+
         // MÉTODO 0: Verificar por token JWT específico de admin (mais seguro)
         if (window.AdminTokenManager) {
             const isAdminByToken = window.AdminTokenManager.isAdminByToken();
@@ -228,29 +228,29 @@ async isUserAdmin() {
                 return true;
             }
         }
-        
+
         // MÉTODO 1: Verificar no Firestore (confiável)
         try {
             if (window.firebase && window.firebase.firestore) {
                 console.log('[isUserAdmin] 🔥 Verificando Firestore...');
-                
+
                 const userDoc = await window.firebase.firestore()
                     .collection('users')
                     .doc(this.currentUser.uid)
                     .get();
-                
+
                 if (userDoc.exists) {
                     const userData = userDoc.data();
                     console.log('[isUserAdmin] 📄 Dados do Firestore:', userData);
-                    
+
                     // Verificar múltiplos campos possíveis
-                    if (userData.isAdmin === true || 
-                        userData.type === 'admin' || 
+                    if (userData.isAdmin === true ||
+                        userData.type === 'admin' ||
                         userData.role === 'admin' ||
                         userData.userType === 'admin') {
-                        
+
                         console.log('[isUserAdmin] ✅ ADMIN confirmado via Firestore!');
-                        
+
                         // Gerar e salvar token JWT para futuras verificações
                         if (window.AdminTokenManager) {
                             const token = window.AdminTokenManager.generateToken(this.currentUser);
@@ -259,7 +259,7 @@ async isUserAdmin() {
                                 console.log('[isUserAdmin] 🔑 Token JWT admin gerado e salvo');
                             }
                         }
-                        
+
                         return true;
                     }
                 }
@@ -267,7 +267,7 @@ async isUserAdmin() {
         } catch (firestoreError) {
             console.error('[isUserAdmin] ❌ Erro ao verificar Firestore:', firestoreError);
         }
-        
+
         // MÉTODO 2: Verificar com funções globais
         if (typeof isAdmin === 'function') {
             try {
@@ -280,15 +280,15 @@ async isUserAdmin() {
                 console.error('[isUserAdmin] ❌ Erro em isAdmin():', error);
             }
         }
-        
+
         // MÉTODO 3: Verificar localStorage
         try {
             const authData = localStorage.getItem('petshop_baronesa_auth');
             if (authData) {
                 const userData = JSON.parse(authData);
-                
-                if (userData.isAdmin === true || 
-                    userData.type === 'admin' || 
+
+                if (userData.isAdmin === true ||
+                    userData.type === 'admin' ||
                     userData.role === 'admin') {
                     console.log('[isUserAdmin] ✅ ADMIN confirmado via localStorage!');
                     return true;
@@ -297,7 +297,7 @@ async isUserAdmin() {
         } catch (error) {
             console.error('[isUserAdmin] ❌ Erro no localStorage:', error);
         }
-        
+
         // MÉTODO 4: Lista de emails admin (mais rigorosa)
         const adminEmails = [
             'admin@petshopbaronesa.com',
@@ -305,10 +305,10 @@ async isUserAdmin() {
             'admin@admin.com'
             // Remova o email genérico para maior segurança
         ];
-        
+
         if (adminEmails.includes(this.currentUser.email?.toLowerCase())) {
             console.log('[isUserAdmin] ✅ ADMIN confirmado via lista de emails!');
-            
+
             // Registrar no Firestore
             try {
                 if (window.firebase && window.firebase.firestore) {
@@ -323,7 +323,7 @@ async isUserAdmin() {
                             role: 'admin',
                             createdAt: new Date()
                         }, { merge: true });
-                    
+
                     // Gerar token JWT
                     if (window.AdminTokenManager) {
                         const token = window.AdminTokenManager.generateToken(this.currentUser);
@@ -335,18 +335,18 @@ async isUserAdmin() {
             } catch (error) {
                 console.error('[isUserAdmin] ⚠️ Erro ao salvar status:', error);
             }
-            
+
             return true;
         }
-        
+
         // EM PRODUÇÃO: Remover este bypass e retornar false
         // EM DESENVOLVIMENTO: Manter para facilitar testes
-        const isProduction = window.location.hostname !== 'localhost' && 
+        const isProduction = window.location.hostname !== 'localhost' &&
                             !window.location.hostname.includes('127.0.0.1');
-        
+
         if (!isProduction) {
             console.log('[isUserAdmin] 🔑 MODO DESENVOLVIMENTO: Permitindo acesso admin');
-            
+
             // Em desenvolvimento, registrar como admin automaticamente
             try {
                 if (window.firebase && window.firebase.firestore) {
@@ -361,19 +361,19 @@ async isUserAdmin() {
                             role: 'admin',
                             createdAt: new Date()
                         }, { merge: true });
-                    
+
                     console.log('[isUserAdmin] 📝 Usuário registrado como admin para desenvolvimento');
                 }
             } catch (error) {
                 console.error('[isUserAdmin] ❌ Erro ao registrar:', error);
             }
-            
+
             return true;
         }
-        
+
         console.log('[isUserAdmin] ❌ Usuário não é admin');
         return false;
-        
+
     } catch (error) {
         console.error('[isUserAdmin] 💥 Erro crítico:', error);
         return false;
@@ -386,7 +386,7 @@ async isUserAdmin() {
      */
     async handleAuthStateChange(user) {
         this.currentUser = user;
-        
+
         if (user) {
             // User is logged in - check role
             this.userRole = await this.determineUserRole(user);
@@ -408,7 +408,7 @@ async isUserAdmin() {
      */
     async determineUserRole(user) {
         if (!user) return 'guest';
-        
+
         try {
             if (typeof window.auth !== 'undefined' && window.auth.checktype) {
                 const type = await window.auth.checktype(user.uid);
@@ -427,14 +427,14 @@ async isUserAdmin() {
     redirectToLogin() {
         // Store the current page for redirect after login
         sessionStorage.setItem('redirect_after_login', window.location.pathname);
-        
+
         // Determine login page path
-        const loginPath = window.location.pathname.includes('/html/') ? 
+        const loginPath = window.location.pathname.includes('/html/') ?
             'admin-login.html' : 'html/admin-login.html';
-        
+
         // Show loading message
         this.showLoadingMessage('Redirecionando para login...');
-        
+
         // Redirect after brief delay
         setTimeout(() => {
             window.location.href = loginPath;
@@ -446,13 +446,13 @@ async isUserAdmin() {
      */
     handleAccessDenied() {
         console.log('[handleAccessDenied] Acesso negado - usuário não é admin');
-        
+
         // Remove loading message if exists
         const loadingDiv = document.getElementById('admin-loading');
         if (loadingDiv) {
             loadingDiv.remove();
         }
-        
+
         // Show access denied message
         this.showErrorMessage(
             'Acesso Negado',
@@ -474,7 +474,7 @@ async isUserAdmin() {
         if (loadingDiv) {
             loadingDiv.remove();
         }
-                
+
         // Initialize admin features
         this.initializeAdminFeatures();
     }
@@ -485,13 +485,13 @@ async isUserAdmin() {
      */
     handleError(error) {
         console.error('[handleError] Erro no middleware:', error);
-        
+
         // Remove loading message if exists
         const loadingDiv = document.getElementById('admin-loading');
         if (loadingDiv) {
             loadingDiv.remove();
         }
-        
+
         // Show error message
         this.showErrorMessage(
             'Erro do Sistema',
@@ -517,7 +517,7 @@ async isUserAdmin() {
                 </div>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -554,7 +554,7 @@ async isUserAdmin() {
                 100% { transform: rotate(360deg); }
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(loadingDiv);
     }
@@ -592,7 +592,7 @@ async isUserAdmin() {
                 </div>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -636,10 +636,10 @@ async isUserAdmin() {
                 background: #c82333;
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(errorDiv);
-        
+
         // Set callback
         if (onClose) {
             errorDiv.querySelector('.admin-error-button').onClose = onClose;
@@ -665,7 +665,7 @@ async isUserAdmin() {
                 </div>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -696,10 +696,10 @@ async isUserAdmin() {
                 margin-bottom: 1rem;
             }
         `;
-        
+
         document.head.appendChild(style);
         document.body.appendChild(successDiv);
-        
+
         // Remove after 2 seconds
         setTimeout(() => {
             successDiv.remove();
@@ -712,16 +712,16 @@ async isUserAdmin() {
      */
     initializeAdminFeatures() {
         console.log('[initializeAdminFeatures] Inicializando recursos admin...');
-        
+
         // Set user role
         this.userRole = 'admin';
-        
+
         // Add admin-specific event listeners
         this.setupAdminEventListeners();
-        
+
         // Initialize admin UI enhancements
         this.enhanceAdminUI();
-        
+
         // Notify other systems that admin is ready
         document.dispatchEvent(new CustomEvent('adminReady', {
             detail: { userRole: this.userRole }
@@ -812,7 +812,7 @@ async isUserAdmin() {
         try {
             const isAuth = this.isUserAuthenticated();
             if (!isAuth) return false;
-            
+
             const isAdmin = await this.isUserAdmin();
             return isAdmin;
         } catch (error) {
@@ -881,20 +881,20 @@ async isUserAdmin() {
                 border-bottom: 1px solid #f0f0f0;
             `;
             menuItem.textContent = item.label;
-            
+
             menuItem.addEventListener('mouseenter', () => {
                 menuItem.style.backgroundColor = '#f8f9fa';
             });
-            
+
             menuItem.addEventListener('mouseleave', () => {
                 menuItem.style.backgroundColor = 'white';
             });
-            
+
             menuItem.addEventListener('click', () => {
                 item.action();
                 contextMenu.remove();
             });
-            
+
             contextMenu.appendChild(menuItem);
         });
 
@@ -908,7 +908,7 @@ async isUserAdmin() {
                 document.removeEventListener('click', removeMenu);
             }
         };
-        
+
         setTimeout(() => {
             document.addEventListener('click', removeMenu);
         }, 0);
@@ -932,7 +932,7 @@ async isUserAdmin() {
             font-size: 12px;
             max-width: 300px;
         `;
-        
+
         statsOverlay.innerHTML = `
             <h4>🔧 Admin Stats</h4>
             <p><strong>Usuário:</strong> ${this.userEmail || 'N/A'}</p>
@@ -949,9 +949,9 @@ async isUserAdmin() {
                 margin-top: 10px;
             ">Fechar</button>
         `;
-        
+
         document.body.appendChild(statsOverlay);
-        
+
         // Auto remove after 10 seconds
         setTimeout(() => {
             if (statsOverlay.parentElement) {
@@ -967,7 +967,7 @@ async isUserAdmin() {
         localStorage.removeItem('adminToken');
         localStorage.removeItem('userRole');
         localStorage.removeItem('userEmail');
-        
+
         // Show notification
         const notification = document.createElement('div');
         notification.style.cssText = `
@@ -982,7 +982,7 @@ async isUserAdmin() {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         `;
         notification.textContent = '🗑️ Cache limpo com sucesso!';
-        
+
         document.body.appendChild(notification);
         setTimeout(() => notification.remove(), 3000);
     }
