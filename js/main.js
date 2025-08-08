@@ -1,6 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Inicializa a transição de página
   initPageTransitions();
+  // Inicializa VLibras (acessibilidade em Libras)
+  initVLibras();
+  // Inicializa widget profissional de acessibilidade (visual)
+  initProfessionalA11yWidget();
   
   // Detecta o caminho correto baseado na localização atual
   const isInHtmlFolder = window.location.pathname.includes('/html/');
@@ -29,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         initMobileMenu(); // Inicializa o menu mobile após carregar o header
         initSearchEvents(); // Inicializa eventos de pesquisa após carregar o header
         initSmoothNavigation(); // Inicializa navegação suave
+  initHeaderA11yButton(); // Liga o botão de acessibilidade do header
         
         // Inicializa sistema de autenticação do header
         if (window.headerAuth) {
@@ -67,6 +72,111 @@ document.addEventListener("DOMContentLoaded", () => {
   // Ajusta visibilidade do texto da logo
   ensureLogoTextVisible();
 });
+
+/**
+ * Inicializa o widget VLibras em todas as páginas
+ * Evita duplicação e carrega o script externo apenas uma vez
+ */
+function initVLibras() {
+  try {
+    if (window.__vlibrasInitialized) return;
+
+    // Cria o container do widget se ainda não existir
+    if (!document.querySelector('[vw].enabled')) {
+      const wrapper = document.createElement('div');
+      wrapper.setAttribute('vw', '');
+      wrapper.className = 'enabled';
+
+      const accessBtn = document.createElement('div');
+      accessBtn.setAttribute('vw-access-button', '');
+      accessBtn.className = 'active';
+
+      const pluginWrapper = document.createElement('div');
+      pluginWrapper.setAttribute('vw-plugin-wrapper', '');
+
+      const topWrapper = document.createElement('div');
+      topWrapper.className = 'vw-plugin-top-wrapper';
+      pluginWrapper.appendChild(topWrapper);
+
+      wrapper.appendChild(accessBtn);
+      wrapper.appendChild(pluginWrapper);
+      document.body.appendChild(wrapper);
+    }
+
+    // Função para instanciar o widget quando o script estiver disponível
+    function bootVLibras() {
+      if (window.__vlibrasInitialized) return;
+      if (window.VLibras && window.VLibras.Widget) {
+        // URL padrão do app VLibras
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+        window.__vlibrasInitialized = true;
+        console.log('✅ VLibras inicializado');
+      }
+    }
+
+    // Injeta o script do VLibras uma única vez
+    if (!document.getElementById('vlibras-plugin')) {
+      const script = document.createElement('script');
+      script.id = 'vlibras-plugin';
+      script.src = 'https://vlibras.gov.br/app/vlibras-plugin.js';
+      script.async = true;
+      script.defer = true;
+      script.onload = bootVLibras;
+      document.body.appendChild(script);
+    } else {
+      // Caso já exista (ou navegação rápida), tenta instanciar
+      bootVLibras();
+    }
+  } catch (e) {
+    console.warn('⚠️ Erro ao iniciar VLibras:', e);
+  }
+}
+
+/**
+ * Carrega um widget profissional de acessibilidade (ex.: UserWay) via configuração externa
+ * Para usar, preencha assets/config/accessibility.json com o "userwayAccount"
+ */
+async function initProfessionalA11yWidget() {
+  try {
+    if (window.__userwayInitialized) return;
+
+    // Descobre caminho certo do config (raiz vs /html)
+    const inHtml = window.location.pathname.includes('/html/');
+    const configPath = inHtml ? '../assets/config/accessibility.json' : 'assets/config/accessibility.json';
+
+    const res = await fetch(configPath, { cache: 'no-store' }).catch(() => null);
+    if (!res || !res.ok) {
+      console.info('Acessibilidade Pro: config não encontrado, pulando. Caminho:', configPath);
+      return;
+    }
+    const cfg = await res.json().catch(() => ({}));
+
+    // Suporte atual: UserWay (outros provedores podem ser adicionados futuramente)
+    if ((cfg.provider || 'userway') === 'userway') {
+      const account = (cfg.userwayAccount || '').trim();
+      if (!account) {
+        console.warn('UserWay: defina "userwayAccount" em assets/config/accessibility.json para habilitar.');
+        return;
+      }
+      if (document.getElementById('userway-widget')) {
+        window.__userwayInitialized = true;
+        return;
+      }
+      const s = document.createElement('script');
+      s.id = 'userway-widget';
+      s.async = true;
+      s.src = 'https://cdn.userway.org/widget.js';
+      s.setAttribute('data-account', account);
+      s.onload = () => {
+        window.__userwayInitialized = true;
+        console.log('✅ UserWay carregado');
+      };
+      document.head.appendChild(s);
+    }
+  } catch (e) {
+    console.warn('⚠️ Falha ao iniciar widget profissional de acessibilidade:', e);
+  }
+}
 
 function initMobileMenu() {
   const menuToggle = document.getElementById("menuToggle");
@@ -217,8 +327,8 @@ function initPageTransitions() {
   if (loader) {
     setTimeout(() => {
       loader.classList.add('hidden');
-      setTimeout(() => loader.remove(), 1200);
-    }, 1200);
+      setTimeout(() => loader.remove(), 600);
+    }, 600);
   }
 }
 
@@ -614,6 +724,39 @@ function fixHeaderLinks() {
 
 // Corrige os links do header ao carregar a página
 document.addEventListener('headerLoaded', fixHeaderLinks);
+
+/**
+ * Liga o botão "Acessibilidade" do header para abrir o widget disponível
+ */
+function initHeaderA11yButton() {
+  const btn = document.getElementById('a11yHeaderBtn');
+  if (!btn) return;
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    // 1) Tenta abrir UserWay, se presente
+    const userwayBtn = document.querySelector('button#userwayAccessibilityIcon, .uwy');
+    if (userwayBtn) {
+      userwayBtn.click();
+      return;
+    }
+
+    // 2) Tenta abrir VLibras (lado direito)
+    const vlibBtn = document.querySelector('[vw-access-button]');
+    if (vlibBtn) {
+      vlibBtn.click();
+      return;
+    }
+
+    // 3) Fallback: instrução
+    if (window.showToast) {
+      window.showToast('Nenhum widget de acessibilidade foi carregado. Configure assets/config/accessibility.json ou verifique o VLibras.');
+    } else {
+      alert('Nenhum widget de acessibilidade foi carregado. Configure assets/config/accessibility.json ou verifique o VLibras.');
+    }
+  });
+}
 
 // Adicionar no final do arquivo ou criar um novo arquivo file-upload.js
 

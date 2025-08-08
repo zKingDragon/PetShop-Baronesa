@@ -148,6 +148,39 @@ img {
   min-height: 60px;
 }
 
+/* Acessibilidade no Header */
+.a11y-header {
+  display: flex;
+  align-items: center;
+  margin-left: 0.25rem;
+}
+
+.a11y-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+.a11y-header-btn:hover {
+  background: #0b5ed7;
+}
+
+.a11y-header-btn i { font-size: 1rem; }
+.a11y-header-btn .a11y-label { display: inline; }
+
+@media (max-width: 770px) {
+  .a11y-header-btn .a11y-label { display: none; }
+  .a11y-header-btn { padding: 8px; }
+}
+
 .header-content .logo {
   flex-shrink: 0;
 }
