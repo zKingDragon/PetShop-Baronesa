@@ -58,7 +58,7 @@ class SlidesService {
   async getAllSlides() {
     try {
       console.log('📊 Carregando slides do banco de dados...')
-      
+
       const querySnapshot = await this.db
         .collection(this.collection)
         .orderBy('order', 'asc')
@@ -85,7 +85,7 @@ class SlidesService {
   async getSlideById(slideId) {
     try {
       const doc = await this.db.collection(this.collection).doc(slideId).get()
-      
+
       if (!doc.exists) {
         return null
       }
@@ -112,7 +112,7 @@ class SlidesService {
       }
 
       const docRef = await this.db.collection(this.collection).add(firestoreData)
-      
+
       console.log('✅ Slide criado com ID:', docRef.id)
       return docRef.id
     } catch (error) {
@@ -134,7 +134,7 @@ class SlidesService {
       const firestoreData = this.mapToFirestore(slideData)
 
       await this.db.collection(this.collection).doc(slideId).update(firestoreData)
-      
+
       console.log('✅ Slide atualizado com sucesso')
     } catch (error) {
       console.error('❌ Erro ao atualizar slide:', error)
@@ -152,7 +152,7 @@ class SlidesService {
       console.log('🗑️ Excluindo slide:', slideId)
 
       await this.db.collection(this.collection).doc(slideId).delete()
-      
+
       console.log('✅ Slide excluído com sucesso')
     } catch (error) {
       console.error('❌ Erro ao excluir slide:', error)

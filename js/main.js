@@ -5,12 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initVLibras();
   // Inicializa widget profissional de acessibilidade (visual)
   initProfessionalA11yWidget();
-  
+
   // Detecta o caminho correto baseado na localização atual
   const isInHtmlFolder = window.location.pathname.includes('/html/');
   const headerPath = isInHtmlFolder ? "header.html" : "html/header.html";
   const footerPath = isInHtmlFolder ? "footer.html" : "html/footer.html";
-  
+
   // Carrega o header
   fetch(headerPath)
     .then(res => {
@@ -23,28 +23,28 @@ document.addEventListener("DOMContentLoaded", () => {
       const header = document.getElementById("header");
       if (header) {
         header.innerHTML = data;
-        
+
         // Dispara evento personalizado para indicar que o header foi carregado
         document.dispatchEvent(new CustomEvent('headerLoaded'));
-        
+
         // Corrige os links do header
         fixHeaderLinks();
-        
+
         initMobileMenu(); // Inicializa o menu mobile após carregar o header
         initSearchEvents(); // Inicializa eventos de pesquisa após carregar o header
         initSmoothNavigation(); // Inicializa navegação suave
   initHeaderA11yButton(); // Liga o botão de acessibilidade do header
-        
+
         // Inicializa sistema de autenticação do header
         if (window.headerAuth) {
           window.headerAuth.updateHeaderUI();
         }
-        
+
         // Inicializa sistema de permissões após carregar o header
         if (window.uiPermissionManager) {
           window.uiPermissionManager.init();
         }
-        
+
         console.log('Header carregado e inicializado');
       }
     })
@@ -242,10 +242,10 @@ function handleGlobalSearch(searchTerm) {
       // Fallback: atualiza os campos de pesquisa e aplica filtros
       const searchInput = document.getElementById('searchInput');
       const searchInputMobile = document.getElementById('searchInputMobile');
-      
+
       if (searchInput) searchInput.value = searchTerm;
       if (searchInputMobile) searchInputMobile.value = searchTerm;
-      
+
       // Dispara evento de input para aplicar a pesquisa
       if (searchInput) {
         searchInput.dispatchEvent(new Event('input'));
@@ -265,17 +265,17 @@ function handleGlobalSearch(searchTerm) {
  */
 function determineCatalogPath() {
   const currentPath = window.location.pathname;
-  
+
   // Se estamos na raiz do projeto
   if (currentPath.endsWith('index.html') || currentPath.endsWith('/')) {
     return 'html/catalogo.html';
   }
-  
+
   // Se estamos dentro da pasta html
   if (currentPath.includes('/html/')) {
     return 'catalogo.html';
   }
-  
+
   // Fallback - assumir que estamos na raiz
   return 'html/catalogo.html';
 }
@@ -287,7 +287,7 @@ function initSearchEvents() {
   // Pesquisa desktop
   const searchForm = document.querySelector('.search-form');
   const searchInput = document.getElementById('headerSearchInput');
-  
+
   if (searchForm) {
     searchForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -301,7 +301,7 @@ function initSearchEvents() {
   // Pesquisa mobile
   const searchFormMobile = document.querySelector('.search-form-mobile');
   const searchInputMobile = document.getElementById('headerSearchInputMobile');
-  
+
   if (searchFormMobile) {
     searchFormMobile.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -390,10 +390,10 @@ function handleGlobalSearchWithTransition(searchTerm) {
       // Fallback: atualiza os campos de pesquisa e aplica filtros
       const searchInput = document.getElementById('searchInput');
       const searchInputMobile = document.getElementById('searchInputMobile');
-      
+
       if (searchInput) searchInput.value = searchTerm;
       if (searchInputMobile) searchInputMobile.value = searchTerm;
-      
+
       // Dispara evento de input para aplicar a pesquisa
       if (searchInput) {
         searchInput.dispatchEvent(new Event('input'));
@@ -404,7 +404,7 @@ function handleGlobalSearchWithTransition(searchTerm) {
     const catalogUrl = determineCatalogPath();
     const searchParams = new URLSearchParams();
     searchParams.set('busca', searchTerm);
-    
+
     // Usa navegação suave
     navigateToPage(`${catalogUrl}?${searchParams.toString()}`);
   }
@@ -430,11 +430,11 @@ class UIPermissionManager {
         await this.updateUserRole()
         this.updateUI()
       })
-      
+
       // Atualiza o papel do usuário inicial
       await this.updateUserRole()
     }
-    
+
     this.updateUI()
   }
 
@@ -468,7 +468,7 @@ class UIPermissionManager {
   updateHeader() {
     const loginBtn = document.querySelector('.btn-login')
     const userDropdown = document.querySelector('.user-dropdown')
-    
+
     // Remove elementos existentes
     if (userDropdown) {
       userDropdown.remove()
@@ -484,13 +484,13 @@ class UIPermissionManager {
       if (loginBtn) {
         loginBtn.style.display = 'none'
       }
-      
+
       this.createUserDropdown()
     }
 
     // Gerencia visibilidade do botão de promoções (removido)
     this.updatePromotionsButton()
-    
+
     // Gerencia botões de admin
     this.updateAdminButtons()
   }
@@ -568,7 +568,7 @@ class UIPermissionManager {
   updateAdminButtons() {
     const addProductBtns = document.querySelectorAll('.btn-add-product, .admin-add-product')
     const adminLinks = document.querySelectorAll('a[href*="admin"]')
-    
+
     addProductBtns.forEach(btn => {
       if (this.currentRole === 'admin') {
         btn.style.display = 'inline-block'
@@ -613,7 +613,7 @@ class UIPermissionManager {
         e.preventDefault()
         await this.logout()
       })
-    } 
+    }
   }
 
   /**
@@ -624,11 +624,11 @@ class UIPermissionManager {
       if (this.authService) {
         await this.authService.signOut()
       }
-      
+
       // Redireciona para home se estiver em página protegida (apenas admin)
       const protectedPages = ['/admin.html']
       const currentPath = window.location.pathname
-      
+
       if (protectedPages.some(page => currentPath.includes(page))) {
         window.location.href = '../index.html'
       } else {
@@ -641,7 +641,7 @@ class UIPermissionManager {
     }
   }
 
-  
+
   /**
  * Verifica e aplica permissão de acesso à página atual
  */
@@ -668,9 +668,9 @@ function fixHeaderLinks() {
   const isInRoot = !currentPath.includes('/html/');
   const pathPrefix = isInRoot ? 'html/' : '';
   const assetPrefix = isInRoot ? '' : '../';
-  
+
   console.log('🔗 Corrigindo links do header para:', isInRoot ? 'página raiz' : 'subpasta html');
-  
+
   // Aguarda um pouco para garantir que o header foi totalmente carregado
   setTimeout(() => {
     // Atualiza logo
@@ -679,18 +679,18 @@ function fixHeaderLinks() {
       homeLink.href = isInRoot ? 'index.html' : '../index.html';
       console.log('✅ Logo link:', homeLink.href);
     }
-    
+
     // Atualiza imagem do logo
     const logoImg = document.querySelector('.header-logo-img');
     if (logoImg) {
       logoImg.src = assetPrefix + 'assets/images/gerais/iconeBaronesa.png';
       console.log('✅ Logo img:', logoImg.src);
     }
-    
+
     // Atualiza todos os links com data-page
     const headerLinks = document.querySelectorAll('.header-link[data-page]');
     console.log('🔍 Links encontrados:', headerLinks.length);
-    
+
     headerLinks.forEach((link, index) => {
       const page = link.getAttribute('data-page');
       if (page) {
@@ -717,7 +717,7 @@ function fixHeaderLinks() {
         console.log(`✅ Link ${page} configurado:`, newHref);
       }
     });
-    
+
     console.log('✅ Todos os links do header foram corrigidos');
   }, 200);
 }
@@ -771,7 +771,7 @@ class FileUploadManager {
     initializeUploads() {
         // Upload de produto
         this.setupFileUpload('productImage', 'fileInfo', 'removeFile', 'imagePreview');
-        
+
         // Upload de dica
         this.setupFileUpload('tipImage', 'tipFileInfo', 'removeTipFile', 'tipImagePreview');
     }
@@ -798,7 +798,7 @@ class FileUploadManager {
         container.addEventListener('drop', (e) => {
             e.preventDefault();
             container.classList.remove('dragover');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 this.handleFile(files[0], fileInput, fileInfo, container, preview);
@@ -873,7 +873,7 @@ class FileUploadManager {
 
     showError(container, message) {
         container.classList.add('error');
-        
+
         // Remover erro anterior
         const existingError = container.querySelector('.file-error');
         if (existingError) {
@@ -891,7 +891,7 @@ class FileUploadManager {
         fileInput.value = '';
         fileInfo.style.display = 'none';
         container.classList.remove('has-file', 'error');
-        
+
         // Restaurar preview padrão
         if (preview) {
             preview.src = '../assets/images/gerais/iconeBaronesa.png';

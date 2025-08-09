@@ -242,7 +242,7 @@ async function filterProducts() {
               break
           }
         })
-        
+
         if (prices.length > 0) {
           minPrice = Math.min(...prices.map(p => p.min))
           maxPrice = Math.max(...prices.map(p => p.max))
@@ -254,13 +254,13 @@ async function filterProducts() {
         types: filterState.types.length > 0 ? filterState.types : undefined,
         promocional: filterState.promocional ? true : undefined,
       }
-      
+
       // Adiciona filtros de preço se houver
       if (minPrice !== undefined) filters.minPrice = minPrice
       if (maxPrice !== undefined && maxPrice !== 999999) filters.maxPrice = maxPrice
 
       const result = await productsService.getFilteredProducts(filters)
-      
+
       // Se usamos faixas de preço, ainda precisamos filtrar no lado cliente para múltiplas faixas
       if (filterState.priceRanges.length > 0) {
         return result.filter(product => {
@@ -278,7 +278,7 @@ async function filterProducts() {
           return matchesPrice && matchesPromo
         })
       }
-      
+
       return result
     }
 
@@ -344,7 +344,7 @@ function renderProducts(products) {
   products.forEach((product) => {
     const productElement = document.createElement("div")
     productElement.className = "product-card"
-    
+
     // Construir o HTML do preço
     let priceHTML = ""
     if (product.promocional && product.precoPromo) {
@@ -357,10 +357,10 @@ function renderProducts(products) {
     } else {
       priceHTML = `<span class="product-price">R$ ${product.price.toFixed(2)}</span>`
     }
-    
+
     // Preço para os botões (usar preço promocional se disponível)
     const effectivePrice = product.promocional && product.precoPromo ? product.precoPromo : product.price
-    
+
     productElement.innerHTML = `
       <div class="product-image">
         <img src="${product.image}" alt="${product.name}" loading="lazy">
@@ -389,7 +389,7 @@ function renderProducts(products) {
 
   // Adiciona event listeners aos botões de adicionar ao carrinho
   initAddToCartButtons()
-  
+
   // Adiciona event listeners aos botões de comprar no WhatsApp
   initBuyNowButtons()
 }
@@ -444,13 +444,13 @@ function initBuyNowButtons() {
 
       // Cria a mensagem para o WhatsApp
       const message = `Olá! Tenho interesse no produto:\n\n*${productName}*\nGostaria de mais informações e finalizar a compra.`
-      
+
       // Número do WhatsApp do Pet Shop (substitua pelo número real)
       const whatsappNumber = "551334559994" // Formato: código do país + DDD + número
-      
+
       // Cria a URL do WhatsApp
       const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
-      
+
       // Abre o WhatsApp em uma nova aba
       window.open(whatsappURL, "_blank")
     })
@@ -854,7 +854,7 @@ function showToast(message, type = "success") {
   const toast = document.createElement("div")
   toast.className = `toast ${type === "error" ? "toast-error" : "toast-success"}`
   toast.textContent = message
-  
+
   // Adiciona ao body
   document.body.appendChild(toast)
 
@@ -1173,13 +1173,13 @@ window.CatalogSearch = {
     // Atualiza os campos de pesquisa
     if (searchInput) searchInput.value = searchTerm;
     if (searchInputMobile) searchInputMobile.value = searchTerm;
-    
+
     // Atualiza o estado do filtro
     filterState.search = searchTerm;
-    
+
     // Aplica os filtros
     applyFilters();
-    
+
     // Atualiza a URL
     updateURL();
   }
