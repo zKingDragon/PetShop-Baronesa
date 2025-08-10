@@ -19,7 +19,7 @@ class Carousel {
    */
   async init() {
     console.log('🎠 Inicializando carousel...');
-    
+
     this.carousel = document.getElementById("mainCarousel");
     if (!this.carousel) {
       console.error('❌ Elemento carousel não encontrado');
@@ -28,7 +28,7 @@ class Carousel {
 
     // Wait for Firebase to be initialized
     await this.waitForFirebase();
-    
+
     // Initialize slides service
     if (window.SlidesService) {
       this.slidesService = new SlidesService();
@@ -36,10 +36,10 @@ class Carousel {
 
     // Load slides from database
     await this.loadSlides();
-    
+
     // Setup event listeners
     this.setupEventListeners();
-    
+
     console.log('✅ Carousel inicializado');
   }
 
@@ -49,12 +49,12 @@ class Carousel {
   async waitForFirebase() {
     let attempts = 0;
     const maxAttempts = 50; // 5 seconds
-    
+
     while (!window.db && attempts < maxAttempts) {
       await new Promise(resolve => setTimeout(resolve, 100));
       attempts++;
     }
-    
+
     if (!window.db) {
       console.warn('⚠️ Firebase não disponível, usando dados de fallback');
     }
@@ -89,7 +89,7 @@ class Carousel {
 
       // Render slides
       this.renderSlides(slidesData);
-      
+
     } catch (error) {
       console.error('❌ Erro ao carregar slides:', error);
       // Use default slides as final fallback
@@ -122,14 +122,14 @@ class Carousel {
         slideNumber: 1
       },
       {
-        id: 'default-2', 
+        id: 'default-2',
         title: 'Desconto Especial para Pets',
         image: 'assets/images/slides/caoPoteDesconto.jpg',
         slideNumber: 2
       },
       {
         id: 'default-3',
-        title: 'Casa Confortável para seu Gato', 
+        title: 'Casa Confortável para seu Gato',
         image: 'assets/images/slides/gatoCasinha.png',
         slideNumber: 3
       }
@@ -141,7 +141,7 @@ class Carousel {
    */
   renderSlides(slidesData) {
     if (!this.carousel) return;
-    
+
     console.log('🎨 Renderizando slides:', slidesData.length);
 
     // Clear existing content
@@ -156,7 +156,7 @@ class Carousel {
       // Create slide element
       const slideElement = document.createElement('div');
       slideElement.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
-      
+
       slideElement.innerHTML = `
         <img src="${slide.image}" alt="${slide.title}" loading="lazy">
         <div class="carousel-caption">
@@ -165,7 +165,7 @@ class Carousel {
           </div>
         </div>
       `;
-      
+
       this.carousel.appendChild(slideElement);
 
       // Create indicator
@@ -180,7 +180,7 @@ class Carousel {
     // Update internal references
     this.slides = this.carousel.querySelectorAll('.carousel-slide');
     this.indicators = indicatorsContainer ? indicatorsContainer.querySelectorAll('.indicator') : [];
-    
+
     console.log(`✅ ${this.slides.length} slides renderizados`);
 
     // Start carousel if we have slides
@@ -215,7 +215,7 @@ class Carousel {
    */
   nextSlide() {
     if (!this.slides.length) return;
-    
+
     let next = this.currentSlide + 1;
     if (next >= this.slides.length) {
       next = 0;
@@ -228,7 +228,7 @@ class Carousel {
    */
   prevSlide() {
     if (!this.slides.length) return;
-    
+
     let prev = this.currentSlide - 1;
     if (prev < 0) {
       prev = this.slides.length - 1;
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setTimeout(async () => {
     carousel = new Carousel();
     await carousel.init();
-    
+
     // Make carousel globally available for refresh
     window.carousel = carousel;
   }, 1000);
