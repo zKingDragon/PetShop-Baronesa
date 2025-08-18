@@ -33,31 +33,75 @@
                             <div class="banho-tosa-image">
                                 <img src="../assets/images/banho-tosa/banho-Gato.jpg" alt="Banho e tosa">
                             </div>
-                            <div class="services-card">
-                                <h2>Nossos Serviços</h2>
-                                <ul class="services-list">
-                                    <li>
-                                        <span class="bullet"></span>
-                                        <span>Banho com produtos de qualidade</span>
-                                    </li>
-                                    <li>
-                                        <span class="bullet"></span>
-                                        <span>Tosa higiênica e estética</span>
-                                    </li>
-                                    <li>
-                                        <span class="bullet"></span>
-                                        <span>Hidratação e perfumaria</span>
-                                    </li>
-                                    <li>
-                                        <span class="bullet"></span>
-                                        <span>Corte de unhas</span>
-                                    </li>
-                                    <li>
-                                        <span class="bullet"></span>
-                                        <span>Limpeza de ouvidos</span>
-                                    </li>
-                                </ul>
-                            </div>
+                                                        <div class="services-card" id="serviceEstimator">
+                                                                <h2>Monte seu Serviço</h2>
+                                                                <div class="form-grid">
+                                                                    <div class="form-group">
+                                                                        <label for="svcPetType">Tipo de Pet</label>
+                                                                        <select id="svcPetType" required>
+                                                                            <option value="">Selecione</option>
+                                                                            <option value="Cao">Cão</option>
+                                                                            <option value="Gato">Gato</option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="form-group" id="svcDogSizeGroup" style="display:none;">
+                                                                        <label for="svcDogSize">Porte do Cão</label>
+                                                                        <select id="svcDogSize">
+                                                                            <option value="">Selecione</option>
+                                                                            <option value="Pequeno">Pequeno</option>
+                                                                            <option value="Medio">Médio</option>
+                                                                            <option value="Grande">Grande</option>
+                                                                            <option value="Gigante">Gigante</option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label for="svcType">Serviço</label>
+                                                                        <select id="svcType" required>
+                                                                            <option value="">Selecione</option>
+                                                                            <option value="Banho">Banho</option>
+                                                                            <option value="TosaHigienica">Tosa Higiênica</option>
+                                                                            <option value="TosaTotal">Tosa Total</option>
+                                                                            <option value="BanhoTosa">Banho e Tosa</option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label for="svcCoat">Pelagem (opcional)</label>
+                                                                        <select id="svcCoat">
+                                                                            <option value="">Selecione</option>
+                                                                            <option value="Curta">Curta</option>
+                                                                            <option value="Media">Média</option>
+                                                                            <option value="Longa">Longa</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="addons">
+                                                                    <label>Adicionais</label>
+                                                                    <div class="addons-list">
+                                                                        <label><input type="checkbox" name="svcAddon" value="corteUnhas"> Corte de Unhas</label>
+                                                                        <label><input type="checkbox" name="svcAddon" value="limpezaOuvidos"> Limpeza de Ouvidos</label>
+                                                                        <label><input type="checkbox" name="svcAddon" value="hidratacao"> Hidratação</label>
+                                                                        <label><input type="checkbox" name="svcAddon" value="perfume"> Perfumaria</label>
+                                                                        <label><input type="checkbox" name="svcAddon" value="desembolo"> Desembolo de nós</label>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="price-summary" id="svcSummary">
+                                                                    <div class="row">
+                                                                        <span>Preço base</span>
+                                                                        <strong id="svcBasePrice">-</strong>
+                                                                    </div>
+                                                                    <ul id="svcAddonsList" class="addons-breakdown"></ul>
+                                                                    <div class="row total">
+                                                                        <span>Total estimado</span>
+                                                                        <strong id="svcTotal">-</strong>
+                                                                    </div>
+                                                                    <p class="note" id="svcNote">Preencha as opções para ver o valor.</p>
+                                                                </div>
+                                                        </div>
                         </div>
 
                                                 <div class="appointment-card">
@@ -154,6 +198,8 @@
     <script src="../js/firebase-config.js"></script>
     <script src="../js/header-auth.js"></script>
     <script src="../js/main.js"></script>
+    <script src="../js/cart.js"></script>
+    <script src="../js/banho-tosa.js"></script>
     <script src="../js/forms.js"></script>
 </body>
 </html>

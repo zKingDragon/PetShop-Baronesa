@@ -97,9 +97,14 @@ async function initializeFirebase(forceClearIndexedDB = false) {
       try {
         // Usar cache apenas, sem persistência completa
         await db.settings({
-          cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+          cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+          // Melhora compatibilidade de rede (proxies/firewalls, ad-blockers, ambientes corporativos)
+          experimentalAutoDetectLongPolling: true,
+          useFetchStreams: false
+          // Se necessário, force o long-polling sempre (menos eficiente):
+          // experimentalForceLongPolling: true
         });
-        console.log('✅ Cache do Firestore configurado');
+        console.log('✅ Firestore settings aplicados (cache + rede)');
         
         // Tentar persistência de forma assíncrona
         setTimeout(async () => {

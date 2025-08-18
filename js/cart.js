@@ -6,8 +6,7 @@
 // Constantes
 const CART_KEY = "petshop_baronesa_cart"
 
-// Elementos DOM
-const cartCountElements = document.querySelectorAll("#cartCount, #cartCountMobile")
+// Elementos DOM (seleções dinâmicas serão feitas dentro das funções)
 const cartItemsList = document.getElementById("cartItemsList")
 const cartSubtotal = document.getElementById("cartSubtotal")
 const cartFrete = document.getElementById("cartFrete")  
@@ -141,7 +140,8 @@ function updateCartCount() {
   const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0)
 
   // Atualiza todos os elementos de contagem do carrinho
-  cartCountElements.forEach((element) => {
+  const elements = document.querySelectorAll('#cartCount, #cartCountMobile')
+  elements.forEach((element) => {
     if (element) element.textContent = itemCount
   })
 }
@@ -420,5 +420,21 @@ function initCart() {
   })
 }
 
-// Inicializa o carrinho quando o DOM estiver carregado
-document.addEventListener("DOMContentLoaded", initCart)
+// Inicializa o carrinho imediatamente se o DOM já estiver pronto; caso contrário, aguarda DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCart)
+} else {
+  initCart()
+}
+
+// Atualiza a contagem assim que o header for carregado dinamicamente
+document.addEventListener('headerLoaded', () => {
+  try { updateCartCount(); } catch (_) {}
+});
+
+// Mantém o contador sincronizado entre abas e quando o localStorage muda
+window.addEventListener('storage', (e) => {
+  if (e.key === CART_KEY) {
+    try { updateCartCount(); } catch (_) {}
+  }
+});

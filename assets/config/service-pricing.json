@@ -1,0 +1,38 @@
+{
+  "currency": "BRL",
+  "base": {
+    "Cao": {
+      "Pequeno": { "Banho": 45, "TosaHigienica": 55, "TosaTotal": 90, "BanhoTosa": 120 },
+      "Medio":   { "Banho": 60, "TosaHigienica": 70, "TosaTotal": 110, "BanhoTosa": 145 },
+      "Grande":  { "Banho": 80, "TosaHigienica": 95, "TosaTotal": 140, "BanhoTosa": 185 },
+      "Gigante": { "Banho": 100, "TosaHigienica": 120, "TosaTotal": 180, "BanhoTosa": 240 }
+    },
+    "Gato": {
+      "Unico": { "Banho": 70, "TosaHigienica": 85, "TosaTotal": 120, "BanhoTosa": 150 }
+    }
+  },
+  "addons": {
+    "corteUnhas": {
+      "label": "Corte de Unhas",
+      "prices": { "Cao": 15, "Gato": 20 }
+    },
+    "limpezaOuvidos": {
+      "label": "Limpeza de Ouvidos",
+      "prices": { "Cao": 10, "Gato": 15 }
+    },
+    "hidratacao": {
+      "label": "Hidratação",
+      "percentOfBase": 0.15,
+      "min": 15
+    },
+    "perfume": {
+      "label": "Perfumaria",
+      "prices": { "Cao": 5, "Gato": 5 }
+    },
+    "desembolo": {
+      "label": "Desembolo de nós",
+      "tieredByCoat": { "Curta": 15, "Media": 25, "Longa": 40 }
+    }
+  },
+  "coatMultipliers": { "Curta": 1.0, "Media": 1.05, "Longa": 1.10 }
+}

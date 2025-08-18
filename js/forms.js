@@ -372,6 +372,15 @@ function showAddressModal() {
         </div>
         
         <form id="addressForm" class="address-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cep">CEP</label>
+              <input type="text" id="cep" name="cep" inputmode="numeric" maxlength="9"
+                     value="${existingAddress.cep || ''}"
+                     placeholder="Ex: 11750-000" required>
+              <small id="cepHelp" style="display:block;color:#6b7280;margin-top:4px;">Digite o CEP para preencher rua e bairro automaticamente.</small>
+            </div>
+          </div>
           <div class="form-group">
             <label for="customerName">Nome Completo</label>
             <input type="text" id="customerName" name="name" required 
@@ -410,15 +419,20 @@ function showAddressModal() {
               <option value="Park D'aville" data-frete="3">Park D'aville </option>
               <option value="Jardim Jangada" data-frete="3">Jardim Jangada </option>
               <option value="Stella Maris" data-frete="3">Stella Maris </option>
-              <option value="Novo Horizonte" data-frete="4">Novo Horizonte </option>
+              <option value="Novo Horizonte" data-frete="3">Novo Horizonte </option>
+              <option value="Flórida" data-frete="3">Flórida </option>
               <option value="Vila Romar" data-frete="4">Vila Romar </option>
               <option value="São João Batista II" data-frete="4">São João Batista II </option>
               <option value="Veneza" data-frete="4">Veneza </option>
               <option value="Jardim Caraguava" data-frete="5">Jardim Caraguava</option>
               <option value="Caraminguava" data-frete="5">Caraminguava</option>
               <option value="Oasis" data-frete="6">Oasis </option>
-              <option value="Bougainville Res." data-frete="6">Bougainville Res. </option>
+              <option value="Nova Peruíbe" data-frete="6">Nova Peruíbe </option>
               <option value="Villa Erminda" data-frete="6">Villa Erminda </option>
+              <option value="Santa Izabel" data-frete="6">Santa Izabel</option>
+              <option value="Estância dos Eucaliptos" data-frete="6">Estância dos Eucaliptos </option>
+              <option value="Bougainville Res." data-frete="7">Bougainville Res. </option>
+              <option value="Ruínas" data-frete="8">Ruínas</option>
             </select>
            </div>
           
@@ -478,15 +492,120 @@ function closeAddressModal() {
  */
 function setupAddressFormEvents() {
   const addressForm = document.getElementById("addressForm")
-  
+  const cepInput = document.getElementById('cep')
+  const streetInput = document.getElementById('streetName')
+  const neighborhoodSelect = document.getElementById('neighborhood')
+
+  // Utilidades de CEP/bairro
+  function normalize(str) {
+    return (str || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim()
+  }
+  // Constrói mapa com as opções atuais do select (suporta novas opções adicionadas)
+  function buildNeighborhoodBaseMap() {
+    const map = {}
+    if (!neighborhoodSelect) return map
+    Array.from(neighborhoodSelect.options).forEach(opt => {
+      const val = (opt.value || '').trim()
+      if (val) {
+        map[normalize(val)] = val
+      }
+    })
+    return map
+  }
+  // Sinônimos comuns mapeados para o nome canônico (normalizado)
+  const synonyms = {
+    "park daville": "park d'aville",
+    "oasis": "oasis",
+    "oasis ": "oasis",
+    "oásis": "oasis",
+    "sao joao batista ii": "são joão batista ii",
+    "sao joao batista 2": "são joão batista ii",
+    "bougainville residencial": "bougainville res.",
+    "bougainville res": "bougainville res.",
+    "vila erminda": "villa erminda"
+  }
+  function getCanonicalNeighborhoodName(name) {
+    if (!name) return null
+    const baseMap = buildNeighborhoodBaseMap()
+    const norm = normalize(name)
+    if (baseMap[norm]) return baseMap[norm]
+    const syn = synonyms[norm]
+    if (syn && baseMap[normalize(syn)]) return baseMap[normalize(syn)]
+    return null
+  }
+  function formatCep(value) {
+    const digits = (value || '').replace(/\D/g, '').slice(0,8)
+    if (digits.length > 5) return digits.slice(0,5) + '-' + digits.slice(5)
+    return digits
+  }
+  function selectNeighborhoodByName(name) {
+    const target = getCanonicalNeighborhoodName(name) || (Array.from(neighborhoodSelect.options).find(opt => normalize(opt.value) === normalize(name))?.value)
+    if (target) {
+      neighborhoodSelect.value = target
+      neighborhoodSelect.dispatchEvent(new Event('change', { bubbles: true }))
+      return true
+    }
+    return false
+  }
+  function lockNeighborhood() {
+    if (!neighborhoodSelect) return
+    neighborhoodSelect.disabled = true
+    neighborhoodSelect.dataset.locked = 'true'
+    const help = document.getElementById('cepHelp')
+    if (help) help.textContent = 'Bairro definido automaticamente pelo CEP. Para alterar, edite o CEP.'
+  }
+  function unlockNeighborhood() {
+    if (!neighborhoodSelect) return
+    neighborhoodSelect.disabled = false
+    delete neighborhoodSelect.dataset.locked
+    const help = document.getElementById('cepHelp')
+    if (help) help.textContent = 'Digite o CEP para preencher rua e bairro automaticamente.'
+  }
+  async function fetchAddressByCep(cep) {
+    try {
+      const clean = (cep || '').replace(/\D/g, '')
+      if (clean.length !== 8) return
+      const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`)
+      if (!res.ok) return
+      const data = await res.json()
+      if (data.erro) return
+      if (data.logradouro && streetInput) streetInput.value = data.logradouro
+      if (data.bairro && neighborhoodSelect) {
+        const ok = selectNeighborhoodByName(data.bairro)
+        if (!ok) {
+          const help = document.getElementById('cepHelp')
+          if (help) help.textContent = `Bairro pelo CEP: ${data.bairro}. Selecione o correspondente na lista.`
+          unlockNeighborhood()
+        } else {
+          lockNeighborhood()
+        }
+      }
+    } catch (e) { console.warn('ViaCEP falhou', e) }
+  }
+
+  if (cepInput) {
+    cepInput.addEventListener('input', (e) => {
+      const caret = e.target.selectionStart
+      e.target.value = formatCep(e.target.value)
+      try { e.target.setSelectionRange(caret, caret) } catch(_) {}
+      // Ao alterar CEP para inválido, libera seleção do bairro
+      const clean = e.target.value.replace(/\D/g, '')
+      if (clean.length < 8) {
+        unlockNeighborhood()
+      }
+    })
+    cepInput.addEventListener('blur', () => fetchAddressByCep(cepInput.value))
+  }
+
   if (addressForm) {
-    addressForm.addEventListener("submit", (e) => {
+    addressForm.addEventListener("submit", async (e) => {
       e.preventDefault()
       
       // Coletar dados do formulário
       const formData = new FormData(addressForm)
       const addressData = {
         name: formData.get('name').trim(),
+        cep: formatCep(formData.get('cep') || '').trim(),
         street: formData.get('street').trim(),
         number: formData.get('number').trim(),
         complement: formData.get('complement').trim(),
@@ -499,6 +618,27 @@ function setupAddressFormEvents() {
         alert('Por favor, preencha todos os campos obrigatórios.')
         return
       }
+
+      // Validação de consistência CEP x Bairro
+      const cleanCep = (addressData.cep || '').replace(/\D/g, '')
+      if (cleanCep.length === 8) {
+        try {
+          const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`)
+          if (res.ok) {
+            const data = await res.json()
+            if (!data.erro && data.bairro) {
+              const canonical = getCanonicalNeighborhoodName(data.bairro)
+              if (canonical && canonical !== addressData.neighborhood) {
+                alert(`O bairro informado pelo CEP (${data.bairro}) não corresponde ao selecionado. Por favor, ajuste o CEP ou o bairro.`)
+                return
+              }
+            }
+          }
+        } catch (err) {
+          // se ViaCEP falhar, seguimos sem bloquear
+          console.warn('Validação CEP x Bairro indisponível', err)
+        }
+      }
       
       // Salvar dados
       saveAddressData(addressData)
@@ -510,7 +650,7 @@ function setupAddressFormEvents() {
       updateAddressDisplay()
       
       // Mostrar mensagem de sucesso
-      showAddressSuccessMessage()
+  showAddressSuccessMessage()
     })
   }
 }
@@ -543,6 +683,7 @@ function updateAddressDisplay() {
         </div>
         <div class="address-details">
           <p><strong>${address.name}</strong></p>
+          ${address.cep ? `<p>CEP: ${address.cep}</p>` : ''}
           <p>${address.street}, ${address.number}${address.complement ? ` - ${address.complement}` : ''}</p>
           <p>${address.neighborhood}</p>
           ${address.reference ? `<p class="address-reference"><i class="fas fa-info-circle"></i> ${address.reference}</p>` : ''}
