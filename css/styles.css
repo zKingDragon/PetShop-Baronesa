@@ -63,8 +63,7 @@ img {
 
 .footer-container {
   width: 100%;
-  max-width: 1500px;
-  min-width: 284px !important;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 1rem;
 }
