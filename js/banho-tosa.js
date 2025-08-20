@@ -162,7 +162,6 @@
     lines.push(`Serviço: ${sel.service || '-'}`);
     if (sel.coat) lines.push(`Pelagem: ${sel.coat}`);
     if (result.ok) {
-      lines.push(`Preço base: ${money(result.base)}`);
       if (result.addons.length) {
         lines.push('Adicionais:');
         result.addons.forEach(a => lines.push(`- ${a.label}: + ${money(a.price)}`));
