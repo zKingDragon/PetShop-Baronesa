@@ -62,7 +62,7 @@ img {
 }
 
 .footer-container {
-  width: 100%;
+  width: 80%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 1rem;
@@ -538,6 +538,7 @@ img {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
+  align-items: center;
 }
 
 @media (min-width: 700px) {
