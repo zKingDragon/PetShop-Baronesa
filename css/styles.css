@@ -43,7 +43,6 @@ img {
   max-width: 100%;
   height: auto;
 }
-
 /* Containers */
 .container {
   width: 100%;
@@ -752,13 +751,6 @@ img {
 
 .contact-item a:hover {
   color: var(--emerald-light);
-}
-
-.quick-links li a {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
 }
 
 .quick-links li a i {
@@ -1608,29 +1600,7 @@ img {
   padding: 3rem 0;
 }
 
-/* Filtros ativos */
-.active-filters {
-  position: absolute;
-  top: 15%;
-  display: none;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 15rem;
-  margin: 1rem 0;
-  padding: 0.75rem;
-  background-color: #f9fafb;
-  border-radius: var(--border-radius);
-}
-@media (max-width: 1024px) {
-  .active-filters {
-    position: static;
-    top: auto;
-    left: 0;
-    right: 0;
-    margin-top: 0;
-    width: 100%;
-  }
-}
+
 .filter-tag {
   display: flex;
   align-items: center;
@@ -1669,6 +1639,8 @@ img {
   margin: 1rem 0;
   font-size: 0.875rem;
   color: #6b7280;
+  display: inline-block; /* permite que os filtros fiquem ao lado */
+  vertical-align: middle;
 }
 
 .product-counter span {
@@ -4864,6 +4836,13 @@ img {
 .social-icons {
   display: flex;
   gap: 1rem;
+  margin-bottom: 5rem;
+}
+
+@media (max-width: 700px) {
+  .social-icons {
+    margin-bottom: 0rem;
+  }
 }
 
 .social-icons a {
@@ -5582,25 +5561,20 @@ img {
 
 /* Filtros ativos */
 .active-filters {
-  position: absolute;
-  top: 15%;
-  display: none;
+  position: static;
+  display: none; /* mostrado pelo JS quando houver filtros */
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 15rem;
-  margin: 1rem 0;
-  padding: 0.75rem;
+  margin: 0.5rem 0 1rem 0.75rem; /* espaço à esquerda do contador */
+  padding: 0.5rem 0.75rem;
   background-color: #f9fafb;
   border-radius: var(--border-radius);
+  align-items: center;
 }
 @media (max-width: 1024px) {
   .active-filters {
-    position: static;
-    top: auto;
-    left: 0;
-    right: 0;
-    margin-top: 0;
-    width: 100%;
+    margin-left: 0;
+    width: auto;
   }
 }
 .filter-tag {
@@ -5641,6 +5615,8 @@ img {
   margin: 1rem 0;
   font-size: 0.875rem;
   color: #6b7280;
+  display: inline-block; /* deixa espaço ao lado para filtros */
+  vertical-align: middle;
 }
 
 .product-counter span {
@@ -6067,12 +6043,13 @@ img {
 /* Toast */
 .toast {
   position: fixed;
-  bottom: 32px;
+  top: 8%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
   min-width: 220px;
   max-width: 90vw;
+  max-height: 50px;
   padding: 16px 32px;
   border-radius: 8px;
   background: #222;
