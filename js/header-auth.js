@@ -15,39 +15,45 @@ let loginButton = null;
  * Inicializa o sistema de autenticação do header
  */
 function initHeaderAuth() {
-    // Aguarda o header ser carregado
-    setTimeout(() => {
-        setupHeaderElements();
+    // Aguarda o header ser carregado (sem atraso artificial)
+    setupHeaderElements();
+    updateHeaderUI();
+    
+    // Escuta mudanças no estado de autenticação
+    document.addEventListener('authStateChanged', () => {
+        console.log('🔄 Auth state changed event recebido');
+        // Garante que o dropdown esteja no DOM
+        tryInsertDropdown();
         updateHeaderUI();
-        
-        // Escuta mudanças no estado de autenticação
-        document.addEventListener('authStateChanged', (e) => {
-            console.log('🔄 Auth state changed event recebido');
-            setTimeout(() => updateHeaderUI(), 500);
+    });
+    
+    // Escuta mudanças do Firebase Auth diretamente
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+        firebase.auth().onAuthStateChanged((user) => {
+            console.log('🔄 Firebase Auth state changed:', user ? user.email : 'logged out');
+            // Garante que o dropdown esteja no DOM
+            tryInsertDropdown();
+            updateHeaderUI();
         });
-        
-        // Escuta mudanças do Firebase Auth diretamente
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-            firebase.auth().onAuthStateChanged((user) => {
-                console.log('🔄 Firebase Auth state changed:', user ? user.email : 'logged out');
-                setTimeout(() => updateHeaderUI(), 500);
-            });
-        }
-        
-        // Listener adicional para mudanças de DOM
-        const observer = new MutationObserver(() => {
-            if (firebase.auth().currentUser && !userDropdown.style.display) {
+    }
+    
+    // Listener adicional para mudanças de DOM
+    const observer = new MutationObserver(() => {
+        try {
+            // Tenta inserir dropdown se ainda não estiver no DOM
+            tryInsertDropdown();
+            const loggedIn = typeof firebase !== 'undefined' && firebase.auth && !!firebase.auth().currentUser;
+            if (loggedIn && userDropdown && userDropdown.style.display === 'none') {
                 console.log('🔄 DOM mudou, re-verificando header...');
                 updateHeaderUI();
             }
-        });
-        
-        observer.observe(document.body, { 
-            childList: true, 
-            subtree: true 
-        });
-        
-    }, 1000);
+        } catch (_) {}
+    });
+    
+    observer.observe(document.body, { 
+        childList: true, 
+        subtree: true 
+    });
 }
 
 /**
@@ -59,6 +65,8 @@ function setupHeaderElements() {
     
     // Cria ou encontra o dropdown do usuário
     createUserDropdown();
+    // Garante que o dropdown esteja no DOM
+    tryInsertDropdown();
     
     // Configura eventos do dropdown
     setupDropdownEvents();
@@ -117,6 +125,30 @@ function createUserDropdown() {
     
     userNameDisplay = document.getElementById('headerUserName');
     console.log('User dropdown created for:', isInRoot ? 'root page' : 'html subfolder');
+}
+
+// NOVO: helper para reinserir caso o header carregue depois
+function tryInsertDropdown() {
+    if (!userDropdown) return false;
+    // Já está no DOM?
+    if (document.body.contains(userDropdown)) return true;
+
+    const headerContent = document.querySelector('.header-content');
+    const authButtons = document.querySelector('.auth-buttons');
+    if (headerContent) {
+        if (authButtons && headerContent.contains(authButtons)) {
+            headerContent.insertBefore(userDropdown, authButtons);
+        } else {
+            headerContent.appendChild(userDropdown);
+        }
+        return true;
+    }
+    const header = document.querySelector('header');
+    if (header) {
+        header.appendChild(userDropdown);
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -189,6 +221,9 @@ async function updateHeaderUI() {
         
         console.log('👤 Status de login:', isLoggedIn, currentUser?.email);
         
+        // Garante que o dropdown esteja no DOM antes de mexer na UI
+        tryInsertDropdown();
+        
         if (isLoggedIn) {
             // Usuário logado - mostrar dropdown
             console.log('✅ Mostrando dropdown de usuário');
@@ -240,34 +275,21 @@ async function updateUserName() {
             userNameDisplay.textContent = 'Usuário';
             return;
         }
-        
-        // Busca o tipo de usuário no Firestore
-        let userType = 'guest';
+        // Nome rápido: usa cache/localStorage ou dados do próprio user sem bater no Firestore
+        let cachedAuth = null;
         try {
-            if (typeof firebase !== 'undefined' && firebase.firestore) {
-                const db = firebase.firestore();
-                const userDoc = await db.collection('usuarios').doc(user.uid).get();
-                if (userDoc.exists) {
-                    userType = userDoc.data().userType || 'guest';
-                }
-            }
-        } catch (error) {
-            console.warn('Erro ao buscar tipo de usuário:', error);
-        }
-        
-        let displayName = user.displayName || user.email?.split('@')[0] || 'Usuário';
+            const raw = localStorage.getItem('petshop_baronesa_auth');
+            if (raw) cachedAuth = JSON.parse(raw);
+        } catch (_) {}
+
+        let displayName = cachedAuth?.displayName || user.displayName || user.email?.split('@')[0] || 'Usuário';
         
         // Pega apenas o primeiro nome
         if (displayName.includes(' ')) {
             displayName = displayName.split(' ')[0];
         }
-        
-        // Adiciona ícone para admin
-        if (userType === 'admin') {
-            userNameDisplay.innerHTML = `<i class="fas fa-crown" style="color: gold; margin-right: 5px;"></i>${displayName}`;
-        } else {
-            userNameDisplay.textContent = displayName;
-        }
+        // Define nome imediatamente; badge de admin será adicionada por updateUserLinks()
+        userNameDisplay.textContent = displayName;
     } catch (error) {
         console.error('Erro ao atualizar nome do usuário:', error);
         userNameDisplay.textContent = 'Usuário';
@@ -394,19 +416,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Aguarda Firebase estar pronto antes de inicializar
     waitForFirebase().then(() => {
-        setTimeout(() => {
-            initHeaderAuth();
-        }, 1000);
+        initHeaderAuth();
+        // Tenta garantir inserção pós-carregamento
+        tryInsertDropdown();
     });
 });
 
 // Também tenta inicializar quando o header é carregado via fetch
 document.addEventListener('headerLoaded', function() {
     console.log('🎯 Header carregado via fetch');
-    setTimeout(() => {
-        initHeaderAuth();
-    }, 500);
+    initHeaderAuth();
+    tryInsertDropdown();
 });
+
 // Exporta para uso global
 window.headerAuth = {
     updateHeaderUI,

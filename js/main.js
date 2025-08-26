@@ -362,6 +362,15 @@ class UIPermissionManager {
   updateHeader() {
     const loginBtn = document.querySelector('.btn-login')
     const userDropdown = document.querySelector('.user-dropdown')
+    const usesHeaderAuth = typeof window !== 'undefined' && !!window.headerAuth
+    
+    // Se o header-auth está gerenciando o dropdown, não mexa nele aqui
+    if (usesHeaderAuth) {
+      // Ainda execute controles adicionais da UI que não conflitam
+      this.updatePromotionsButton()
+      this.updateAdminButtons()
+      return
+    }
     
     // Remove elementos existentes
     if (userDropdown) {
