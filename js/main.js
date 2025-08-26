@@ -60,10 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const footer = document.getElementById("footer");
       if (footer) {
         footer.innerHTML = data;
+    // Atualiza o ano atual assim que o footer for injetado
+    updateCurrentYear();
       }
     });
-  // Atualiza o ano atual no rodapé
-  updateCurrentYear();
+  // Removido: a atualização do ano agora é chamada após o footer ser carregado
 
   // Ajusta visibilidade do texto da logo
   ensureLogoTextVisible();

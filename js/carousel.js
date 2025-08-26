@@ -12,6 +12,10 @@ class Carousel {
     this.interval = null;
     this.slidesService = null;
     this.isLoading = false;
+  // Autoplay config
+  this.autoPlay = true;
+  this.autoPlayDelay = 5000; // milliseconds
+  this.hoverPause = true;
   }
 
   /**
@@ -39,6 +43,11 @@ class Carousel {
     
     // Setup event listeners
     this.setupEventListeners();
+    
+    // Ensure autoplay is running after listeners are attached
+    if (this.autoPlay && this.slides.length > 0) {
+      this.startAutoSlide();
+    }
     
     console.log('✅ Carousel inicializado');
   }
@@ -184,7 +193,7 @@ class Carousel {
     console.log(`✅ ${this.slides.length} slides renderizados`);
 
     // Start carousel if we have slides
-    if (this.slides.length > 0) {
+    if (this.autoPlay && this.slides.length > 0) {
       this.startAutoSlide();
     }
   }
@@ -243,7 +252,7 @@ class Carousel {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    this.interval = setInterval(() => this.nextSlide(), 5000);
+  this.interval = setInterval(() => this.nextSlide(), this.autoPlayDelay);
   }
 
   /**
@@ -284,10 +293,20 @@ class Carousel {
     this.setupIndicatorListeners();
 
     // Pause on hover
-    if (this.carousel) {
+    if (this.hoverPause && this.carousel) {
       this.carousel.addEventListener('mouseenter', () => this.stopAutoSlide());
       this.carousel.addEventListener('mouseleave', () => this.startAutoSlide());
     }
+
+    // Pause when tab not visible to save resources, resume when visible
+    document.addEventListener('visibilitychange', () => {
+      if (!this.autoPlay) return;
+      if (document.hidden) {
+        this.stopAutoSlide();
+      } else if (this.slides.length > 0) {
+        this.startAutoSlide();
+      }
+    });
   }
 
   /**
