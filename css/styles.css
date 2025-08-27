@@ -8186,3 +8186,24 @@ img {
   font-size: 0.9rem;
   font-weight: 500;
 }
+
+.btn-Avaliacoes {
+  background-color: var(--emerald-green);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 770px) {
+  .btn-Avaliacoes {
+    margin: 0 auto 1rem;
+  }
+}

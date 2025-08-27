@@ -779,6 +779,7 @@ class FileUploadManager {
         }
     }
 
+
     // Método para converter arquivo para base64 (para salvar no Firebase)
     async fileToBase64(file) {
         return new Promise((resolve, reject) => {
