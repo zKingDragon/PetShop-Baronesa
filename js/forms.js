@@ -413,7 +413,7 @@ function showAddressModal() {
           
           <div class="form-group">
             <label for="neighborhood">Bairro</label>
-            <select id="neighborhood" name="neighborhood" required>
+            <select id="neighborhood" name="neighborhood" required disabled>
               <option value="" data-frete="0">Selecione o bairro</option>
               <option value="Centro" data-frete="3">Centro </option>
               <option value="Park D'aville" data-frete="3">Park D'aville </option>
@@ -543,6 +543,9 @@ function setupAddressFormEvents() {
     if (target) {
       neighborhoodSelect.value = target
       neighborhoodSelect.dispatchEvent(new Event('change', { bubbles: true }))
+  // Sincroniza hidden se estiver bloqueado
+  const hidden = document.getElementById('neighborhoodHidden')
+  if (hidden) hidden.value = neighborhoodSelect.value || ''
       return true
     }
     return false
@@ -551,6 +554,16 @@ function setupAddressFormEvents() {
     if (!neighborhoodSelect) return
     neighborhoodSelect.disabled = true
     neighborhoodSelect.dataset.locked = 'true'
+    // Quando desabilitado, certifique-se que um input hidden replique o valor para submissão
+    let hidden = document.getElementById('neighborhoodHidden')
+    if (!hidden) {
+      hidden = document.createElement('input')
+      hidden.type = 'hidden'
+      hidden.name = 'neighborhood'
+      hidden.id = 'neighborhoodHidden'
+      neighborhoodSelect.form?.appendChild(hidden)
+    }
+    hidden.value = neighborhoodSelect.value || ''
     const help = document.getElementById('cepHelp')
     if (help) help.textContent = 'Bairro definido automaticamente pelo CEP. Para alterar, edite o CEP.'
   }
@@ -558,6 +571,9 @@ function setupAddressFormEvents() {
     if (!neighborhoodSelect) return
     neighborhoodSelect.disabled = false
     delete neighborhoodSelect.dataset.locked
+    // Remover hidden auxiliar para evitar duplicidade
+    const hidden = document.getElementById('neighborhoodHidden')
+    if (hidden) hidden.remove()
     const help = document.getElementById('cepHelp')
     if (help) help.textContent = 'Digite o CEP para preencher rua e bairro automaticamente.'
   }
@@ -569,7 +585,7 @@ function setupAddressFormEvents() {
       if (!res.ok) return
       const data = await res.json()
       if (data.erro) return
-      if (data.logradouro && streetInput) streetInput.value = data.logradouro
+    if (data.logradouro && streetInput) streetInput.value = data.logradouro
       if (data.bairro && neighborhoodSelect) {
         const ok = selectNeighborhoodByName(data.bairro)
         if (!ok) {
@@ -577,10 +593,19 @@ function setupAddressFormEvents() {
           if (help) help.textContent = `Bairro pelo CEP: ${data.bairro}. Selecione o correspondente na lista.`
           unlockNeighborhood()
         } else {
-          lockNeighborhood()
+      lockNeighborhood()
         }
       }
     } catch (e) { console.warn('ViaCEP falhou', e) }
+  }
+
+  // Reforça bloqueio: se tentar focar no select enquanto bloqueado, impedir interação
+  if (neighborhoodSelect) {
+    neighborhoodSelect.addEventListener('focus', () => {
+      if (neighborhoodSelect.disabled) {
+        neighborhoodSelect.blur()
+      }
+    });
   }
 
   if (cepInput) {
@@ -588,11 +613,7 @@ function setupAddressFormEvents() {
       const caret = e.target.selectionStart
       e.target.value = formatCep(e.target.value)
       try { e.target.setSelectionRange(caret, caret) } catch(_) {}
-      // Ao alterar CEP para inválido, libera seleção do bairro
-      const clean = e.target.value.replace(/\D/g, '')
-      if (clean.length < 8) {
-        unlockNeighborhood()
-      }
+      // Não liberar bairro apenas por CEP incompleto; manter bloqueado até validação/consulta
     })
     cepInput.addEventListener('blur', () => fetchAddressByCep(cepInput.value))
   }
@@ -603,14 +624,20 @@ function setupAddressFormEvents() {
       
       // Coletar dados do formulário
       const formData = new FormData(addressForm)
+      const safe = (v) => (v == null ? '' : String(v)).trim()
+      // Campo disabled não é incluído no FormData; usar fallback do DOM
+      let neighborhoodValue = safe(formData.get('neighborhood'))
+      if (!neighborhoodValue && neighborhoodSelect) {
+        neighborhoodValue = safe(neighborhoodSelect.value)
+      }
       const addressData = {
-        name: formData.get('name').trim(),
-        cep: formatCep(formData.get('cep') || '').trim(),
-        street: formData.get('street').trim(),
-        number: formData.get('number').trim(),
-        complement: formData.get('complement').trim(),
-        neighborhood: formData.get('neighborhood').trim(),
-        reference: formData.get('reference').trim()
+        name: safe(formData.get('name')),
+        cep: safe(formatCep(formData.get('cep') || '')),
+        street: safe(formData.get('street')),
+        number: safe(formData.get('number')),
+        complement: safe(formData.get('complement')),
+        neighborhood: neighborhoodValue,
+        reference: safe(formData.get('reference'))
       }
       
       // Validar campos obrigatórios
@@ -652,6 +679,28 @@ function setupAddressFormEvents() {
       // Mostrar mensagem de sucesso
   showAddressSuccessMessage()
     })
+    // Estado inicial ao abrir o modal
+    try {
+      // Por padrão, manter bairro bloqueado até validação/CEP
+      if (neighborhoodSelect) {
+        neighborhoodSelect.disabled = true;
+      }
+      const existing = getAddressData() || {};
+      const cepVal = (cepInput?.value || existing.cep || '').replace(/\D/g, '');
+      if (cepVal.length === 8) {
+        // Se já temos bairro salvo, aplicar e bloquear
+        if (existing.neighborhood) {
+          const matched = selectNeighborhoodByName(existing.neighborhood);
+          if (!matched && neighborhoodSelect) {
+            neighborhoodSelect.value = existing.neighborhood;
+          }
+          lockNeighborhood();
+        } else if (cepInput && cepInput.value) {
+          // Tentar buscar endereço e bloquear no retorno
+          fetchAddressByCep(cepInput.value);
+        }
+      }
+    } catch(_) {}
   }
 }
 /**

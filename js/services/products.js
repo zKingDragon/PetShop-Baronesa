@@ -313,12 +313,20 @@ class ProductsService {
       throw new Error("Tipo de produto inválido")
     }
 
-    // Validate image URL if provided
+    // Validate image if provided: allow http(s) URLs, relative paths, or data URLs (base64)
     if (productData.image && productData.image.trim()) {
-      try {
-        new URL(productData.image)
-      } catch {
-        throw new Error("URL da imagem inválida")
+      const img = productData.image.trim();
+      const isDataUrl = img.startsWith('data:image/');
+      const isRelative = img.startsWith('./') || img.startsWith('../') || img.startsWith('assets/') || img.startsWith('/assets/');
+      if (!isDataUrl && !isRelative) {
+        try {
+          const u = new URL(img);
+          if (!/^https?:$/.test(u.protocol)) {
+            throw new Error('invalid-protocol');
+          }
+        } catch (e) {
+          throw new Error("URL da imagem inválida")
+        }
       }
     }
   }

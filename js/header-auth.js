@@ -98,7 +98,7 @@ function createUserDropdown() {
             <i class="fas fa-chevron-down"></i>
         </div>
         <div class="user-dropdown-menu">
-            <a href="${pathPrefix}admin.html" class="dropdown-item">
+            <a href="${pathPrefix}admin.html" class="dropdown-item admin-only">
                 <i class="fas fa-cog"></i> Painel Admin
             </a>
             <hr class="dropdown-divider">
@@ -330,27 +330,22 @@ async function getUserType(user) {
     return 'guest';
 }
 
-// Atualiza os links do dropdown baseado no tipo de usuário
+// Atualiza os links do dropdown baseado no estado de login
 async function updateUserLinks() {
     if (!userDropdown) return;
     try {
-        let userType = 'guest';
-        const user = firebase.auth().currentUser;
-        if (user) {
-            userType = await getUserType(user);
-        }
-        // Controla visibilidade dos links admin
+        const isLoggedIn = typeof firebase !== 'undefined' && firebase.auth && !!firebase.auth().currentUser;
         const adminLinks = userDropdown.querySelectorAll('.admin-only');
         adminLinks.forEach(link => {
-            link.style.display = userType === 'admin' ? 'block' : 'none';
+            link.style.display = isLoggedIn ? 'block' : 'none';
         });
-        // Adiciona indicador visual se for admin
-        if (userType === 'admin') {
+
+        if (isLoggedIn) {
             addAdminBadge();
         } else {
             removeAdminBadge();
         }
-        console.log('✅ Links atualizados para tipo:', userType);
+        console.log('✅ Links atualizados (visíveis somente quando logado)');
     } catch (error) {
         console.error('Erro ao atualizar links do usuário:', error);
     }

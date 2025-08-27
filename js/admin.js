@@ -416,9 +416,27 @@ async init() {
     // Image preview
     const imageInput = document.getElementById("productImage");
     if (imageInput && !imageInput.dataset.listenersAdded) {
-      imageInput.addEventListener("input", (e) => {
-        this.updateImagePreview(e.target.value)
-      })
+      // Use 'change' e leia o arquivo para gerar preview (evita C:\\fakepath)
+      imageInput.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          try {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              const dataUrl = evt.target?.result;
+              if (typeof dataUrl === 'string') {
+                this.updateImagePreview(dataUrl);
+              }
+            };
+            reader.readAsDataURL(file);
+          } catch (_) {
+            // Fallback: limpa preview
+            this.updateImagePreview("");
+          }
+        } else {
+          this.updateImagePreview("");
+        }
+      });
       imageInput.dataset.listenersAdded = 'true';
     }
   }

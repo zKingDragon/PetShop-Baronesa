@@ -46,7 +46,7 @@ img {
 /* Containers */
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 200px;
   min-width: 284px;
   margin: 0 auto;
   padding: 0 1rem;
@@ -54,7 +54,7 @@ img {
 
 .header-container {
   width: 100%;
-  max-width: 1500px;
+  max-width: 1400px;
   min-width: 284px;
   margin: 0 auto;
   padding: 0 1rem;
@@ -2517,6 +2517,8 @@ img {
   border-radius: var(--border-radius);
   padding: 1.5rem;
   box-shadow: var(--box-shadow);
+  width: 80%;
+  margin: 0 auto;
 }
 
 .login-form-card h2 {
