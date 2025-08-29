@@ -60,9 +60,6 @@ function addToCart(product) {
 
   // Atualiza a UI
   updateCartUI()
-
-  // Mostra feedback ao usuário
-  showToast("Produto adicionado ao carrinho!")
 }
 
 /**

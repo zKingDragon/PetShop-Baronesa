@@ -1,13 +1,15 @@
 /**
  * Products Service for Pet Shop Baronesa
- * Handles all product-related database operations
+ * Handles all product-related da    } catch (error) {
+      this.logger.error ? this.logger.error("ProductsService", "Error getting product", error) : console.error("Error getting product:", error)
+      throw new Error("Erro ao buscar produto")ase operations
  */
-
 
 class ProductsService {
   constructor() {
     this.collection = "Produtos"
     this.db = window.db
+    this.logger = window.Logger || console // Fallback para console se logger não estiver disponível
   }
 
   /**
@@ -108,10 +110,10 @@ class ProductsService {
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }
       const docRef = await this.db.collection(this.collection).add(productWithTimestamps)
-      console.log("Product created with ID:", docRef.id)
+      this.logger.info ? this.logger.info("ProductsService", `Product created with ID: ${docRef.id}`) : console.log("Product created with ID:", docRef.id)
       return docRef.id
     } catch (error) {
-      console.error("Error creating product:", error)
+      this.logger.error ? this.logger.error("ProductsService", "Error creating product", error) : console.error("Error creating product:", error)
       throw new Error("Erro ao criar produto")
     }
   }
@@ -232,37 +234,46 @@ class ProductsService {
   async getFilteredProducts(filters = {}) {
     try {
       let query = this.db.collection(this.collection)
-      // Suporte a múltiplas categorias/tipos
+      
+      // Aplicar apenas um filtro por vez para evitar necessidade de índices compostos
       if (filters.categories && Array.isArray(filters.categories) && filters.categories.length > 0) {
         query = query.where("categoria", "in", filters.categories.slice(0, 10))
       } else if (filters.category) {
         query = query.where("categoria", "==", filters.category)
-      }
-      if (filters.types && Array.isArray(filters.types) && filters.types.length > 0) {
+      } else if (filters.types && Array.isArray(filters.types) && filters.types.length > 0) {
         query = query.where("tipoProduto", "in", filters.types.slice(0, 10))
       } else if (filters.type) {
         query = query.where("tipoProduto", "==", filters.type)
-      }
-      // Filtro promocional
-      if (filters.promocional) {
+      } else if (filters.promocional) {
         query = query.where("promocional", "==", true)
+      } else {
+        // Se não há filtros específicos, apenas ordenar por data
+        query = query.orderBy("createdAt", "desc")
       }
-      // Faixa de preço
-      if (filters.minPrice !== undefined) {
-        query = query.where("Preco", ">=", filters.minPrice)
-      }
-      if (filters.maxPrice !== undefined) {
-        query = query.where("Preco", "<=", filters.maxPrice)
-      }
-      // Order by creation date
-      query = query.orderBy("createdAt", "desc")
+      
       if (filters.limit) {
         query = query.limit(filters.limit)
       }
+      
       const snapshot = await query.get()
-      return snapshot.docs.map((doc) => this.mapFirestoreProduct(doc))
+      let products = snapshot.docs.map((doc) => this.mapFirestoreProduct(doc))
+      
+      // Aplicar filtros restantes no lado cliente
+      if (filters.minPrice !== undefined) {
+        products = products.filter(product => product.price >= filters.minPrice)
+      }
+      if (filters.maxPrice !== undefined) {
+        products = products.filter(product => product.price <= filters.maxPrice)
+      }
+      
+      // Ordenar por data se não foi feito na consulta
+      if (filters.categories || filters.category || filters.types || filters.type || filters.promocional) {
+        products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      }
+      
+      return products
     } catch (error) {
-      console.error("Error getting filtered products:", error)
+      this.logger.error ? this.logger.error("ProductsService", "Error getting filtered products", error) : console.error("Error getting filtered products:", error)
       throw new Error("Erro ao filtrar produtos")
     }
   }

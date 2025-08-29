@@ -47,12 +47,13 @@ function getCurrentPageName() {
  * Verifica se o usuário está logado
  */
 function isUserLoggedIn() {
+    const logger = window.Logger || console;
     try {
         // Verifica Firebase Auth
         if (typeof firebase !== 'undefined' && firebase.auth) {
             const user = firebase.auth().currentUser;
             if (user) {
-                console.log('✅ Usuário logado via Firebase:', user.email);
+                logger.debug ? logger.debug('RouteProtection', `Usuário logado via Firebase: ${user.email}`) : console.log('✅ Usuário logado via Firebase:', user.email);
                 return true;
             }
         }
@@ -63,7 +64,7 @@ function isUserLoggedIn() {
             try {
                 const parsed = JSON.parse(authData);
                 if (parsed.uid && parsed.email) {
-                    console.log('✅ Usuário logado via localStorage:', parsed.email);
+                    logger.debug ? logger.debug('RouteProtection', `Usuário logado via localStorage: ${parsed.email}`) : console.log('✅ Usuário logado via localStorage:', parsed.email);
                     return true;
                 }
             } catch (e) {}
@@ -72,14 +73,14 @@ function isUserLoggedIn() {
         // Verifica sessionStorage
         const sessionAuth = sessionStorage.getItem('admin_authenticated');
         if (sessionAuth === 'true') {
-            console.log('✅ Usuário logado via sessionStorage');
+            logger.debug ? logger.debug('RouteProtection', 'Usuário logado via sessionStorage') : console.log('✅ Usuário logado via sessionStorage');
             return true;
         }
         
-        console.log('❌ Usuário não está logado');
+        logger.debug ? logger.debug('RouteProtection', 'Usuário não está logado') : console.log('❌ Usuário não está logado');
         return false;
     } catch (error) {
-        console.warn('⚠️ Erro ao verificar autenticação:', error);
+        logger.warn ? logger.warn('RouteProtection', 'Erro ao verificar autenticação', error) : console.warn('⚠️ Erro ao verificar autenticação:', error);
         return false;
     }
 }

@@ -534,8 +534,14 @@ function setupAddressFormEvents() {
     return null
   }
   function formatCep(value) {
-    const digits = (value || '').replace(/\D/g, '').slice(0,8)
-    if (digits.length > 5) return digits.slice(0,5) + '-' + digits.slice(5)
+    // Remove todos os caracteres não numéricos
+    const digits = (value || '').replace(/\D/g, '').slice(0, 8)
+    
+    // Formatar com hífen apenas se tiver mais de 5 dígitos
+    if (digits.length > 5) {
+      return digits.slice(0, 5) + '-' + digits.slice(5)
+    }
+    
     return digits
   }
   function selectNeighborhoodByName(name) {
@@ -610,9 +616,52 @@ function setupAddressFormEvents() {
 
   if (cepInput) {
     cepInput.addEventListener('input', (e) => {
-      const caret = e.target.selectionStart
-      e.target.value = formatCep(e.target.value)
-      try { e.target.setSelectionRange(caret, caret) } catch(_) {}
+      const input = e.target
+      const oldValue = input.value
+      const oldCaret = input.selectionStart
+      
+      // Formatar o valor
+      const newValue = formatCep(oldValue)
+      
+      // Calcular nova posição do cursor
+      let newCaret = oldCaret
+      
+      // Se o valor mudou (formatação aplicada)
+      if (newValue !== oldValue) {
+        // Contar quantos dígitos há antes da posição do cursor
+        const digitsBeforeCaret = oldValue.slice(0, oldCaret).replace(/\D/g, '').length
+        
+        // Encontrar a posição correspondente no novo valor
+        let digitCount = 0
+        newCaret = 0
+        
+        for (let i = 0; i < newValue.length; i++) {
+          if (/\d/.test(newValue[i])) {
+            digitCount++
+            if (digitCount >= digitsBeforeCaret) {
+              newCaret = i + 1
+              break
+            }
+          }
+          if (digitCount < digitsBeforeCaret) {
+            newCaret = i + 1
+          }
+        }
+        
+        // Ajustar se o cursor estava no final
+        if (oldCaret >= oldValue.length) {
+          newCaret = newValue.length
+        }
+      }
+      
+      // Aplicar valor formatado
+      input.value = newValue
+      
+      // Restaurar posição do cursor
+      try { 
+        input.setSelectionRange(newCaret, newCaret) 
+      } catch(_) {}
+      
       // Não liberar bairro apenas por CEP incompleto; manter bloqueado até validação/consulta
     })
     cepInput.addEventListener('blur', () => fetchAddressByCep(cepInput.value))

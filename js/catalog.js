@@ -422,9 +422,34 @@ function initAddToCartButtons() {
           price: productPrice,
           image: productImage,
         })
+      }
 
-        // Mostra mensagem de toast
-        showToast("Produto adicionado ao carrinho!")
+      // Sempre mostra toast com ações independente do módulo de carrinho
+      const toastActions = [
+        {
+          label: 'Ver Carrinho',
+          className: 'toast-action-primary',
+          callback: () => {
+            window.location.href = 'carrinho.html'
+          }
+        },
+        {
+          label: 'Continuar Comprando',
+          className: 'toast-action-secondary',
+          callback: () => {
+            // Toast se fecha automaticamente
+          }
+        }
+      ]
+      
+      // Usa o ToastManager global
+      if (window.toastManager && typeof window.toastManager.show === 'function') {
+        window.toastManager.show(`${productName} adicionado ao carrinho!`, 'success', 4000, toastActions)
+      } else if (window.showToast && typeof window.showToast === 'function') {
+        window.showToast(`${productName} adicionado ao carrinho!`, 'success', 4000, toastActions)
+      } else {
+        // Ultimate fallback
+        alert(`${productName} adicionado ao carrinho!`)
       }
     })
   })
@@ -835,46 +860,11 @@ function setLoading(loading) {
  * @param {string} message - Mensagem de erro
  */
 function showError(message) {
-  showToast(message, "error")
-}
-
-/**
- * Mostra uma mensagem de toast
- * @param {string} message - Mensagem a exibir
- * @param {string} type - Tipo da mensagem ('success' ou 'error')
- */
-function showToast(message, type = "success") {
-  // Remove qualquer toast existente
-  const existingToast = document.querySelector(".toast")
-  if (existingToast) {
-    existingToast.remove()
+  if (window.showToast) {
+    window.showToast(message, "error")
+  } else {
+    console.error(message)
   }
-
-  // Cria um novo elemento de toast
-  const toast = document.createElement("div")
-  toast.className = `toast ${type === "error" ? "toast-error" : "toast-success"}`
-  toast.textContent = message
-  
-  // Adiciona ao body
-  document.body.appendChild(toast)
-
-  // Força reflow para garantir que a transição funcione
-  toast.offsetHeight
-
-  // Mostra o toast
-  toast.classList.add("show")
-
-  // Esconde o toast após 3 segundos
-  setTimeout(() => {
-    toast.classList.remove("show")
-
-    // Remove o toast do DOM após a animação
-    setTimeout(() => {
-      if (toast.parentNode) {
-        toast.parentNode.removeChild(toast)
-      }
-    }, 300)
-  }, 3000)
 }
 
 /**
@@ -1052,7 +1042,9 @@ function initEventListeners() {
 
   window.addEventListener("offline", () => {
     console.log("Gone offline, using cached data")
-    showToast("Você está offline. Usando dados em cache.", "info")
+    if (window.showToast) {
+      window.showToast("Você está offline. Usando dados em cache.", "info")
+    }
   })
 }
 
@@ -1102,7 +1094,9 @@ window.CatalogAdmin = {
       await authService.requireAdmin()
       const productId = await productsService.createProduct(productData)
       await loadProducts() // Refresh products
-      showToast("Produto criado com sucesso!")
+      if (window.showToast) {
+        window.showToast("Produto criado com sucesso!")
+      }
       return productId
     } catch (error) {
       console.error("Error creating product:", error)
@@ -1120,7 +1114,9 @@ window.CatalogAdmin = {
       await authService.requireAdmin()
       await productsService.updateProduct(productId, updateData)
       await loadProducts() // Refresh products
-      showToast("Produto atualizado com sucesso!")
+      if (window.showToast) {
+        window.showToast("Produto atualizado com sucesso!")
+      }
     } catch (error) {
       console.error("Error updating product:", error)
       showError(`Erro ao atualizar produto: ${error.message}`)
@@ -1137,7 +1133,9 @@ window.CatalogAdmin = {
       await authService.requireAdmin()
       await productsService.deleteProduct(productId)
       await loadProducts() // Refresh products
-      showToast("Produto excluído com sucesso!")
+      if (window.showToast) {
+        window.showToast("Produto excluído com sucesso!")
+      }
     } catch (error) {
       console.error("Error deleting product:", error)
       showError(`Erro ao excluir produto: ${error.message}`)
