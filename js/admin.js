@@ -111,6 +111,8 @@ setupTabSystem() {
                 targetPane = document.getElementById('products-tab');
             } else if (targetTab === 'slides') {
                 targetPane = document.getElementById('slidesTab');
+            } else if (targetTab === 'services') {
+                targetPane = document.getElementById('services-tab');
             } else {
                 targetPane = document.getElementById(targetTab + 'Tab');
             }
@@ -123,6 +125,12 @@ setupTabSystem() {
                 if (targetTab === 'slides' && !window.adminSlidesManager) {
                     console.log('🖼️ Inicializando gerenciador de slides...');
                     window.adminSlidesManager = new AdminSlidesManager();
+                }
+                
+                // Se for a aba de serviços, inicializar o gerenciador se necessário
+                if (targetTab === 'services' && !window.servicePricingManager) {
+                    console.log('✂️ Inicializando gerenciador de preços de serviços...');
+                    window.servicePricingManager = new ServicePricingManager();
                 }
                 
                 // Se for a aba de produtos, garantir que os produtos sejam carregados
@@ -148,6 +156,8 @@ setupTabSystem() {
             activePane = document.getElementById('products-tab');
         } else if (savedTab === 'slides') {
             activePane = document.getElementById('slidesTab');
+        } else if (savedTab === 'services') {
+            activePane = document.getElementById('services-tab');
         } else {
             activePane = document.getElementById(savedTab + 'Tab');
         }

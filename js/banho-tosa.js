@@ -16,9 +16,47 @@
   function setDisabled(el, disabled) { if (el) el.disabled = !!disabled; }
 
   function loadPricing() {
-    return fetch(PRICING_URL).then(r => {
-      if (!r.ok) throw new Error('Falha ao carregar tabela de preços');
-      return r.json();
+    return new Promise(async (resolve, reject) => {
+      try {
+        // 1. Primeiro, tentar carregar do Firestore se disponível
+        if (window.db) {
+          try {
+            const doc = await window.db.collection('settings').doc('servicePricing').get();
+            if (doc.exists) {
+              const data = doc.data();
+              console.log('📊 Preços carregados do Firestore (banco de dados)');
+              resolve(data.pricing);
+              return;
+            }
+          } catch (firestoreError) {
+            console.warn('⚠️ Erro ao carregar do Firestore:', firestoreError);
+          }
+        }
+
+        // 2. Segundo, tentar carregar do localStorage (preços atualizados pelo admin)
+        const savedPricing = localStorage.getItem('servicePricing');
+        if (savedPricing) {
+          try {
+            const parsedPricing = JSON.parse(savedPricing);
+            console.log('📊 Preços carregados do localStorage (cache admin)');
+            resolve(parsedPricing);
+            return;
+          } catch (error) {
+            console.warn('⚠️ Erro ao parsear preços do localStorage:', error);
+          }
+        }
+
+        // 3. Fallback: carregar do arquivo JSON
+        const response = await fetch(PRICING_URL);
+        if (!response.ok) throw new Error('Falha ao carregar tabela de preços');
+        const data = await response.json();
+        console.log('📊 Preços carregados do arquivo JSON (fallback)');
+        resolve(data);
+        
+      } catch (error) {
+        console.error('❌ Erro ao carregar preços:', error);
+        reject(error);
+      }
     });
   }
 
@@ -192,7 +230,43 @@
   function init() {
     if (!initElements()) return;
     loadPricing()
-      .then(cfg => { pricing = cfg; render(); attachEvents(); })
+      .then(cfg => { 
+        pricing = cfg; 
+        render(); 
+        attachEvents(); 
+        
+        // Escutar atualizações de preços do painel admin
+        window.addEventListener('servicePricingUpdated', (event) => {
+          console.log('📊 Preços de serviços atualizados, recarregando...');
+          pricing = event.detail.pricing;
+          render();
+        });
+
+        // Escutar mudanças em tempo real do Firestore
+        if (window.db) {
+          window.db.collection('settings').doc('servicePricing')
+            .onSnapshot((doc) => {
+              if (doc.exists) {
+                const data = doc.data();
+                if (data.pricing && JSON.stringify(data.pricing) !== JSON.stringify(pricing)) {
+                  console.log('🔄 Preços atualizados em tempo real do Firestore');
+                  pricing = data.pricing;
+                  render();
+                  
+                  // Atualizar localStorage também
+                  localStorage.setItem('servicePricing', JSON.stringify(data.pricing));
+                  
+                  // Mostrar notificação (se disponível)
+                  if (window.showToast) {
+                    window.showToast('Preços atualizados pelo administrador', 'info');
+                  }
+                }
+              }
+            }, (error) => {
+              console.warn('⚠️ Erro ao escutar mudanças do Firestore:', error);
+            });
+        }
+      })
       .catch(err => {
         console.warn('Erro ao carregar preços:', err);
         if (els.note) els.note.textContent = 'Não foi possível carregar a tabela de preços.';

@@ -49,6 +49,10 @@
                             <i class="fas fa-images"></i>
                             <span>Slides</span>
                         </button>
+                        <button class="tab-button" data-tab="services">
+                            <i class="fas fa-scissors"></i>
+                            <span>Serviços B&T</span>
+                        </button>
                     </div>
                 </div>
 
@@ -399,6 +403,270 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Services Tab -->
+                    <div id="services-tab" class="tab-pane">
+                        <div class="services-header">
+                            <h2><i class="fas fa-scissors"></i> Gerenciar Preços - Banho & Tosa</h2>
+                            <p>Configure os preços dos serviços de banho e tosa</p>
+                            
+                            <!-- Status de Conexão -->
+                            <div class="connection-status" id="connectionStatus">
+                                <div class="status-indicator">
+                                    <i class="fas fa-database"></i>
+                                    <span id="statusText">Conectando ao banco de dados...</span>
+                                </div>
+                                <div class="last-sync" id="lastSync" style="display: none;">
+                                    <i class="fas fa-clock"></i>
+                                    <span>Última sincronização: <span id="lastSyncTime">--</span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preços Base -->
+                        <div class="services-section">
+                            <h3><i class="fas fa-dollar-sign"></i> Preços Base</h3>
+                            
+                            <!-- Cães -->
+                            <div class="price-category">
+                                <h4><i class="fas fa-dog"></i> Cães</h4>
+                                <div class="price-grid">
+                                    <div class="price-card">
+                                        <h5>Porte Pequeno</h5>
+                                        <div class="price-inputs">
+                                            <div class="input-group">
+                                                <label>Banho</label>
+                                                <input type="number" id="cao-pequeno-banho" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Higiênica</label>
+                                                <input type="number" id="cao-pequeno-tosa-higienica" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Total</label>
+                                                <input type="number" id="cao-pequeno-tosa-total" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Banho e Tosa</label>
+                                                <input type="number" id="cao-pequeno-banho-tosa" min="0" step="0.01">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="price-card">
+                                        <h5>Porte Médio</h5>
+                                        <div class="price-inputs">
+                                            <div class="input-group">
+                                                <label>Banho</label>
+                                                <input type="number" id="cao-medio-banho" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Higiênica</label>
+                                                <input type="number" id="cao-medio-tosa-higienica" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Total</label>
+                                                <input type="number" id="cao-medio-tosa-total" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Banho e Tosa</label>
+                                                <input type="number" id="cao-medio-banho-tosa" min="0" step="0.01">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="price-card">
+                                        <h5>Porte Grande</h5>
+                                        <div class="price-inputs">
+                                            <div class="input-group">
+                                                <label>Banho</label>
+                                                <input type="number" id="cao-grande-banho" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Higiênica</label>
+                                                <input type="number" id="cao-grande-tosa-higienica" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Total</label>
+                                                <input type="number" id="cao-grande-tosa-total" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Banho e Tosa</label>
+                                                <input type="number" id="cao-grande-banho-tosa" min="0" step="0.01">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="price-card">
+                                        <h5>Porte Gigante</h5>
+                                        <div class="price-inputs">
+                                            <div class="input-group">
+                                                <label>Banho</label>
+                                                <input type="number" id="cao-gigante-banho" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Higiênica</label>
+                                                <input type="number" id="cao-gigante-tosa-higienica" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Total</label>
+                                                <input type="number" id="cao-gigante-tosa-total" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Banho e Tosa</label>
+                                                <input type="number" id="cao-gigante-banho-tosa" min="0" step="0.01">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gatos -->
+                            <div class="price-category">
+                                <h4><i class="fas fa-cat"></i> Gatos</h4>
+                                <div class="price-grid">
+                                    <div class="price-card">
+                                        <h5>Padrão</h5>
+                                        <div class="price-inputs">
+                                            <div class="input-group">
+                                                <label>Banho</label>
+                                                <input type="number" id="gato-unico-banho" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Higiênica</label>
+                                                <input type="number" id="gato-unico-tosa-higienica" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Tosa Total</label>
+                                                <input type="number" id="gato-unico-tosa-total" min="0" step="0.01">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>Banho e Tosa</label>
+                                                <input type="number" id="gato-unico-banho-tosa" min="0" step="0.01">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Adicionais -->
+                        <div class="services-section">
+                            <h3><i class="fas fa-plus"></i> Serviços Adicionais</h3>
+                            
+                            <div class="addons-grid">
+                                <div class="addon-card">
+                                    <h5>Corte de Unhas</h5>
+                                    <div class="addon-prices">
+                                        <div class="input-group">
+                                            <label>Cães</label>
+                                            <input type="number" id="addon-corte-unhas-cao" min="0" step="0.01">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Gatos</label>
+                                            <input type="number" id="addon-corte-unhas-gato" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="addon-card">
+                                    <h5>Limpeza de Ouvidos</h5>
+                                    <div class="addon-prices">
+                                        <div class="input-group">
+                                            <label>Cães</label>
+                                            <input type="number" id="addon-limpeza-ouvidos-cao" min="0" step="0.01">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Gatos</label>
+                                            <input type="number" id="addon-limpeza-ouvidos-gato" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="addon-card">
+                                    <h5>Hidratação</h5>
+                                    <div class="addon-prices">
+                                        <div class="input-group">
+                                            <label>% do Preço Base</label>
+                                            <input type="number" id="addon-hidratacao-percent" min="0" max="1" step="0.01" placeholder="0.15">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Valor Mínimo</label>
+                                            <input type="number" id="addon-hidratacao-min" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="addon-card">
+                                    <h5>Perfumaria</h5>
+                                    <div class="addon-prices">
+                                        <div class="input-group">
+                                            <label>Cães</label>
+                                            <input type="number" id="addon-perfume-cao" min="0" step="0.01">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Gatos</label>
+                                            <input type="number" id="addon-perfume-gato" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="addon-card">
+                                    <h5>Desembolo de Nós</h5>
+                                    <div class="addon-prices">
+                                        <div class="input-group">
+                                            <label>Pelagem Curta</label>
+                                            <input type="number" id="addon-desembolo-curta" min="0" step="0.01">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Pelagem Média</label>
+                                            <input type="number" id="addon-desembolo-media" min="0" step="0.01">
+                                        </div>
+                                        <div class="input-group">
+                                            <label>Pelagem Longa</label>
+                                            <input type="number" id="addon-desembolo-longa" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Multiplicadores de Pelagem -->
+                        <div class="services-section">
+                            <h3><i class="fas fa-percentage"></i> Multiplicadores por Tipo de Pelagem</h3>
+                            
+                            <div class="multipliers-grid">
+                                <div class="multiplier-card">
+                                    <label>Pelagem Curta</label>
+                                    <input type="number" id="multiplier-curta" min="0" step="0.01" placeholder="1.0">
+                                </div>
+                                <div class="multiplier-card">
+                                    <label>Pelagem Média</label>
+                                    <input type="number" id="multiplier-media" min="0" step="0.01" placeholder="1.05">
+                                </div>
+                                <div class="multiplier-card">
+                                    <label>Pelagem Longa</label>
+                                    <input type="number" id="multiplier-longa" min="0" step="0.01" placeholder="1.10">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botões de Ação -->
+                        <div class="services-actions">
+                            <button type="button" class="btn-secondary" id="loadCurrentPrices">
+                                <i class="fas fa-download"></i> Carregar do Banco
+                            </button>
+                            <button type="button" class="btn-info" id="syncFromFirestore">
+                                <i class="fas fa-sync"></i> Sincronizar
+                            </button>
+                            <button type="button" class="btn-primary" id="savePrices">
+                                <i class="fas fa-save"></i> Salvar no Banco
+                            </button>
+                            <button type="button" class="btn-warning" id="resetPrices">
+                                <i class="fas fa-undo"></i> Restaurar Padrão
+                            </button>
                         </div>
                     </div>
 
@@ -779,6 +1047,8 @@
     <script src="../js/admin-middleware.js"></script>
     <script src="../js/services/products.js"></script>
     <script src="../js/services/slides.js"></script>
+    <script src="../js/services/service-pricing-manager.js"></script>
+    <script src="../js/utils/database-init.js"></script>
     <script src="../js/services/auth-service.js"></script>
     <script src="../js/main.js"></script>
     <script src="../js/admin.js"></script>

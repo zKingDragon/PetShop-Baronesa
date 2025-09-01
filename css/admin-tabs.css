@@ -49,6 +49,316 @@
     position: relative;
 }
 
+/* Services Tab Styles */
+.services-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.services-header h2 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.services-header p {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+/* Connection Status */
+.connection-status {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid #17a2b8;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #17a2b8;
+    font-weight: 500;
+}
+
+.last-sync {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.connection-status.connected {
+    border-color: #28a745;
+}
+
+.connection-status.connected .status-indicator {
+    color: #28a745;
+}
+
+.connection-status.error {
+    border-color: #dc3545;
+}
+
+.connection-status.error .status-indicator {
+    color: #dc3545;
+}
+
+.services-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.services-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #4CAF50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.price-category {
+    margin-bottom: 2rem;
+}
+
+.price-category h4 {
+    color: #34495e;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.price-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.price-card:hover {
+    border-color: #4CAF50;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+}
+
+.price-card h5 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.price-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.input-group label {
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* Addons Grid */
+.addons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.addon-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.addon-card:hover {
+    border-color: #17a2b8;
+    box-shadow: 0 4px 15px rgba(23, 162, 184, 0.1);
+}
+
+.addon-card h5 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.addon-prices {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Multipliers Grid */
+.multipliers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.multiplier-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 2px solid #e9ecef;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.multiplier-card:hover {
+    border-color: #ffc107;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.1);
+}
+
+.multiplier-card label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+}
+
+.multiplier-card input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.multiplier-card input:focus {
+    outline: none;
+    border-color: #ffc107;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+}
+
+/* Services Actions */
+.services-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.services-actions button {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.services-actions .btn-primary {
+    background: #4CAF50;
+    color: white;
+}
+
+.services-actions .btn-primary:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+}
+
+.services-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.services-actions .btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.services-actions .btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.services-actions .btn-warning:hover {
+    background: #e0a800;
+    transform: translateY(-2px);
+}
+
+.services-actions .btn-info {
+    background: #17a2b8;
+    color: white;
+}
+
+.services-actions .btn-info:hover {
+    background: #138496;
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .price-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .addons-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .multipliers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .services-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .services-actions button {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
 .tab-pane {
     display: none;
     animation: fadeIn 0.3s ease-in-out;
