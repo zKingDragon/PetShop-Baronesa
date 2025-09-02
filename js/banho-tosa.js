@@ -256,10 +256,7 @@
                   // Atualizar localStorage também
                   localStorage.setItem('servicePricing', JSON.stringify(data.pricing));
                   
-                  // Mostrar notificação (se disponível)
-                  if (window.showToast) {
-                    window.showToast('Preços atualizados pelo administrador', 'info');
-                  }
+                 
                 }
               }
             }, (error) => {

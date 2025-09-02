@@ -8239,3 +8239,28 @@ img {
     overflow-y: auto;
   }
 }
+
+/* Estilos do Scrollbar */
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #34d399;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* Para Firefox */
+html {
+  scrollbar-width: auto;
+  scrollbar-color: #34d399 #f1f1f1;
+}
