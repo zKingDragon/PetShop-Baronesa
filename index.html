@@ -9,6 +9,9 @@
         <link rel="stylesheet" href="css/styles.css">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- IMPORTANTE: Script de desabilitação de console DEVE ser carregado PRIMEIRO -->
+    <script src="js/utils/console-disable.js"></script>
 </head>
 <body>
  <!-- Page Loader -->
@@ -220,57 +223,65 @@
             setTimeout(function() {
                 console.log('🔍 Index page: Verificando sistemas...');
                 
-                // Verifica Firebase
-                if (typeof firebase !== 'undefined') {
-                    console.log('✅ Firebase carregado na index');
-                } else {
-                    console.error('❌ Firebase não carregado na index');
-                }
-                
-                // Verifica Auth Service
-                if (window.auth) {
-                    console.log('✅ Auth service carregado na index');
-                } else {
-                    console.error('❌ Auth service não carregado na index');
-                }
-                
-                // Verifica Header Auth
-                if (window.headerAuth) {
-                    console.log('✅ Header auth carregado na index');
-                    // Força uma atualização do header
-                    setTimeout(() => {
-                        console.log('🔄 Forçando atualização do header na index...');
-                        window.headerAuth.updateHeaderUI();
-                    }, 500);
-                } else {
-                    console.error('❌ Header auth não carregado na index');
-                }
-                
-                // Verifica se há usuário logado
-                if (typeof firebase !== 'undefined' && firebase.auth) {
-                    const currentUser = firebase.auth().currentUser;
-                    if (currentUser) {
-                        console.log('👤 Usuário logado na index:', currentUser.email);
+                // Verifica Firebase apenas em desenvolvimento
+                if (!window.PRODUCTION_MODE) {
+                    const logger = window.Logger || console;
+                    if (typeof firebase !== 'undefined') {
+                        logger.info ? logger.info('Index', 'Firebase carregado') : console.log('✅ Firebase carregado na index');
                     } else {
-                        console.log('👤 Nenhum usuário logado na index');
+                        logger.error ? logger.error('Index', 'Firebase não carregado') : console.error('❌ Firebase não carregado na index');
                     }
                 }
                 
-                // Verifica elementos do header
-                setTimeout(() => {
-                    const signupBtn = document.querySelector('.btn-signup');
-                    const userDropdowns = document.querySelectorAll('.user-dropdown');
+                // Verificações de debug apenas em desenvolvimento
+                if (!window.PRODUCTION_MODE) {
+                    const logger = window.Logger || console;
                     
-                    console.log('🔘 Botão cadastro encontrado:', !!signupBtn);
-                    console.log('📋 Dropdowns de usuário encontrados:', userDropdowns.length);
+                    // Verifica Auth Service
+                    if (window.auth) {
+                        logger.info ? logger.info('Index', 'Auth service carregado') : console.log('✅ Auth service carregado na index');
+                    } else {
+                        logger.error ? logger.error('Index', 'Auth service não carregado') : console.error('❌ Auth service não carregado na index');
+                    }
                     
-                    if (userDropdowns.length > 1) {
-                        console.warn('⚠️ Múltiplos dropdowns encontrados, removendo extras...');
-                        for (let i = 1; i < userDropdowns.length; i++) {
-                            userDropdowns[i].remove();
+                    // Verifica Header Auth
+                    if (window.headerAuth) {
+                        logger.info ? logger.info('Index', 'Header auth carregado') : console.log('✅ Header auth carregado na index');
+                        // Força uma atualização do header
+                        setTimeout(() => {
+                            logger.debug ? logger.debug('Index', 'Forçando atualização do header') : console.log('🔄 Forçando atualização do header na index...');
+                            window.headerAuth.updateHeaderUI();
+                        }, 500);
+                    } else {
+                        logger.error ? logger.error('Index', 'Header auth não carregado') : console.error('❌ Header auth não carregado na index');
+                    }
+                    
+                    // Verifica se há usuário logado
+                    if (typeof firebase !== 'undefined' && firebase.auth) {
+                        const currentUser = firebase.auth().currentUser;
+                        if (currentUser) {
+                            logger.info ? logger.info('Index', `Usuário logado: ${currentUser.email}`) : console.log('👤 Usuário logado na index:', currentUser.email);
+                        } else {
+                            logger.debug ? logger.debug('Index', 'Nenhum usuário logado') : console.log('👤 Nenhum usuário logado na index');
                         }
                     }
-                }, 1000);
+                    
+                    // Verifica elementos do header
+                    setTimeout(() => {
+                        const signupBtn = document.querySelector('.btn-signup');
+                        const userDropdowns = document.querySelectorAll('.user-dropdown');
+                        
+                        logger.debug ? logger.debug('Index', `Botão cadastro encontrado: ${!!signupBtn}`) : console.log('🔘 Botão cadastro encontrado:', !!signupBtn);
+                        logger.debug ? logger.debug('Index', `Dropdowns de usuário encontrados: ${userDropdowns.length}`) : console.log('📋 Dropdowns de usuário encontrados:', userDropdowns.length);
+                        
+                        if (userDropdowns.length > 1) {
+                            logger.warn ? logger.warn('Index', 'Múltiplos dropdowns encontrados, removendo extras') : console.warn('⚠️ Múltiplos dropdowns encontrados, removendo extras...');
+                            for (let i = 1; i < userDropdowns.length; i++) {
+                                userDropdowns[i].remove();
+                            }
+                        }
+                    }, 1000);
+                }
                 
             }, 2000); // Aguarda 2 segundos para tudo carregar
         });

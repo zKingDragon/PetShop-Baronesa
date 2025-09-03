@@ -57,7 +57,8 @@ class SlidesService {
    */
   async getAllSlides() {
     try {
-      console.log('📊 Carregando slides do banco de dados...')
+      const logger = window.Logger || console;
+      logger.info ? logger.info('SlidesService', 'Carregando slides do banco de dados...') : console.log('📊 Carregando slides do banco de dados...');
       
       const querySnapshot = await this.db
         .collection(this.collection)
@@ -69,10 +70,11 @@ class SlidesService {
         slides.push(this.mapFirestoreSlide(doc))
       })
 
-      console.log(`✅ ${slides.length} slides carregados`)
+      logger.info ? logger.info('SlidesService', `${slides.length} slides carregados`) : console.log(`✅ ${slides.length} slides carregados`);
       return slides
     } catch (error) {
-      console.error('❌ Erro ao carregar slides:', error)
+      const logger = window.Logger || console;
+      logger.error ? logger.error('SlidesService', 'Erro ao carregar slides', error) : console.error('❌ Erro ao carregar slides:', error);
       throw new Error(`Erro ao carregar slides: ${error.message}`)
     }
   }
@@ -92,7 +94,8 @@ class SlidesService {
 
       return this.mapFirestoreSlide(doc)
     } catch (error) {
-      console.error('❌ Erro ao buscar slide:', error)
+      const logger = window.Logger || console;
+      logger.error ? logger.error('SlidesService', 'Erro ao buscar slide', error) : console.error('❌ Erro ao buscar slide:', error);
       throw new Error(`Erro ao buscar slide: ${error.message}`)
     }
   }
@@ -104,7 +107,8 @@ class SlidesService {
    */
   async createSlide(slideData) {
     try {
-      console.log('💾 Criando novo slide...', slideData)
+      const logger = window.Logger || console;
+      logger.debug ? logger.debug('SlidesService', 'Criando novo slide', slideData) : console.log('💾 Criando novo slide...', slideData);
 
       const firestoreData = {
         ...this.mapToFirestore(slideData),
@@ -113,10 +117,11 @@ class SlidesService {
 
       const docRef = await this.db.collection(this.collection).add(firestoreData)
       
-      console.log('✅ Slide criado com ID:', docRef.id)
+      logger.info ? logger.info('SlidesService', `Slide criado com ID: ${docRef.id}`) : console.log('✅ Slide criado com ID:', docRef.id);
       return docRef.id
     } catch (error) {
-      console.error('❌ Erro ao criar slide:', error)
+      const logger = window.Logger || console;
+      logger.error ? logger.error('SlidesService', 'Erro ao criar slide', error) : console.error('❌ Erro ao criar slide:', error);
       throw new Error(`Erro ao criar slide: ${error.message}`)
     }
   }
@@ -129,15 +134,17 @@ class SlidesService {
    */
   async updateSlide(slideId, slideData) {
     try {
-      console.log('💾 Atualizando slide:', slideId, slideData)
+      const logger = window.Logger || console;
+      logger.debug ? logger.debug('SlidesService', 'Atualizando slide', { slideId, slideData }) : console.log('💾 Atualizando slide:', slideId, slideData);
 
       const firestoreData = this.mapToFirestore(slideData)
 
       await this.db.collection(this.collection).doc(slideId).update(firestoreData)
       
-      console.log('✅ Slide atualizado com sucesso')
+      logger.info ? logger.info('SlidesService', 'Slide atualizado com sucesso') : console.log('✅ Slide atualizado com sucesso');
     } catch (error) {
-      console.error('❌ Erro ao atualizar slide:', error)
+      const logger = window.Logger || console;
+      logger.error ? logger.error('SlidesService', 'Erro ao atualizar slide', error) : console.error('❌ Erro ao atualizar slide:', error);
       throw new Error(`Erro ao atualizar slide: ${error.message}`)
     }
   }
@@ -149,13 +156,15 @@ class SlidesService {
    */
   async deleteSlide(slideId) {
     try {
-      console.log('🗑️ Excluindo slide:', slideId)
+      const logger = window.Logger || console;
+      logger.debug ? logger.debug('SlidesService', `Excluindo slide: ${slideId}`) : console.log('🗑️ Excluindo slide:', slideId);
 
       await this.db.collection(this.collection).doc(slideId).delete()
       
-      console.log('✅ Slide excluído com sucesso')
+      logger.info ? logger.info('SlidesService', 'Slide excluído com sucesso') : console.log('✅ Slide excluído com sucesso');
     } catch (error) {
-      console.error('❌ Erro ao excluir slide:', error)
+      const logger = window.Logger || console;
+      logger.error ? logger.error('SlidesService', 'Erro ao excluir slide', error) : console.error('❌ Erro ao excluir slide:', error);
       throw new Error(`Erro ao excluir slide: ${error.message}`)
     }
   }
@@ -168,7 +177,8 @@ class SlidesService {
    */
   async upsertSlide(slideNumber, slideData) {
     try {
-      console.log(`🔄 Upsert slide ${slideNumber}...`)
+      const logger = window.Logger || console;
+      logger.debug ? logger.debug('SlidesService', `Upsert slide ${slideNumber}`) : console.log(`🔄 Upsert slide ${slideNumber}...`);
 
       // Primeiro, tentar encontrar slide existente pelo número
       const querySnapshot = await this.db
@@ -191,7 +201,8 @@ class SlidesService {
         return await this.createSlide(slideDataWithNumber)
       }
     } catch (error) {
-      console.error('❌ Erro no upsert do slide:', error)
+      const logger = window.Logger || console;
+      logger.error ? logger.error('SlidesService', 'Erro no upsert do slide', error) : console.error('❌ Erro no upsert do slide:', error);
       throw new Error(`Erro ao salvar slide: ${error.message}`)
     }
   }
@@ -202,7 +213,8 @@ class SlidesService {
    */
   async initializeDefaultSlides() {
     try {
-      console.log('🚀 Inicializando slides padrão...')
+      const logger = window.Logger || console;
+      logger.info ? logger.info('SlidesService', 'Inicializando slides padrão...') : console.log('🚀 Inicializando slides padrão...');
 
       const defaultSlides = [
         {
@@ -234,9 +246,10 @@ class SlidesService {
       const promises = defaultSlides.map(slide => this.upsertSlide(slide.slideNumber, slide))
       await Promise.all(promises)
 
-      console.log('✅ Slides padrão inicializados com sucesso')
+      logger.info ? logger.info('SlidesService', 'Slides padrão inicializados com sucesso') : console.log('✅ Slides padrão inicializados com sucesso');
     } catch (error) {
-      console.error('❌ Erro ao inicializar slides padrão:', error)
+      const logger = window.Logger || console;
+      logger.error ? logger.error('SlidesService', 'Erro ao inicializar slides padrão', error) : console.error('❌ Erro ao inicializar slides padrão:', error);
       throw new Error(`Erro ao inicializar slides: ${error.message}`)
     }
   }
@@ -258,7 +271,8 @@ class SlidesService {
           slideNumber: slide.slideNumber
         }))
     } catch (error) {
-      console.error('❌ Erro ao buscar slides para carousel:', error)
+      const logger = window.Logger || console;
+      logger.error ? logger.error('SlidesService', 'Erro ao buscar slides para carousel', error) : console.error('❌ Erro ao buscar slides para carousel:', error);
       return []
     }
   }
