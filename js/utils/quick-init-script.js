@@ -9,7 +9,7 @@
  */
 
 (async function() {
-    console.log('🚀 Iniciando script de inicialização do banco de dados...');
+
     
     // Verificar se Firebase está disponível
     if (typeof firebase === 'undefined') {
@@ -22,7 +22,7 @@
         return;
     }
     
-    console.log('✅ Firebase detectado, prosseguindo...');
+
     
     // Dados para inicializar
     const initialData = {
@@ -72,40 +72,40 @@
         const db = firebase.firestore();
         
         // Verificar se já existe
-        console.log('🔍 Verificando se documento já existe...');
+
         const docRef = db.collection('settings').doc('servicePricing');
         const existingDoc = await docRef.get();
         
         if (existingDoc.exists()) {
-            console.log('⚠️ Documento já existe! Dados atuais:');
-            console.log(existingDoc.data());
+
+
             
             const overwrite = confirm('O documento já existe. Deseja sobrescrever? (OK = Sim, Cancelar = Não)');
             if (!overwrite) {
-                console.log('❌ Operação cancelada pelo usuário');
+
                 return;
             }
         }
         
         // Criar/atualizar documento
-        console.log('💾 Salvando dados no Firestore...');
+
         await docRef.set(initialData);
         
         // Verificar se foi salvo
-        console.log('🔄 Verificando se foi salvo corretamente...');
+
         const verification = await docRef.get();
         
         if (verification.exists()) {
-            console.log('✅ SUCESSO! Estrutura criada/atualizada no Firestore!');
-            console.log('📊 Dados salvos:', verification.data());
-            console.log('🎉 Agora você pode usar o sistema de preços dinâmico!');
+
+
+
         } else {
             console.error('❌ Erro: Documento não foi salvo corretamente');
         }
         
     } catch (error) {
         console.error('❌ Erro durante a operação:', error);
-        console.log('💡 Dica: Verifique se você tem permissões para escrever no Firestore');
+
     }
 })();
 
@@ -114,10 +114,10 @@ window.checkServicePricing = async function() {
     try {
         const doc = await firebase.firestore().collection('settings').doc('servicePricing').get();
         if (doc.exists()) {
-            console.log('📊 Dados atuais no Firestore:');
-            console.log(doc.data());
+
+
         } else {
-            console.log('❌ Nenhum documento encontrado');
+
         }
     } catch (error) {
         console.error('❌ Erro ao verificar:', error);
@@ -128,13 +128,13 @@ window.deleteServicePricing = async function() {
     if (confirm('ATENÇÃO: Isso irá deletar TODA a estrutura de preços! Tem certeza?')) {
         try {
             await firebase.firestore().collection('settings').doc('servicePricing').delete();
-            console.log('🗑️ Estrutura deletada com sucesso');
+
         } catch (error) {
             console.error('❌ Erro ao deletar:', error);
         }
     }
 };
 
-console.log('💡 Script carregado! Funções disponíveis:');
-console.log('   - checkServicePricing() - Verificar dados atuais');
-console.log('   - deleteServicePricing() - Deletar estrutura (cuidado!)');
+
+
+

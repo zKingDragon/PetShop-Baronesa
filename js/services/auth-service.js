@@ -76,7 +76,7 @@ class AuthService {
 
     try {
       const userCredential = await this.auth.signInWithEmailAndPassword(email, password)
-      console.log("User signed in successfully")
+
       return userCredential.user
     } catch (error) {
       console.error("Error signing in:", error)
@@ -93,7 +93,7 @@ class AuthService {
 
     try {
       await this.auth.signOut()
-      console.log("User signed out successfully")
+
     } catch (error) {
       console.error("Error signing out:", error)
       throw new Error(`Failed to sign out: ${error.message}`)
@@ -212,7 +212,7 @@ class AuthService {
         })
       }
       
-      console.log("User created successfully")
+
       return userCredential.user
     } catch (error) {
       console.error("Error creating user:", error)
@@ -247,7 +247,7 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
   const checkFirebase = () => {
     if (typeof firebase !== 'undefined' && firebase.auth) {
       authService.initialize(firebase.auth());
-      console.log('AuthService initialized automatically');
+
     } else {
       setTimeout(checkFirebase, 100);
     }

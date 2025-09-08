@@ -24,7 +24,7 @@
             const doc = await window.db.collection('settings').doc('servicePricing').get();
             if (doc.exists) {
               const data = doc.data();
-              console.log('📊 Preços carregados do Firestore (banco de dados)');
+
               resolve(data.pricing);
               return;
             }
@@ -38,7 +38,7 @@
         if (savedPricing) {
           try {
             const parsedPricing = JSON.parse(savedPricing);
-            console.log('📊 Preços carregados do localStorage (cache admin)');
+
             resolve(parsedPricing);
             return;
           } catch (error) {
@@ -50,7 +50,7 @@
         const response = await fetch(PRICING_URL);
         if (!response.ok) throw new Error('Falha ao carregar tabela de preços');
         const data = await response.json();
-        console.log('📊 Preços carregados do arquivo JSON (fallback)');
+
         resolve(data);
         
       } catch (error) {
@@ -237,7 +237,7 @@
         
         // Escutar atualizações de preços do painel admin
         window.addEventListener('servicePricingUpdated', (event) => {
-          console.log('📊 Preços de serviços atualizados, recarregando...');
+
           pricing = event.detail.pricing;
           render();
         });
@@ -249,7 +249,7 @@
               if (doc.exists) {
                 const data = doc.data();
                 if (data.pricing && JSON.stringify(data.pricing) !== JSON.stringify(pricing)) {
-                  console.log('🔄 Preços atualizados em tempo real do Firestore');
+
                   pricing = data.pricing;
                   render();
                   

@@ -23,7 +23,7 @@ class AdminMiddleware {
      */
     async init() {
         try {
-            console.log('Initializing admin middleware...');
+
             
             // Check if we're on a protected page
             if (this.isProtectedRoute()) {
@@ -32,7 +32,7 @@ class AdminMiddleware {
             
             this.setupEventListeners();
             this.isInitialized = true;
-            console.log('Admin middleware initialized');
+
         } catch (error) {
             console.error('Error initializing admin middleware:', error);
             this.handleError(error);
@@ -87,15 +87,15 @@ class AdminMiddleware {
      */
     async checkPageAccess() {
         try {
-            console.log('[checkPageAccess] Checking page access...');
+
             
             // Wait for auth system to be available
             await this.waitForAuthSystem();
-            console.log('[checkPageAccess] Auth system ready');
+
             
             // Check if user is authenticated
             const isAuthenticated = this.isUserAuthenticated();
-            console.log('[checkPageAccess] Is authenticated:', isAuthenticated);
+
             
             if (!isAuthenticated) {
                 console.warn('[checkPageAccess] User not authenticated, redirecting to login');
@@ -105,7 +105,7 @@ class AdminMiddleware {
 
             // Check if user has admin privileges
             const isAdmin = await this.isUserAdmin();
-            console.log('[checkPageAccess] Is admin:', isAdmin);
+
             
             if (!isAdmin) {
                 console.warn('[checkPageAccess] User is not admin, access denied');
@@ -113,7 +113,7 @@ class AdminMiddleware {
                 return;
             }
 
-            console.log('[checkPageAccess] Access granted for admin user');
+
             this.handleAccessGranted();
         } catch (error) {
             console.error('[checkPageAccess] Error checking page access:', error);
@@ -125,7 +125,7 @@ class AdminMiddleware {
      * Wait for auth system to be available
      */
     async waitForAuthSystem() {
-        console.log('[waitForAuthSystem] Waiting for auth system...');
+
         let retryCount = 0;
         const maxRetries = 50; // Reduzido para 5 segundos
         
@@ -139,11 +139,11 @@ class AdminMiddleware {
                 // Check if Firebase is loaded (opcional para o teste)
                 const firebaseReady = window.firebase && window.firebase.auth;
                 
-                console.log(`[waitForAuthSystem] Check ${retryCount + 1}/${maxRetries} - Auth Functions: ${authFunctionsReady}, Firebase: ${firebaseReady}`);
+
                 
                 // Continua se as funções auth estão prontas OU se atingiu o máximo de tentativas
                 if (authFunctionsReady || retryCount >= maxRetries) {
-                    console.log('[waitForAuthSystem] Auth system ready or timeout reached');
+
                     resolve();
                     return;
                 }
@@ -161,14 +161,14 @@ class AdminMiddleware {
      * @returns {boolean} - True if authenticated
      */
     isUserAuthenticated() {
-        console.log('[isUserAuthenticated] Checking authentication...');
+
         
         // Método 1: Use getCurrentUser function se disponível
         if (typeof getCurrentUser === 'function') {
             const user = getCurrentUser();
             if (user) {
                 this.currentUser = user;
-                console.log('[isUserAuthenticated] ✅ User found via getCurrentUser:', user.email);
+
                 return true;
             }
         }
@@ -178,7 +178,7 @@ class AdminMiddleware {
             const user = window.firebase.auth().currentUser;
             if (user) {
                 this.currentUser = user;
-                console.log('[isUserAuthenticated] ✅ User found via Firebase:', user.email);
+
                 return true;
             }
         }
@@ -190,7 +190,7 @@ class AdminMiddleware {
                 const userData = JSON.parse(authData);
                 if (userData && userData.uid && userData.email) {
                     this.currentUser = userData;
-                    console.log('[isUserAuthenticated] ✅ User found via localStorage:', userData.email);
+
                     return true;
                 }
             } catch (error) {
@@ -199,7 +199,7 @@ class AdminMiddleware {
             }
         }
 
-        console.log('[isUserAuthenticated] ❌ No authenticated user found');
+
         return false;
     }
 // Modificar apenas a função isUserAdmin() para adicionar verificação por token
@@ -211,20 +211,20 @@ class AdminMiddleware {
  */
 async isUserAdmin() {
     try {
-        console.log('[isUserAdmin] 🔍 Verificando status de admin...');
+
         
         if (!this.currentUser) {
-            console.log('[isUserAdmin] ❌ Sem usuário atual');
+
             return false;
         }
         
-        console.log('[isUserAdmin] 👤 Verificando:', this.currentUser.email);
+
         
         // MÉTODO 0: Verificar por token JWT específico de admin (mais seguro)
         if (window.AdminTokenManager) {
             const isAdminByToken = window.AdminTokenManager.isAdminByToken();
             if (isAdminByToken) {
-                console.log('[isUserAdmin] ✅ ADMIN confirmado via Token JWT!');
+
                 return true;
             }
         }
@@ -232,7 +232,7 @@ async isUserAdmin() {
         // MÉTODO 1: Verificar no Firestore (confiável)
         try {
             if (window.firebase && window.firebase.firestore) {
-                console.log('[isUserAdmin] 🔥 Verificando Firestore...');
+
                 
                 const userDoc = await window.firebase.firestore()
                     .collection('users')
@@ -241,7 +241,7 @@ async isUserAdmin() {
                 
                 if (userDoc.exists) {
                     const userData = userDoc.data();
-                    console.log('[isUserAdmin] 📄 Dados do Firestore:', userData);
+
                     
                     // Verificar múltiplos campos possíveis
                     if (userData.isAdmin === true || 
@@ -249,14 +249,14 @@ async isUserAdmin() {
                         userData.role === 'admin' ||
                         userData.userType === 'admin') {
                         
-                        console.log('[isUserAdmin] ✅ ADMIN confirmado via Firestore!');
+
                         
                         // Gerar e salvar token JWT para futuras verificações
                         if (window.AdminTokenManager) {
                             const token = window.AdminTokenManager.generateToken(this.currentUser);
                             if (token) {
                                 window.AdminTokenManager.saveToken(token);
-                                console.log('[isUserAdmin] 🔑 Token JWT admin gerado e salvo');
+
                             }
                         }
                         
@@ -273,7 +273,7 @@ async isUserAdmin() {
             try {
                 const result = await isAdmin();
                 if (result === true) {
-                    console.log('[isUserAdmin] ✅ ADMIN confirmado via isAdmin()!');
+
                     return true;
                 }
             } catch (error) {
@@ -290,7 +290,7 @@ async isUserAdmin() {
                 if (userData.isAdmin === true || 
                     userData.type === 'admin' || 
                     userData.role === 'admin') {
-                    console.log('[isUserAdmin] ✅ ADMIN confirmado via localStorage!');
+
                     return true;
                 }
             }
@@ -307,7 +307,7 @@ async isUserAdmin() {
         ];
         
         if (adminEmails.includes(this.currentUser.email?.toLowerCase())) {
-            console.log('[isUserAdmin] ✅ ADMIN confirmado via lista de emails!');
+
             
             // Registrar no Firestore
             try {
@@ -345,7 +345,7 @@ async isUserAdmin() {
                             !window.location.hostname.includes('127.0.0.1');
         
         if (!isProduction) {
-            console.log('[isUserAdmin] 🔑 MODO DESENVOLVIMENTO: Permitindo acesso admin');
+
             
             // Em desenvolvimento, registrar como admin automaticamente
             try {
@@ -362,7 +362,7 @@ async isUserAdmin() {
                             createdAt: new Date()
                         }, { merge: true });
                     
-                    console.log('[isUserAdmin] 📝 Usuário registrado como admin para desenvolvimento');
+
                 }
             } catch (error) {
                 console.error('[isUserAdmin] ❌ Erro ao registrar:', error);
@@ -371,7 +371,7 @@ async isUserAdmin() {
             return true;
         }
         
-        console.log('[isUserAdmin] ❌ Usuário não é admin');
+
         return false;
         
     } catch (error) {
@@ -445,7 +445,7 @@ async isUserAdmin() {
      * Handle access denied
      */
     handleAccessDenied() {
-        console.log('[handleAccessDenied] Acesso negado - usuário não é admin');
+
         
         // Remove loading message if exists
         const loadingDiv = document.getElementById('admin-loading');
@@ -468,7 +468,7 @@ async isUserAdmin() {
      * Handle access granted
      */
     handleAccessGranted() {
-        console.log('[handleAccessGranted] Acesso liberado para admin');
+
         // Remove loading message if exists
         const loadingDiv = document.getElementById('admin-loading');
         if (loadingDiv) {
@@ -711,7 +711,7 @@ async isUserAdmin() {
      * Initialize admin features
      */
     initializeAdminFeatures() {
-        console.log('[initializeAdminFeatures] Inicializando recursos admin...');
+
         
         // Set user role
         this.userRole = 'admin';
@@ -773,21 +773,21 @@ async isUserAdmin() {
      */
     clearSensitiveData() {
         // Clear any sensitive data when page is hidden or unloaded
-        console.log('Clearing sensitive data...');
+
     }
 
     /**
      * Handle page hidden
      */
     onPageHidden() {
-        console.log('Admin page hidden');
+
     }
 
     /**
      * Handle page visible
      */
     onPageVisible() {
-        console.log('Admin page visible');
+
         // Re-check permissions when page becomes visible
         if (this.isProtectedRoute()) {
             this.checkPageAccess();

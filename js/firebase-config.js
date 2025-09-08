@@ -3,7 +3,7 @@
  * This file contains the Firebase configuration and initialization
  */
 
-console.log('🔥 Carregando Firebase Config...');
+
 
 // Firebase configuration object
 const firebaseConfig = {
@@ -35,7 +35,7 @@ async function resetIndexedDB() {
       const request = indexedDB.deleteDatabase('firebaseLocalStorageDb');
       
       request.onsuccess = function() {
-        console.log('✅ IndexedDB limpo com sucesso');
+
         resolve();
       };
       
@@ -66,7 +66,7 @@ async function resetIndexedDB() {
  */
 async function initializeFirebase(forceClearIndexedDB = false) {
   try {
-    console.log('🔄 Inicializando Firebase...');
+
     
     // Limpar IndexedDB se forçado (usar com cuidado)
     if (forceClearIndexedDB) {
@@ -76,35 +76,39 @@ async function initializeFirebase(forceClearIndexedDB = false) {
     // Check if Firebase is already initialized
     if (!firebase.apps.length) {
       app = firebase.initializeApp(firebaseConfig)
-      console.log('✅ Firebase App inicializado');
+
     } else {
       app = firebase.app()
-      console.log('✅ Firebase App já existe');
+
     }
 
     // Initialize Firestore FIRST (before any other operations)
     db = firebase.firestore()
-    console.log('✅ Firestore inicializado');
+
 
     // Initialize Auth
     auth = firebase.auth()
-    console.log('✅ Auth inicializado');
+
 
     // Tenta habilitar persistência apenas se ainda não tentou
     if (!persistenceAttempted) {
       persistenceAttempted = true;
       
       try {
-        // Usar cache apenas, sem persistência completa
-        await db.settings({
-          cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-          // Melhora compatibilidade de rede (proxies/firewalls, ad-blockers, ambientes corporativos)
-          experimentalAutoDetectLongPolling: true,
-          useFetchStreams: false
-          // Se necessário, force o long-polling sempre (menos eficiente):
-          // experimentalForceLongPolling: true
-        });
-        console.log('✅ Firestore settings aplicados (cache + rede)');
+    // Usar cache apenas, sem persistência completa
+    await db.settings({
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+        // Melhora compatibilidade de rede (proxies/firewalls, ad-blockers, ambientes corporativos)
+        experimentalAutoDetectLongPolling: true,
+        useFetchStreams: false,
+        
+        // ADICIONE ESTA LINHA PARA RESOLVER O AVISO
+        merge: true 
+        
+        // Se necessário, force o long-polling sempre (menos eficiente):
+        // experimentalForceLongPolling: true
+    });
+
         
         // Tentar persistência de forma assíncrona
         setTimeout(async () => {
@@ -112,11 +116,11 @@ async function initializeFirebase(forceClearIndexedDB = false) {
             await db.enablePersistence({
               synchronizeTabs: true,
             });
-            console.log('✅ Persistência habilitada com sucesso');
+
           } catch (err) {
             if (err.code === "failed-precondition") {
               // Suprimir o aviso de múltiplas abas no console
-              console.log("ℹ️ Usando cache sem persistência completa");
+
             } else {
               console.warn("⚠️ Erro ao habilitar persistência:", err);
             }
@@ -126,13 +130,13 @@ async function initializeFirebase(forceClearIndexedDB = false) {
         console.warn("⚠️ Erro ao configurar cache:", err);
       }
     } else {
-      console.log('ℹ️ Persistência já foi tentada anteriormente');
+
     }
 
     // Export to global scope for compatibility
     window.db = db
     window.auth = auth
-    console.log("✅ Firebase inicializado com sucesso")
+
     return { app, db, auth }
   } catch (error) {
     console.error("❌ Erro ao inicializar Firebase:", error)
@@ -159,7 +163,7 @@ function setupConsoleFilter() {
       originalWarn.apply(console, args);
     };
     
-    console.log('✅ Filtro de console configurado');
+
   } catch (error) {
     console.error('❌ Erro ao configurar filtro de console:', error);
   }
@@ -203,14 +207,14 @@ function getApp() {
  * Usar apenas em caso de problemas
  */
 async function clearCacheAndReinitialize() {
-  console.log('🔄 Limpando cache e reinicializando Firebase...');
+
   
   // Tentar desconectar primeiro
   try {
     if (db) {
       // Terminar todas as conexões do Firestore
       db.terminate && db.terminate();
-      console.log('✅ Firestore terminado');
+
     }
   } catch (error) {
     console.warn('⚠️ Erro ao terminar Firestore:', error);

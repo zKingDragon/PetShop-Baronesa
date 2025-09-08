@@ -49,7 +49,7 @@ async function initializeServices() {
     productsService = window.ProductsService;
     authService = window.AuthService;
 
-    console.log("Services initialized successfully");
+
   } catch (error) {
     console.error("Error initializing services:", error);
     showError("Erro ao conectar com o banco de dados. Alguns recursos podem não funcionar corretamente.");
@@ -86,7 +86,7 @@ async function loadProducts() {
 
     // Check if we have cached products and we're offline
     if (allProducts.length > 0 && !navigator.onLine) {
-      console.log("Using cached products (offline)")
+
       filteredProducts = [...allProducts]
       renderProducts(filteredProducts)
       updateProductCounter()
@@ -110,7 +110,7 @@ async function loadProducts() {
 
     // If no products found, seed with sample data (for development)
     if (allProducts.length === 0) {
-      console.log("No products found, seeding with sample data...")
+
       await seedSampleProducts()
       allProducts = await productsService.getAllProducts()
     }
@@ -121,7 +121,7 @@ async function loadProducts() {
     // Apply any existing filters
     applyFilters()
 
-    console.log(`Loaded ${allProducts.length} products`)
+
   } catch (error) {
     console.error("Error loading products:", error)
     showError("Erro ao carregar produtos. Tente novamente mais tarde.")
@@ -146,7 +146,7 @@ async function seedSampleProducts() {
   const sampleProducts = getSampleProducts()
   try {
     await productsService.bulkCreateProducts(sampleProducts)
-    console.log("Sample products seeded successfully")
+
   } catch (error) {
     console.error("Error seeding sample products:", error)
   }
@@ -783,17 +783,17 @@ function clearAllFiltersAndActivateAllBtn() {
  */
 function applyFiltersFromURL() {
   const urlParams = new URLSearchParams(window.location.search)
-  console.log('🔗 Parâmetros da URL:', window.location.search)
+
 
   // Obtém categoria da URL
   const categoryParam = urlParams.get("categoria")
   if (categoryParam) {
-    console.log('🏷️ Categoria detectada na URL:', categoryParam)
+
     const checkbox = document.querySelector(`input[name="category"][value="${categoryParam}"]`)
     if (checkbox) {
       checkbox.checked = true
       filterState.categories.push(categoryParam)
-      console.log('✅ Filtro de categoria aplicado:', categoryParam)
+
     } else {
       console.warn('⚠️ Categoria não encontrada nos filtros:', categoryParam)
     }
@@ -802,7 +802,7 @@ function applyFiltersFromURL() {
   // Obtém termo de busca da URL
   const searchParam = urlParams.get("busca")
   if (searchParam) {
-    console.log('🔍 Termo de busca detectado na URL:', searchParam)
+
     if (searchInput) searchInput.value = searchParam
     if (searchInputMobile) searchInputMobile.value = searchParam
     filterState.search = searchParam
@@ -810,7 +810,7 @@ function applyFiltersFromURL() {
 
   // Aplica filtros se houver parâmetros encontrados
   if (categoryParam || searchParam) {
-    console.log('⚡ Aplicando filtros da URL...')
+
     applyFilters()
   }
 }
@@ -1036,12 +1036,12 @@ function initEventListeners() {
 
   // Listen for online/offline events
   window.addEventListener("online", () => {
-    console.log("Back online, refreshing products...")
+
     loadProducts()
   })
 
   window.addEventListener("offline", () => {
-    console.log("Gone offline, using cached data")
+
     if (window.showToast) {
       window.showToast("Você está offline. Usando dados em cache.", "info")
     }

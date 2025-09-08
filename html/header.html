@@ -78,7 +78,7 @@
     const pathPrefix = isInRoot ? 'html/' : '';
     const assetPrefix = isInRoot ? '' : '../';
     
-    console.log('🔗 Configurando caminhos do header para:', isInRoot ? 'página raiz' : 'subpasta html');
+
     
     // Função para atualizar links imediatamente
     function updateHeaderLinks() {
@@ -86,19 +86,19 @@
         const homeLink = document.querySelector('.header-home-link');
         if (homeLink) {
             homeLink.href = isInRoot ? 'index.html' : '../index.html';
-            console.log('✅ Logo link configurado:', homeLink.href);
+
         }
         
         // Atualiza imagem do logo
         const logoImg = document.querySelector('.header-logo-img');
         if (logoImg) {
             logoImg.src = assetPrefix + 'assets/images/gerais/iconeBaronesa.png';
-            console.log('✅ Logo img configurada:', logoImg.src);
+
         }
         
         // Configura todos os links com data-page usando event listeners
         const headerLinks = document.querySelectorAll('.header-link[data-page]');
-        console.log('🔍 Configurando', headerLinks.length, 'links do header');
+
         
         headerLinks.forEach(link => {
             const page = link.getAttribute('data-page');
@@ -110,20 +110,20 @@
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetUrl = pathPrefix + page + '.html';
-                    console.log(`🔄 Navegando para: ${page} -> ${targetUrl}`);
+
                     window.location.href = targetUrl;
                 });
                 
                 // Adiciona cursor pointer
                 link.style.cursor = 'pointer';
                 
-                console.log(`✅ Link ${page} configurado para: ${pathPrefix + page}.html`);
+
             }
         });
     }
     
 
     
-    console.log('✅ Header navigation configured successfully');
+
 })();
 </script>

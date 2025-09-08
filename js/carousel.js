@@ -22,7 +22,7 @@ class Carousel {
    * Initialize the carousel
    */
   async init() {
-    console.log('🎠 Inicializando carousel...');
+
     
     this.carousel = document.getElementById("mainCarousel");
     if (!this.carousel) {
@@ -49,7 +49,7 @@ class Carousel {
       this.startAutoSlide();
     }
     
-    console.log('✅ Carousel inicializado');
+
   }
 
   /**
@@ -76,7 +76,7 @@ class Carousel {
     try {
       this.isLoading = true;
       this.showLoading(true);
-      console.log('📊 Carregando slides para o carousel...');
+
 
       let slidesData = [];
 
@@ -84,7 +84,7 @@ class Carousel {
       if (this.slidesService && window.db) {
         try {
           slidesData = await this.slidesService.getSlidesForCarousel();
-          console.log('✅ Slides carregados do banco:', slidesData.length);
+
         } catch (error) {
           console.warn('⚠️ Erro ao carregar do banco, usando fallback:', error.message);
         }
@@ -92,7 +92,7 @@ class Carousel {
 
       // Fallback to default slides if database fails or no slides found
       if (slidesData.length === 0) {
-        console.log('📁 Usando slides padrão como fallback');
+
         slidesData = this.getDefaultSlides();
       }
 
@@ -151,7 +151,7 @@ class Carousel {
   renderSlides(slidesData) {
     if (!this.carousel) return;
     
-    console.log('🎨 Renderizando slides:', slidesData.length);
+
 
     // Clear existing content
     this.carousel.innerHTML = '';
@@ -190,7 +190,7 @@ class Carousel {
     this.slides = this.carousel.querySelectorAll('.carousel-slide');
     this.indicators = indicatorsContainer ? indicatorsContainer.querySelectorAll('.indicator') : [];
     
-    console.log(`✅ ${this.slides.length} slides renderizados`);
+
 
     // Start carousel if we have slides
     if (this.autoPlay && this.slides.length > 0) {
@@ -326,7 +326,7 @@ class Carousel {
    * Refresh slides from database
    */
   async refresh() {
-    console.log('🔄 Atualizando slides do carousel...');
+
     this.stopAutoSlide();
     await this.loadSlides();
     this.setupIndicatorListeners();
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Global function to refresh carousel from external scripts
 window.refreshCarousel = async function() {
   if (window.carousel) {
-    console.log('🔄 Atualizando carousel via função global...');
+
     await window.carousel.refresh();
     return 'Carousel atualizado com sucesso!';
   } else {

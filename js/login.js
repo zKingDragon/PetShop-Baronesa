@@ -3,11 +3,11 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🔄 Inicializando página de login...');
+
   
   // Aguarda Firebase estar disponível (já inicializado globalmente)
   await waitForFirebase()
-  console.log('✅ Firebase disponível para login');
+
 
   // Aguarda um pouco mais para garantir que todos os listeners estão prontos
   await new Promise(resolve => setTimeout(resolve, 500));
@@ -15,13 +15,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Verifica se já está logado
   const currentUser = firebase.auth().currentUser;
   if (currentUser) {
-    console.log('✅ Usuário já logado, redirecionando...', currentUser.uid);
+
     const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
     window.location.href = returnUrl
     return
   }
 
-  console.log('👤 Usuário não logado, configurando formulário...');
+
 
   // Pré-preenche o email se veio da página de cadastro
   const urlParams = new URLSearchParams(window.location.search);
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (passwordInput) {
         setTimeout(() => passwordInput.focus(), 100);
       }
-      console.log('📧 Email pré-preenchido:', prefilledEmail);
+
     }
   }
 
@@ -57,10 +57,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             firebase.firestore &&
             firebase.apps &&
             firebase.apps.length > 0) {
-          console.log('✅ Firebase completamente carregado');
+
           resolve();
         } else {
-          console.log('⏳ Aguardando Firebase...');
+
           setTimeout(checkFirebase, 100);
         }
       };
@@ -99,13 +99,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     hideError()
 
     try {
-      console.log('Tentando fazer login com:', email);
+
       
       // Login direto com Firebase
       const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
       const user = userCredential.user
       
-      console.log('✅ Login realizado com sucesso:', user.uid);
+
       
       // Sucesso - redireciona para a página anterior ou home
       const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
@@ -153,10 +153,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     hideError()
 
     try {
-      console.log('Tentando login demo com:', email);
+
       
       const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
-      console.log('✅ Login demo realizado:', userCredential.user.uid);
+
       
       // Sucesso - redireciona
       const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
@@ -168,11 +168,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Se a conta de demo não existir, cria automaticamente
       if (error.code === 'auth/user-not-found') {
         try {
-          console.log('🔧 Criando conta demo automaticamente...');
+
           await createDemoAccount(email, password)
           
           const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password)
-          console.log('✅ Login após criação demo:', userCredential.user.uid);
+
           
           const returnUrl = new URLSearchParams(window.location.search).get('return') || '../index.html'
           window.location.href = returnUrl
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       
       await firebase.firestore().collection("usuarios").doc(user.uid).set(userData)
-      console.log('✅ Conta demo criada e salva:', user.uid);
+
       
     } catch (error) {
       console.error('❌ Erro ao criar conta demo:', error);

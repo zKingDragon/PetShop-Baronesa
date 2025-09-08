@@ -71,7 +71,7 @@ window.enableDebug = function() {
         window.Logger.enableDebug();
         window.Logger.system('Debug', 'Modo debug ativado manualmente');
     }
-    console.log('🐛 Modo debug ativado! Use window.disableDebug() para desativar.');
+
 };
 
 window.disableDebug = function() {
@@ -81,7 +81,7 @@ window.disableDebug = function() {
         window.Logger.setLevel('error');
         window.Logger.system('Debug', 'Modo debug desativado');
     }
-    console.log('🔇 Modo debug desativado.');
+
 };
 
 // Função para ver logs de erro coletados
@@ -92,7 +92,7 @@ window.viewErrorLogs = function() {
             console.table(logs);
             return logs;
         } else {
-            console.log('📋 Nenhum log de erro encontrado.');
+
             return [];
         }
     }
@@ -102,7 +102,7 @@ window.viewErrorLogs = function() {
 window.clearLogs = function() {
     if (window.Logger) {
         window.Logger.clearErrorLogs();
-        console.log('🧹 Logs limpos.');
+
     }
 };
 
@@ -150,12 +150,12 @@ function detectEnvironment() {
     
     // Log de inicialização (apenas em desenvolvimento)
     if (window.DEBUG_MODE) {
-        console.log(`🏗️ Ambiente detectado: ${env.environment}`);
-        console.log('🔧 Comandos disponíveis:');
-        console.log('  - window.enableDebug() - Ativar logs');
-        console.log('  - window.disableDebug() - Desativar logs'); 
-        console.log('  - window.viewErrorLogs() - Ver logs de erro');
-        console.log('  - window.clearLogs() - Limpar logs');
+
+
+
+
+
+
     }
     
     // Salvar configurações globalmente

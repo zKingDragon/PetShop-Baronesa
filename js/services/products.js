@@ -141,7 +141,7 @@ class ProductsService {
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       }
       await this.db.collection(this.collection).doc(productId).update(updateWithTimestamp)
-      console.log("Product updated:", productId)
+
     } catch (error) {
       console.error("Error updating product:", error)
       throw new Error("Erro ao atualizar produto")
@@ -157,7 +157,7 @@ class ProductsService {
     try {
       await this.db.collection(this.collection).doc(productId).delete()
 
-      console.log("Product deleted:", productId)
+
     } catch (error) {
       console.error("Error deleting product:", error)
       throw new Error("Erro ao excluir produto")
@@ -379,7 +379,7 @@ class ProductsService {
         await this.createProduct(product)
       }
 
-      console.log("Sample products seeded successfully")
+
     } catch (error) {
       console.error("Error seeding products:", error)
       throw new Error("Erro ao criar produtos de exemplo")
@@ -432,7 +432,7 @@ if (typeof firebase !== 'undefined' && firebase.firestore) {
   const checkFirebase = () => {
     if (typeof firebase !== 'undefined' && firebase.firestore) {
       productsService.db = firebase.firestore();
-      console.log('ProductsService initialized with Firebase');
+
     } else {
       setTimeout(checkFirebase, 100);
     }
@@ -446,7 +446,7 @@ window.ProductsService = productsService;
 // Para compatibilidade, também disponibiliza a classe
 window.ProductsServiceClass = ProductsService;
 
-console.log('ProductsService initialized and available globally');
+
 
 // Para importar e usar corretamente em outro arquivo:
 // import productsService from './services/products.js' // ajuste o caminho conforme necessário

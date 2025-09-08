@@ -33,11 +33,11 @@ async function checkUserType(uid) {
         // Verificar cache primeiro
         if (userTypeCache && cacheTimestamp && 
             Date.now() - cacheTimestamp < CACHE_DURATION) {
-            console.log('Usando cache para tipo de usuário:', userTypeCache)
+
             return userTypeCache
         }
 
-        console.log('Verificando tipo de usuário no banco de dados para UID:', uid)
+
         
         // Tentativa 1: Verificar no Firestore
         if (typeof db !== 'undefined' && db) {
@@ -55,7 +55,7 @@ async function checkUserType(uid) {
                     uid: uid
                 }))
                 
-                console.log('Tipo de usuário encontrado no Firestore:', userType)
+
                 return userType
             }
         }
@@ -67,7 +67,7 @@ async function checkUserType(uid) {
             if (cachedUid === uid && Date.now() - timestamp < CACHE_DURATION) {
                 userTypeCache = type
                 cacheTimestamp = timestamp
-                console.log('Usando cache localStorage para tipo de usuário:', type)
+
                 return type
             }
         }
@@ -109,13 +109,12 @@ async function getCurrentUserType() {
     try {
         const currentUser = getCurrentUser()
         if (!currentUser) {
-            return 'guest'
+            console.warn('Usuário não encontrado no banco de dados, default para guest')
+            return 'guest' // Default para guest se não for encontrado (mais seguro)
         }
-
         return await checkUserType(currentUser.uid)
     } catch (error) {
-        console.error('Erro ao obter tipo de usuário atual:', error)
-        return 'guest'
+        return 'guest' // Default para guest em caso de erro (mais seguro)
     }
 }
 
@@ -128,17 +127,17 @@ async function isAdmin(user = null) {
     try {
         const currentUser = user || getCurrentUser()
         if (!currentUser) {
-            console.log('[isAdmin] Nenhum usuário logado');
+
             return false
         }
 
-        console.log('[isAdmin] Verificando admin para:', currentUser.email);
+
         
         const userType = await checkUserType(currentUser.uid)
-        console.log('[isAdmin] Tipo do usuário:', userType);
+
         
         const isAdminResult = userType === 'admin';
-        console.log('[isAdmin] Resultado:', isAdminResult);
+
         
         return isAdminResult;
     } catch (error) {
@@ -166,7 +165,7 @@ async function updateUserType(uid, newType) {
             throw new Error('Tipo de usuário inválido. Apenas "admin" é permitido')
         }
 
-        console.log(`Atualizando tipo de usuário ${uid} para: ${newType}`)
+
 
         // Atualizar no Firestore
         if (typeof db !== 'undefined' && db) {
@@ -183,7 +182,7 @@ async function updateUserType(uid, newType) {
             clearUserTypeCache()
         }
 
-        console.log(`Tipo de usuário atualizado para: ${newType}`)
+
         return true
     } catch (error) {
         console.error('Erro ao atualizar tipo de usuário:', error)
@@ -198,7 +197,7 @@ function clearUserTypeCache() {
     userTypeCache = null
     cacheTimestamp = null
     localStorage.removeItem(USER_TYPE_CACHE_KEY)
-    console.log('Cache de tipo de usuário limpo')
+
 }
 
 /**
@@ -226,7 +225,7 @@ function getAuthUser() {
  */
 async function login(email, password) {
     try {
-        console.log('Tentando fazer login com:', email)
+
         
         // Garantir que o Firebase está inicializado
         if (typeof initializeFirebase === 'function') {
@@ -237,7 +236,7 @@ async function login(email, password) {
         
         // Verificar tipo de usuário no banco de dados
         const userType = await checkUserType(userCredential.user.uid)
-        console.log('Login realizado com sucesso. Tipo de usuário:', userType)
+
         
         // Salvar dados de autenticação
         const authData = {
@@ -277,7 +276,7 @@ async function logout() {
         // Limpar dados locais
         localStorage.removeItem(AUTH_KEY)
         
-        console.log('Logout realizado com sucesso')
+
         
         // Atualizar UI
         updateAuthUI()
@@ -305,43 +304,92 @@ function notifyAuthStateChange(user) {
   });
   document.dispatchEvent(event);
 }
-
 /**
  * Atualiza a interface de usuário com base no estado de autenticação
  */
 async function updateAuthUI() {
-    const isLoggedIn = isAuthenticated()
-    const user = getCurrentUser()
+    const isLoggedIn = isAuthenticated();
+    const user = getCurrentUser();
 
     if (isLoggedIn && user) {
         try {
-            const userType = await getCurrentUserType()
-            const displayName = await getUserDisplayName()
-            
-            if (authButtons) authButtons.style.display = "none"
+            const userType = await getCurrentUserType();
+            const displayName = await getUserDisplayName();
+
+            if (authButtons) authButtons.style.display = "none";
             if (userMenu) {
-                userMenu.style.display = "block"
+                userMenu.style.display = "block";
                 if (userNameDisplay) {
-                    userNameDisplay.textContent = displayName
-                    
+                    userNameDisplay.textContent = displayName;
+
                     // Adicionar indicador visual para admin
                     if (userType === 'admin') {
-                        userNameDisplay.innerHTML = `<i class="fas fa-crown" style="color: gold; margin-right: 5px;"></i>${displayName}`
+                        userNameDisplay.innerHTML = `<i class="fas fa-crown" style="color: gold; margin-right: 5px;"></i>${displayName}`;
                     }
                 }
+
+                // --- NOVO CÓDIGO PARA CRIAR O DROPDOWN ---
+                // Verifica se o dropdown já não foi criado antes
+                if (!document.getElementById('user-dropdown-menu')) {
+                    const dropdown = document.createElement('div');
+                    dropdown.id = 'user-dropdown-menu';
+                    dropdown.className = 'user-dropdown'; // Adicione uma classe para estilizar no CSS
+
+                    // Itens do menu
+                    const menuItems = [
+                        { text: 'Meu Perfil', href: '/perfil.html' },
+                        { text: 'Meus Pedidos', href: '/pedidos.html' }
+                    ];
+
+                    // Adiciona o link do Painel Admin apenas se o usuário for admin
+                    if (userType === 'admin') {
+                        menuItems.push({ text: 'Painel Admin', href: '/admin.html' });
+                    }
+
+                    menuItems.forEach(item => {
+                        const link = document.createElement('a');
+                        link.href = item.href;
+                        link.textContent = item.text;
+                        dropdown.appendChild(link);
+                    });
+
+                    // Adiciona um separador
+                    const separator = document.createElement('hr');
+                    dropdown.appendChild(separator);
+
+                    // Adiciona o botão de Sair (Logout)
+                    const logoutButton = document.createElement('a');
+                    logoutButton.textContent = 'Sair';
+                    logoutButton.href = '#'; // Usamos # para não redirecionar a página
+                    logoutButton.onclick = (e) => {
+                        e.preventDefault(); // Impede o link de navegar
+                        // Chame sua função de logout aqui. Exemplo:
+                        // auth.signOut(); 
+                        console.log('Função de logout chamada!');
+                    };
+                    dropdown.appendChild(logoutButton);
+                    
+                    // Anexa o dropdown ao menu do usuário
+                    userMenu.appendChild(dropdown);
+                }
+
             }
         } catch (error) {
-            console.error('Erro ao atualizar UI:', error)
+            console.error('Erro ao atualizar UI:', error);
         }
     } else {
-        if (authButtons) authButtons.style.display = "flex"
-        if (userMenu) userMenu.style.display = "none"
-    }
-    
-    // Notifica o footer sobre a mudança de estado
-    notifyAuthStateChange(user)
-}
+        if (authButtons) authButtons.style.display = "flex";
+        if (userMenu) userMenu.style.display = "none";
 
+        const dropdown = document.getElementById('user-dropdown-menu');
+        if (dropdown) {
+            dropdown.remove();
+        }
+    }
+
+    // Notifica o footer sobre a mudança de estado
+    notifyAuthStateChange(user);
+}
 /**
  * Obtém o nome de exibição do usuário baseado no tipo
  * @returns {Promise<string>} - Nome de exibição
@@ -381,7 +429,7 @@ async function loginWithGoogle() {
         
         // Verificar tipo de usuário no banco de dados
         const userType = await checkUserType(result.user.uid)
-        console.log('Login com Google realizado. Tipo de usuário:', userType)
+
         
         // Salvar dados de autenticação
         const authData = {
@@ -410,7 +458,7 @@ async function loginWithGoogle() {
 function setupAuthStateListener() {
     if (typeof firebase !== 'undefined' && firebase.auth) {
         firebase.auth().onAuthStateChanged(async (user) => {
-            console.log('Estado de autenticação alterado:', user ? user.email : 'não logado')
+
             
             if (user) {
                 // Usuário logado - verificar tipo no banco de dados

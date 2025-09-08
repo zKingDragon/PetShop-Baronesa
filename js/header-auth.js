@@ -21,7 +21,7 @@ function initHeaderAuth() {
     
     // Escuta mudanças no estado de autenticação
     document.addEventListener('authStateChanged', () => {
-        console.log('🔄 Auth state changed event recebido');
+
         // Garante que o dropdown esteja no DOM
         tryInsertDropdown();
         updateHeaderUI();
@@ -30,7 +30,7 @@ function initHeaderAuth() {
     // Escuta mudanças do Firebase Auth diretamente
     if (typeof firebase !== 'undefined' && firebase.auth) {
         firebase.auth().onAuthStateChanged((user) => {
-            console.log('🔄 Firebase Auth state changed:', user ? user.email : 'logged out');
+
             // Garante que o dropdown esteja no DOM
             tryInsertDropdown();
             updateHeaderUI();
@@ -44,7 +44,7 @@ function initHeaderAuth() {
             tryInsertDropdown();
             const loggedIn = typeof firebase !== 'undefined' && firebase.auth && !!firebase.auth().currentUser;
             if (loggedIn && userDropdown && userDropdown.style.display === 'none') {
-                console.log('🔄 DOM mudou, re-verificando header...');
+
                 updateHeaderUI();
             }
         } catch (_) {}
@@ -124,7 +124,7 @@ function createUserDropdown() {
     }
     
     userNameDisplay = document.getElementById('headerUserName');
-    console.log('User dropdown created for:', isInRoot ? 'root page' : 'html subfolder');
+
 }
 
 // NOVO: helper para reinserir caso o header carregue depois
@@ -174,7 +174,7 @@ function setupDropdownEvents() {
             try {
                 if (typeof firebase !== 'undefined' && firebase.auth) {
                     await firebase.auth().signOut();
-                    console.log('Logout realizado com sucesso');
+
                     // Dispara evento personalizado
                     document.dispatchEvent(new CustomEvent('authStateChanged'));
                     
@@ -208,7 +208,7 @@ function setupDropdownEvents() {
  */
 async function updateHeaderUI() {
     try {
-        console.log('🔄 Iniciando atualização do header UI...');
+
         
         // Verifica se está logado usando Firebase diretamente
         let isLoggedIn = false;
@@ -219,21 +219,21 @@ async function updateHeaderUI() {
             isLoggedIn = !!currentUser;
         }
         
-        console.log('👤 Status de login:', isLoggedIn, currentUser?.email);
+
         
         // Garante que o dropdown esteja no DOM antes de mexer na UI
         tryInsertDropdown();
         
         if (isLoggedIn) {
             // Usuário logado - mostrar dropdown
-            console.log('✅ Mostrando dropdown de usuário');
+
             if (loginButton) {
                 loginButton.style.display = 'none';
-                console.log('✅ Botão login ocultado');
+
             }
             if (userDropdown) {
                 userDropdown.style.display = 'block';
-                console.log('✅ Dropdown mostrado');
+
             }
             
             // Atualizar nome do usuário
@@ -243,14 +243,14 @@ async function updateHeaderUI() {
             await updateUserLinks();
         } else {
             // Usuário não logado - mostrar botão de login
-            console.log('❌ Mostrando botão de login');
+
             if (loginButton) {
                 loginButton.style.display = 'block';
-                console.log('✅ Botão login mostrado');
+
             }
             if (userDropdown) {
                 userDropdown.style.display = 'none';
-                console.log('✅ Dropdown ocultado');
+
             }
         }
     } catch (error) {
@@ -345,7 +345,7 @@ async function updateUserLinks() {
         } else {
             removeAdminBadge();
         }
-        console.log('✅ Links atualizados (visíveis somente quando logado)');
+
     } catch (error) {
         console.error('Erro ao atualizar links do usuário:', error);
     }
@@ -381,7 +381,7 @@ function removeAdminBadge() {
 
 // Inicializa quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏁 DOM carregado, iniciando header auth...');
+
     
     // Função para aguardar Firebase estar pronto
     function waitForFirebase() {
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const check = () => {
                 if (typeof firebase !== 'undefined' && firebase.auth && typeof window.auth !== 'undefined') {
-                    console.log('✅ Firebase e auth prontos');
+
                     resolve();
                     return;
                 }
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Também tenta inicializar quando o header é carregado via fetch
 document.addEventListener('headerLoaded', function() {
-    console.log('🎯 Header carregado via fetch');
+
     initHeaderAuth();
     tryInsertDropdown();
 });

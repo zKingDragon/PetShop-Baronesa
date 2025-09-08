@@ -154,9 +154,9 @@ class Logger {
         if (this.isDevelopment) {
             const style = `color: ${this.colors.info}; font-weight: bold;`;
             if (data) {
-                console.log(`%cℹ️ [${timestamp}] ${context}:`, style, message, data);
+
             } else {
-                console.log(`%cℹ️ [${timestamp}] ${context}:`, style, message);
+
             }
         }
     }
@@ -172,9 +172,9 @@ class Logger {
         if (this.isDevelopment) {
             const style = `color: ${this.colors.debug}; font-size: 0.9em;`;
             if (data) {
-                console.log(`%c🐛 [${timestamp}] ${context}:`, style, message, data);
+
             } else {
-                console.log(`%c🐛 [${timestamp}] ${context}:`, style, message);
+
             }
         }
     }
@@ -188,9 +188,9 @@ class Logger {
         if (this.isDevelopment) {
             const style = `color: ${this.colors.system}; font-weight: bold; font-size: 1.1em;`;
             if (data) {
-                console.log(`%c🛡️ [${timestamp}] ${context}:`, style, message, data);
+
             } else {
-                console.log(`%c🛡️ [${timestamp}] ${context}:`, style, message);
+
             }
         } else {
             // Em produção, apenas erros críticos do sistema
@@ -243,7 +243,7 @@ class Logger {
     table(context, data) {
         if (!this.isDevelopment) return;
         
-        console.log(`📊 ${context}:`);
+
         console.table(data);
     }
     

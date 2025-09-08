@@ -50,7 +50,7 @@ Logger.performance('ModuleName', 'Operação concluída', 150);
 
 ### ❌ Antes (não profissional)
 ```javascript
-console.log('Produto carregado:', product);
+
 console.error('Erro ao salvar:', error);
 console.warn('Atenção:', warning);
 ```
@@ -209,7 +209,7 @@ console.table(errorLogs); // Para análise posterior
 ### E-commerce (Carrinho)
 ```javascript
 // ❌ Antes
-console.log('Item adicionado ao carrinho:', item);
+
 
 // ✅ Depois  
 logInfo('CartService', 'Item adicionado ao carrinho', {
@@ -222,7 +222,7 @@ logInfo('CartService', 'Item adicionado ao carrinho', {
 ### Autenticação
 ```javascript
 // ❌ Antes
-console.log('Usuário logado:', user.email);
+
 console.error('Erro no login:', error);
 
 // ✅ Depois
@@ -236,8 +236,8 @@ logError('AuthService', 'Falha na autenticação', {
 ### API Calls
 ```javascript
 // ❌ Antes
-console.log('Fazendo requisição para:', url);
-console.log('Resposta recebida:', data);
+
+
 
 // ✅ Depois
 logDebug('APIService', `Requisição iniciada: ${url}`);

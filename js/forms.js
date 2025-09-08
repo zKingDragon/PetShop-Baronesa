@@ -1,8 +1,8 @@
-console.log('📋 forms.js carregado')
+
 
 // Função para inicializar os formulários
 document.addEventListener("DOMContentLoaded", () => {
-  console.log('📋 DOM carregado, inicializando formulários')
+
   initAppointmentForm()
   initCadastroForm()
   initPasswordToggles()
@@ -18,7 +18,7 @@ function initAppointmentForm() {
     const form = document.getElementById('appointmentForm');
     if (!form) return;
 
-    console.log('✅ Formulário de agendamento encontrado');
+
 
     // Adicionar evento para mostrar/ocultar campo de porte do cachorro
     const petTypeSelect = document.getElementById('petType');
@@ -186,7 +186,7 @@ function initCadastroForm() {
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         })
 
-        console.log('Usuário cadastrado com sucesso:', user.uid)
+
         showSuccessMessage()
       } catch (error) {
         console.error('Erro ao cadastrar:', error)
@@ -329,9 +329,9 @@ function saveAddressData(addressData) {
  * Limpa os dados de endereço do localStorage
  */
 function clearAddressData() {
-  console.log('🗑️ Removendo dados do localStorage...')
+
   localStorage.removeItem(ADDRESS_KEY)
-  console.log('✅ Dados removidos do localStorage')
+
 }
 
 /**
@@ -825,7 +825,7 @@ function updateAddressDisplay() {
  * Limpa as informações do endereço com confirmação
  */
 function clearAddressInfo() {
-  console.log('🗑️ clearAddressInfo chamada')
+
   
   // Modal de confirmação personalizado
   showConfirmationModal({
@@ -834,19 +834,19 @@ function clearAddressInfo() {
     confirmText: 'Sim, Limpar',
     cancelText: 'Cancelar',
     onConfirm: () => {
-      console.log('✅ Confirmação para limpar endereço')
+
       
       // Limpar dados do localStorage
       clearAddressData()
-      console.log('🗑️ Dados removidos do localStorage')
+
       
       // Atualizar interface
       updateAddressDisplay()
-      console.log('🔄 Interface atualizada')
+
       
       // Mostrar mensagem de sucesso
       showAddressClearMessage()
-      console.log('✅ Mensagem de sucesso exibida')
+
     }
   })
 }

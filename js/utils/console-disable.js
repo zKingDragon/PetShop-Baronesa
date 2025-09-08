@@ -36,7 +36,7 @@
     function disableConsoleInProduction() {
         if (isDevelopmentEnvironment()) {
             // Em desenvolvimento, manter logs
-            console.log('🔧 Ambiente de desenvolvimento detectado - logs habilitados');
+
             return;
         }
         
@@ -109,7 +109,7 @@
             console.assert = window._originalConsole.assert;
             
             window.CONSOLE_DISABLED = false;
-            console.log('🔧 Console reabilitado');
+
         }
     }
     
@@ -118,7 +118,7 @@
      */
     function disableConsole() {
         disableConsoleInProduction();
-        console.log('🔇 Console desabilitado');
+
     }
     
     // Executar imediatamente

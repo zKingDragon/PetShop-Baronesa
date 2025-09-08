@@ -27,7 +27,7 @@ function initProductFilters() {
     if (filterContainer) {
         filterContainer.addEventListener('submit', function(e) {
             e.preventDefault();
-            console.log('⚠️ Submissão de formulário bloqueada nos filtros');
+
             return false;
         });
         
@@ -35,7 +35,7 @@ function initProductFilters() {
         filterContainer.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
                 e.preventDefault();
-                console.log('⚠️ Enter bloqueado no campo:', e.target.id || e.target.name);
+
                 return false;
             }
         });
@@ -47,7 +47,7 @@ function initProductFilters() {
         searchInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                console.log('⚠️ Enter bloqueado no campo de busca');
+
                 return false;
             }
         });
@@ -187,7 +187,7 @@ function handleResponsiveFilters() {
     const filterToggleContainer = document.querySelector('.admin-filter-mobile-toggle');
     const filterToggleBtn = document.getElementById('filterToggleBtn');
     
-    console.log(`📱 Ajustando responsividade ADMIN - Mobile: ${isMobile}, Sidebars: ${adminSidebars.length}`);
+
     
     adminSidebars.forEach((sidebar, index) => {
         if (isMobile) {
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', handleResponsiveFilters);
 
 // Handle window resize to manage mobile/desktop states
 window.addEventListener('resize', debounce(function() {
-    console.log('📱 Redimensionamento detectado - Nova largura:', window.innerWidth);
+
     
     const isMobile = window.innerWidth <= 1023;
     const adminSidebars = document.querySelectorAll('.admin-sidebar');
@@ -259,7 +259,7 @@ window.addEventListener('resize', debounce(function() {
 }, 250));
 
 function initMobileFilterToggle() {
-    console.log('📱 Configurando toggle de filtros ADMIN mobile...');
+
     
     // Mobile filter toggle for products
     const filterToggleBtn = document.getElementById('filterToggleBtn');
@@ -315,10 +315,10 @@ function setupFilterToggle(toggleBtn, sidebar, type) {
         e.preventDefault();
         e.stopPropagation();
         
-        console.log(`📱 Toggle filtros ${type.toUpperCase()} clicado`);
+
         
         const isActive = sidebar.classList.contains('active');
-        console.log(`Estado atual ${type} (ativo):`, isActive);
+
         
         if (isActive) {
             // Ocultar filtros
@@ -326,14 +326,14 @@ function setupFilterToggle(toggleBtn, sidebar, type) {
             sidebar.style.display = 'none';
             newBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
             newBtn.setAttribute('aria-expanded', 'false');
-            console.log(`📱 Filtros ${type.toUpperCase()} ocultados`);
+
         } else {
             // Mostrar filtros
             sidebar.classList.add('active');
             sidebar.style.display = 'block';
             newBtn.innerHTML = '<i class="fas fa-times"></i> Fechar Filtros';
             newBtn.setAttribute('aria-expanded', 'true');
-            console.log(`📱 Filtros ${type.toUpperCase()} exibidos`);
+
             
             // Scroll suave para os filtros
             setTimeout(() => {
@@ -345,14 +345,14 @@ function setupFilterToggle(toggleBtn, sidebar, type) {
         }
     });
     
-    console.log(`✅ Toggle filtros ${type.toUpperCase()} configurado com sucesso`);
+
 }
 
 /**
  * Cria o botão de filtro admin se não existir
  */
 function createAdminFilterButton() {
-    console.log('🔧 Criando botão de filtro ADMIN...');
+
     
     const adminLayout = document.querySelector('.admin-layout') || 
                        document.querySelector('.admin-content') ||
@@ -403,7 +403,7 @@ function createAdminFilterButton() {
         // Inserir no início do container
         adminLayout.insertBefore(filterToggleContainer, adminLayout.firstChild);
         
-        console.log('✅ Botão de filtro ADMIN criado');
+
         
         // Reconfigurar após criação
         setTimeout(() => {
@@ -417,7 +417,7 @@ function createAdminFilterButton() {
  */
 const adminFiltersDebug = {
     checkElements() {
-        console.log('🔧 === DEBUG FILTROS ADMIN ===');
+
         
         const filterToggleBtn = document.getElementById('filterToggleBtn');
         const adminSidebars = document.querySelectorAll('.admin-sidebar');
@@ -460,21 +460,21 @@ console.log('🔘 Botão de filtro:', {
     },
     
     forceShow() {
-        console.log('🔧 Forçando exibição dos filtros...');
+
         const sidebar = document.querySelector('.admin-sidebar');
         if (sidebar) {
             sidebar.style.display = 'block';
             sidebar.classList.add('active');
-            console.log('✅ Sidebar forçada a aparecer');
+
         }
     },
     
     testToggle() {
-        console.log('🔧 Testando toggle...');
+
         const btn = document.getElementById('filterToggleBtn');
         if (btn) {
             btn.click();
-            console.log('✅ Clique simulado');
+
         } else {
             console.error('❌ Botão não encontrado para teste');
         }

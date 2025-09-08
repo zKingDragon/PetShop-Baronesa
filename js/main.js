@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
           window.uiPermissionManager.init();
         }
         
-        console.log('Header carregado e inicializado');
+
       }
     })
     .catch(error => {
@@ -571,7 +571,7 @@ function fixHeaderLinks() {
   const pathPrefix = isInRoot ? 'html/' : '';
   const assetPrefix = isInRoot ? '' : '../';
   
-  console.log('🔗 Corrigindo links do header para:', isInRoot ? 'página raiz' : 'subpasta html');
+
   
   // Aguarda um pouco para garantir que o header foi totalmente carregado
   setTimeout(() => {
@@ -579,19 +579,19 @@ function fixHeaderLinks() {
     const homeLink = document.querySelector('.header-home-link');
     if (homeLink) {
       homeLink.href = isInRoot ? 'index.html' : '../index.html';
-      console.log('✅ Logo link:', homeLink.href);
+
     }
     
     // Atualiza imagem do logo
     const logoImg = document.querySelector('.header-logo-img');
     if (logoImg) {
       logoImg.src = assetPrefix + 'assets/images/gerais/iconeBaronesa.png';
-      console.log('✅ Logo img:', logoImg.src);
+
     }
     
     // Atualiza todos os links com data-page
     const headerLinks = document.querySelectorAll('.header-link[data-page]');
-    console.log('🔍 Links encontrados:', headerLinks.length);
+
     
     headerLinks.forEach((link, index) => {
       const page = link.getAttribute('data-page');
@@ -608,7 +608,7 @@ function fixHeaderLinks() {
           // Removido controle especial para promoções (não há mais página de promoções)
           const href = this.getAttribute('href');
           if (href && href !== '#') {
-            console.log('🔄 Navegando para:', href);
+
             window.location.href = href;
           } else {
             e.preventDefault();
@@ -616,11 +616,11 @@ function fixHeaderLinks() {
           }
         });
 
-        console.log(`✅ Link ${page} configurado:`, newHref);
+
       }
     });
     
-    console.log('✅ Todos os links do header foram corrigidos');
+
   }, 200);
 }
 

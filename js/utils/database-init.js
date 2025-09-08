@@ -93,12 +93,12 @@ async function initializeServicePricing() {
     const doc = await docRef.get();
     
     if (doc.exists) {
-      console.log('📋 Documento de preços já existe no Firestore');
-      console.log('Dados atuais:', doc.data());
+
+
       
       const overwrite = confirm('O documento já existe. Deseja sobrescrever com os dados padrão?');
       if (!overwrite) {
-        console.log('❌ Operação cancelada pelo usuário');
+
         return;
       }
     }
@@ -106,13 +106,13 @@ async function initializeServicePricing() {
     // Criar/Atualizar o documento
     await docRef.set(initialServicePricing);
     
-    console.log('✅ Estrutura de preços criada/atualizada com sucesso no Firestore!');
-    console.log('📊 Dados salvos:', initialServicePricing);
+
+
     
     // Verificar se foi salvo corretamente
     const verification = await docRef.get();
     if (verification.exists) {
-      console.log('✅ Verificação: Documento salvo corretamente');
+
       alert('✅ Estrutura de preços inicializada com sucesso no Firestore!');
     } else {
       throw new Error('Falha na verificação: documento não foi salvo');
@@ -137,11 +137,11 @@ async function checkCurrentPricing() {
     const doc = await db.collection('settings').doc('servicePricing').get();
     
     if (doc.exists) {
-      console.log('📋 Estrutura atual no Firestore:');
-      console.log(doc.data());
+
+
       return doc.data();
     } else {
-      console.log('📋 Nenhuma estrutura encontrada no Firestore');
+
       return null;
     }
   } catch (error) {
@@ -157,7 +157,7 @@ async function deleteServicePricing() {
   try {
     const confirm = prompt('Digite "DELETAR" para confirmar a exclusão da estrutura de preços:');
     if (confirm !== 'DELETAR') {
-      console.log('❌ Operação cancelada');
+
       return;
     }
 
@@ -168,7 +168,7 @@ async function deleteServicePricing() {
     const db = firebase.firestore();
     await db.collection('settings').doc('servicePricing').delete();
     
-    console.log('🗑️ Estrutura de preços deletada do Firestore');
+
     alert('🗑️ Estrutura deletada com sucesso');
     
   } catch (error) {
@@ -184,11 +184,143 @@ window.deleteServicePricing = deleteServicePricing;
 
 // Auto-inicialização quando o script é carregado (opcional)
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🔧 Script de inicialização de preços carregado');
-  console.log('💡 Funções disponíveis:');
-  console.log('   - initializeServicePricing() - Criar estrutura inicial');
-  console.log('   - checkCurrentPricing() - Verificar estrutura atual');
-  console.log('   - deleteServicePricing() - Deletar estrutura (cuidado!)');
+
+
+
+
+
 });
 
-console.log('📦 Módulo de inicialização de preços carregado');
+/**
+ * Verifica e adiciona campos faltantes 'BanhoTosa' no documento 'servicePricing'
+ * Não sobrescreve outros campos existentes.
+ */
+window.addMissingBanhoTosa = async function() {
+  try {
+    if (typeof firebase === 'undefined' || !firebase.firestore) {
+      alert('Firebase não está disponível nesta página.');
+      return;
+    }
+
+    const db = firebase.firestore();
+    const docRef = db.collection('settings').doc('servicePricing');
+    const snap = await docRef.get();
+
+    if (!snap.exists) {
+      alert('Documento servicePricing não encontrado. Você pode inicializá-lo primeiro.');
+      return;
+    }
+
+    const remote = snap.data().pricing || snap.data();
+    const updates = {};
+
+    // Verificar cães
+    const dogSizes = ['Pequeno','Medio','Grande','Gigante'];
+    dogSizes.forEach(size => {
+      const has = remote?.base?.Cao?.[size] && (remote.base.Cao[size].hasOwnProperty('BanhoTosa'));
+      if (!has) {
+        const defaultVal = initialServicePricing.pricing.base.Cao?.[size]?.BanhoTosa;
+        if (defaultVal !== undefined) {
+          updates[`pricing.base.Cao.${size}.BanhoTosa`] = defaultVal;
+        }
+      }
+    });
+
+    // Verificar gato único
+    const gatoHas = remote?.base?.Gato?.Unico && (remote.base.Gato.Unico.hasOwnProperty('BanhoTosa'));
+    if (!gatoHas) {
+      const defaultVal = initialServicePricing.pricing.base.Gato?.Unico?.BanhoTosa;
+      if (defaultVal !== undefined) {
+        updates[`pricing.base.Gato.Unico.BanhoTosa`] = defaultVal;
+      }
+    }
+
+    if (Object.keys(updates).length === 0) {
+      alert('Nenhum campo BanhoTosa faltando foi encontrado.');
+      return;
+    }
+
+    // Aplicar atualização parcial
+    await docRef.update(updates);
+    alert('Campos BanhoTosa adicionados com sucesso.');
+  } catch (error) {
+    console.error('Erro ao adicionar BanhoTosa:', error);
+    alert('Erro ao adicionar BanhoTosa: ' + (error.message || error));
+  }
+};
+
+/**
+ * Preenche explicitamente os valores padrão de 'BanhoTosa' que estejam ausentes
+ * Usa set(..., { merge: true }) para garantir que apenas campos faltantes sejam adicionados
+ */
+window.fillMissingBanhoTosaValues = async function() {
+  try {
+    if (typeof firebase === 'undefined' || !firebase.firestore) {
+      alert('Firebase não está disponível nesta página.');
+      return;
+    }
+
+    const db = firebase.firestore();
+    const docRef = db.collection('settings').doc('servicePricing');
+    const snap = await docRef.get();
+
+    if (!snap.exists) {
+      alert('Documento servicePricing não encontrado. Você pode inicializá-lo primeiro.');
+      return;
+    }
+
+    const remote = snap.data().pricing || snap.data();
+
+    const patch = { pricing: { base: { Cao: {}, Gato: { Unico: {} } } } };
+    let needUpdate = false;
+
+    const dogSizes = ['Pequeno','Medio','Grande','Gigante'];
+    dogSizes.forEach(size => {
+      const current = remote?.base?.Cao?.[size];
+      const hasValue = current && (current.BanhoTosa !== undefined && current.BanhoTosa !== null);
+      if (!hasValue) {
+        const defaultVal = initialServicePricing.pricing.base.Cao?.[size]?.BanhoTosa;
+        if (defaultVal !== undefined) {
+          patch.pricing.base.Cao[size] = { BanhoTosa: defaultVal };
+          needUpdate = true;
+        }
+      }
+    });
+
+    const gatoCurrent = remote?.base?.Gato?.Unico;
+    const gatoHas = gatoCurrent && (gatoCurrent.BanhoTosa !== undefined && gatoCurrent.BanhoTosa !== null);
+    if (!gatoHas) {
+      const defaultVal = initialServicePricing.pricing.base.Gato?.Unico?.BanhoTosa;
+      if (defaultVal !== undefined) {
+        patch.pricing.base.Gato.Unico = { BanhoTosa: defaultVal };
+        needUpdate = true;
+      }
+    }
+
+    if (!needUpdate) {
+      alert('Nenhum valor faltante de BanhoTosa encontrado.');
+      return;
+    }
+
+    // Aplicar patch com merge para garantir que apenas os campos adicionados sejam escritos
+    await docRef.set(patch, { merge: true });
+
+    // Verificar resultado
+    const verify = await docRef.get();
+    const newRemote = verify.data().pricing || verify.data();
+    let added = [];
+    dogSizes.forEach(size => {
+      const v = newRemote?.base?.Cao?.[size]?.BanhoTosa;
+      if (v !== undefined && v !== null) added.push(`Cao.${size}=${v}`);
+    });
+    const vg = newRemote?.base?.Gato?.Unico?.BanhoTosa;
+    if (vg !== undefined && vg !== null) added.push(`Gato.Unico=${vg}`);
+
+    alert('Atualização concluída. Campos adicionados/confirmados: ' + added.join(', '));
+  } catch (error) {
+    console.error('Erro ao preencher BanhoTosa:', error);
+    alert('Erro ao preencher BanhoTosa: ' + (error.message || error));
+  }
+};
+
+
