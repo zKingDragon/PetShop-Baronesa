@@ -60,13 +60,22 @@
                                                                     </div>
 
                                                                     <div class="form-group">
-                                                                        <label for="svcType">Serviço</label>
-                                                                        <select id="svcType" required>
+                                                                        <label for="svcType1">Serviço 1</label>
+                                                                        <select id="svcType1" required>
                                                                             <option value="">Selecione</option>
                                                                             <option value="Banho">Banho</option>
                                                                             <option value="TosaHigienica">Tosa Higiênica</option>
                                                                             <option value="TosaTotal">Tosa Total</option>
-                                                                            <option value="BanhoTosa">Banho e Tosa</option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label for="svcType2">Serviço 2</label>
+                                                                        <select id="svcType2">
+                                                                            <option value="">Nenhum</option>
+                                                                            <option value="Banho">Banho</option>
+                                                                            <option value="TosaHigienica">Tosa Higiênica</option>
+                                                                            <option value="TosaTotal">Tosa Total</option>
                                                                         </select>
                                                                     </div>
 
@@ -92,10 +101,6 @@
                                                                 </div>
 
                                                                 <div class="price-summary" id="svcSummary">
-                                                                    <div class="row">
-                                                                        <span>Preço base</span>
-                                                                        <strong id="svcBasePrice">-</strong>
-                                                                    </div>
                                                                     <ul id="svcAddonsList" class="addons-breakdown"></ul>
                                                                     <div class="row total">
                                                                         <span>Total estimado</span>
@@ -126,7 +131,7 @@
 
                             <div class="form-group">
                                 <label for="notes">Observações (opcional)</label>
-                                <textarea id="notes" name="notes" rows="3" placeholder="Alguma informação adicional sobre seu pet ou preferências..."></textarea>
+                                <textarea id="notes" name="notes" rows="3" placeholder="Alguma informação adicional sobre seu pet ou preferências..." ></textarea>
                             </div>
 
                             <button type="submit" class="btn-primary btn-block">Agendar via WhatsApp</button>

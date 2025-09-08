@@ -249,12 +249,12 @@ async function login(email, password) {
         
         return true
     } catch (error) {
-        console.error('Erro ao fazer login: Confira as informações inseridas ou entre usando o Google')
+        console.error('Erro ao fazer login: Confira as informações. ')
         if (loginError) {
-            loginError.textContent = "Erro ao fazer login: Confira as informações inseridas ou entre usando o Google "  || "Tente novamente."
+            loginError.textContent = "Erro ao fazer login: Confira as informações."  || "Tente novamente."
             loginError.style.display = "block"
         } else {
-            alert("Erro ao fazer login: Confira as informações inseridas ou entre usando o Google" || "Tente novamente.")
+            alert("Erro ao fazer login: Confira as informações inseridas." || "Tente novamente.")
         }
         return false
     }
@@ -410,50 +410,6 @@ async function getUserDisplayName() {
 }
 
 
-// Função para login com Google usando Firebase Auth
-async function loginWithGoogle() {
-    try {
-        // Garante que o Firebase foi inicializado
-        if (typeof initializeFirebase === 'function') {
-            await initializeFirebase()
-        }
-        
-        if (!firebase || !firebase.auth) {
-            throw new Error("Firebase não está disponível")
-        }
-
-        const auth = firebase.auth()
-        const provider = new firebase.auth.GoogleAuthProvider()
-
-        const result = await auth.signInWithPopup(provider)
-        
-        // Verificar tipo de usuário no banco de dados
-        const userType = await checkUserType(result.user.uid)
-
-        
-        // Salvar dados de autenticação
-        const authData = {
-            uid: result.user.uid,
-            email: result.user.email,
-            displayName: result.user.displayName,
-            type: userType
-        }
-        localStorage.setItem(AUTH_KEY, JSON.stringify(authData))
-        
-        // Redirecionar sempre para admin (apenas admins fazem login)
-        window.location.href = "admin.html"
-    } catch (error) {
-        console.error('Erro ao fazer login com Google:', error)
-        // Mostra mensagem de erro
-        if (loginError) {
-            loginError.textContent = "Erro ao entrar com Google, tente novamente."
-            loginError.style.display = "block"
-        } else {
-            alert("Erro ao entrar com Google, tente novamente.")
-        }
-    }
-}
-
 // Listener para mudanças no estado de autenticação do Firebase
 function setupAuthStateListener() {
     if (typeof firebase !== 'undefined' && firebase.auth) {
@@ -555,14 +511,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             })
         })
 
-        // Botão de login com Google
-        const googleLoginBtn = document.getElementById("googleLoginBtn")
-        if (googleLoginBtn) {
-            googleLoginBtn.addEventListener("click", async function (e) {
-                e.preventDefault()
-                await loginWithGoogle()
-            })
-        }
     } catch (error) {
         console.error('Erro na inicialização do sistema de autenticação:', error)
     }

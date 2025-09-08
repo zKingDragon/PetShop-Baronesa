@@ -67,7 +67,9 @@
     els.type = q('#svcPetType');
     els.sizeGroup = q('#svcDogSizeGroup');
     els.size = q('#svcDogSize');
-    els.service = q('#svcType');
+  // suporte a dois selects de serviço: svcType1 (obrigatório) e svcType2 (opcional)
+  els.service1 = q('#svcType1');
+  els.service2 = q('#svcType2');
     els.coat = q('#svcCoat');
 
     els.addons = qa('input[name="svcAddon"]');
@@ -85,23 +87,24 @@
   }
 
   function getSelection() {
-    const type = els.type.value || '';
-    const isDog = type === 'Cao';
-    const size = isDog ? (els.size.value || '') : 'Unico';
-    const service = els.service.value || '';
-    const coat = els.coat.value || '';
+  const type = els.type.value || '';
+  const isDog = type === 'Cao';
+  const size = isDog ? (els.size.value || '') : 'Unico';
+  const service1 = els.service1 ? (els.service1.value || '') : '';
+  const service2 = els.service2 ? (els.service2.value || '') : '';
+  const coat = els.coat.value || '';
 
-    const selectedAddons = els.addons.filter(a => a.checked).map(a => a.value);
+  const selectedAddons = els.addons.filter(a => a.checked).map(a => a.value);
 
-    return { type, size, service, coat, addons: selectedAddons };
+  return { type, size, service1, service2, coat, addons: selectedAddons };
   }
 
   function calcEstimate(sel) {
     if (!pricing) return { ok: false, message: 'Tabela de preços não carregada.' };
 
     // validações básicas
-    if (!sel.type || !sel.service) {
-      return { ok: false, message: 'Selecione tipo de pet e serviço.' };
+    if (!sel.type || (!sel.service1 && !sel.service2)) {
+      return { ok: false, message: 'Selecione tipo de pet e pelo menos um serviço.' };
     }
     if (sel.type === 'Cao' && !sel.size) {
       return { ok: false, message: 'Selecione o porte do cão.' };
@@ -109,15 +112,35 @@
 
     const baseTable = pricing.base[sel.type];
     const tier = baseTable && baseTable[sel.size];
-    const base = tier ? tier[sel.service] : null;
-    if (base == null) {
+    // calcular preço base para um ou dois serviços
+    let baseSum = 0;
+    const breakdownBases = [];
+
+    const computeServiceBase = (svc) => {
+      if (!svc) return null;
+      const v = tier ? tier[svc] : null;
+      return (v == null) ? null : v;
+    };
+
+    const base1 = computeServiceBase(sel.service1);
+    const base2 = computeServiceBase(sel.service2);
+
+    if (base1 == null && base2 == null) {
       return { ok: false, message: 'Combinação sem preço definido.' };
     }
 
-    // pelagem
-    let baseAdj = base;
-    if (sel.coat && pricing.coatMultipliers && pricing.coatMultipliers[sel.coat]) {
-      baseAdj = Math.round(base * pricing.coatMultipliers[sel.coat]);
+    // pelagem e soma
+    const coatMultiplier = (sel.coat && pricing.coatMultipliers && pricing.coatMultipliers[sel.coat]) ? pricing.coatMultipliers[sel.coat] : 1;
+
+    if (base1 != null) {
+      const adj1 = Math.round(base1 * coatMultiplier);
+      baseSum += adj1;
+      breakdownBases.push({ key: sel.service1, base: adj1 });
+    }
+    if (base2 != null) {
+      const adj2 = Math.round(base2 * coatMultiplier);
+      baseSum += adj2;
+      breakdownBases.push({ key: sel.service2, base: adj2 });
     }
 
     // adicionais
@@ -133,7 +156,7 @@
         if (typeof p === 'number') addPrice = p;
       }
       if (!addPrice && cfg.percentOfBase) {
-        addPrice = Math.max(baseAdj * cfg.percentOfBase, cfg.min || 0);
+        addPrice = Math.max(baseSum * cfg.percentOfBase, cfg.min || 0);
       }
       if (!addPrice && cfg.tieredByCoat && cfg.tieredByCoat[sel.coat]) {
         addPrice = cfg.tieredByCoat[sel.coat];
@@ -144,8 +167,8 @@
       }
     });
 
-    const total = baseAdj + addonsTotal;
-    return { ok: true, base: baseAdj, addons: breakdown, total };
+  const total = baseSum + addonsTotal;
+  return { ok: true, base: baseSum, addons: breakdown, total, bases: breakdownBases };
   }
 
   function render() {
@@ -165,9 +188,9 @@
       return;
     }
 
-    els.baseSpan.textContent = money(result.base);
+  els.baseSpan.textContent = money(result.base);
     els.totalSpan.textContent = money(result.total);
-    els.note.textContent = 'Valor estimado. A confirmação ocorre na loja.';
+    els.note.textContent = 'Valor estimado. A confirmação ocorre contatando a loja.';
 
     els.addonsList.innerHTML = '';
     result.addons.forEach(a => {
@@ -175,6 +198,21 @@
       li.textContent = `${a.label}: + ${money(a.price)}`;
       els.addonsList.appendChild(li);
     });
+
+    // mostrar detalhamento dos serviços (quando houver dois)
+    if (result.bases && result.bases.length) {
+      result.bases.forEach(b => {
+        const li = document.createElement('li');
+        const labelMap = {
+          Banho: 'Banho',
+          TosaHigienica: 'Tosa Higiênica',
+          TosaTotal: 'Tosa Total',
+          BanhoTosa: 'Banho e Tosa'
+        };
+        li.textContent = `${labelMap[b.key] || b.key}: ${money(b.base)}`;
+        els.addonsList.appendChild(li);
+      });
+    }
 
     setDisabled(els.submitBtn, false);
   }
@@ -195,10 +233,15 @@
     if (petTypeForm) lines.push(`Tipo informado no formulário: ${petTypeForm}`);
     if (dogSizeForm) lines.push(`Porte informado no formulário: ${dogSizeForm}`);
 
-    lines.push(`Tipo: ${sel.type || '-'}`);
-    if (sel.type === 'Cao') lines.push(`Porte: ${sel.size || '-'}`);
-    lines.push(`Serviço: ${sel.service || '-'}`);
-    if (sel.coat) lines.push(`Pelagem: ${sel.coat}`);
+  lines.push(`Tipo: ${sel.type || '-'}`);
+  if (sel.type === 'Cao') lines.push(`Porte: ${sel.size || '-'}`);
+  // Serviços selecionados
+  const svcList = [];
+  if (sel.service1) svcList.push(sel.service1);
+  if (sel.service2) svcList.push(sel.service2);
+  const svcLabelMap = { Banho: 'Banho', TosaHigienica: 'Tosa Higiênica', TosaTotal: 'Tosa Total', BanhoTosa: 'Banho e Tosa' };
+  lines.push(`Serviços: ${svcList.length ? svcList.map(s => svcLabelMap[s] || s).join(' + ') : '-'}`);
+  if (sel.coat) lines.push(`Pelagem: ${sel.coat}`);
     if (result.ok) {
       if (result.addons.length) {
         lines.push('Adicionais:');
@@ -214,7 +257,7 @@
   }
 
   function attachEvents() {
-    [els.type, els.size, els.service, els.coat].forEach(el => el && el.addEventListener('change', render));
+  [els.type, els.size, els.service1, els.service2, els.coat].forEach(el => el && el.addEventListener('change', render));
     els.addons.forEach(a => a.addEventListener('change', render));
 
     if (els.appointmentForm) {
