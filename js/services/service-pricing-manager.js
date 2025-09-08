@@ -111,10 +111,14 @@ class ServicePricingManager {
             services.forEach(service => {
                 const value = this.currentPricing.base?.Cao?.[size]?.[service];
                 if (value !== undefined) {
-                    const inputId = `cao-${size.toLowerCase()}-${service.toLowerCase().replace('tosa', 'tosa-').replace('higienica', 'higienica').replace('total', 'total').replace('banho-tosa', 'banho-tosa')}`;
+                    // FIX: Convert camelCase service name to kebab-case for the ID
+                    const serviceId = service.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+                    const inputId = `cao-${size.toLowerCase()}-${serviceId}`;
                     const input = document.getElementById(inputId);
                     if (input) {
                         input.value = value;
+                    } else {
+                        console.warn(`Input not found for ID: ${inputId}`);
                     }
                 }
             });
@@ -124,10 +128,14 @@ class ServicePricingManager {
         services.forEach(service => {
             const value = this.currentPricing.base?.Gato?.Unico?.[service];
             if (value !== undefined) {
-                const inputId = `gato-unico-${service.toLowerCase().replace('tosa', 'tosa-').replace('higienica', 'higienica').replace('total', 'total').replace('banho-tosa', 'banho-tosa')}`;
+                // FIX: Convert camelCase service name to kebab-case for the ID
+                const serviceId = service.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+                const inputId = `gato-unico-${serviceId}`;
                 const input = document.getElementById(inputId);
                 if (input) {
                     input.value = value;
+                } else {
+                    console.warn(`Input not found for ID: ${inputId}`);
                 }
             }
         });
