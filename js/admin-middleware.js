@@ -430,7 +430,7 @@ async isUserAdmin() {
         
         // Determine login page path
         const loginPath = window.location.pathname.includes('/html/') ? 
-            'admin-login.html' : 'html/admin-login.html';
+            'login.html' : 'html/login.html';
         
         // Show loading message
         this.showLoadingMessage('Redirecionando para login...');
@@ -994,12 +994,12 @@ async isUserAdmin() {
         try {
             await this.authService.logout();
             this.clearCache();
-            window.location.href = '/html/admin-login.html';
+            window.location.href = '/html/login.html';
         } catch (error) {
             console.error('Error logging out:', error);
             // Force logout even if there's an error
             this.clearCache();
-            window.location.href = '/html/admin-login.html';
+            window.location.href = '/html/login.html';
         }
     }
 }

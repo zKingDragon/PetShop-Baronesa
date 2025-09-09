@@ -9,7 +9,7 @@ Foi adicionada uma nova aba **"Serviços B&T"** no painel administrativo que per
 ### 1. Acessar o Painel Administrativo
 
 ```
-URL: http://localhost:5000/html/admin-login.html?access_key=PSB_LOGIN_2024_SecretKey789
+URL: http://localhost:5000/html/login.html?access_key=PSB_LOGIN_2024_SecretKey789
 ```
 
 ### 2. Navegar para a Aba "Serviços B&T"

@@ -221,6 +221,47 @@ class AuthService {
   }
 
   /**
+   * Creates a new admin user account and sets their role in Firestore
+   * @param {string} email - User email
+   * @param {string} password - User password
+   * @param {string} displayName - User display name
+   * @returns {Promise<firebase.auth.UserCredential>} - Created user credential
+   */
+  async createAdminUser(email, password, displayName) {
+    this._checkInitialized();
+
+    // Primeiro, cria o usuário no Firebase Auth
+    const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+
+    // Atualiza o perfil do usuário com o nome de exibição
+    await user.updateProfile({
+      displayName: displayName
+    });
+
+    // Agora, salva as informações do usuário no Firestore com a função de admin
+    // Certifique-se de que 'db' (instância do Firestore) está disponível globalmente
+    if (window.db) {
+      const userDocRef = window.db.collection('users').doc(user.uid);
+      await userDocRef.set({
+        uid: user.uid,
+        email: user.email,
+        name: displayName,
+        role: 'admin',
+        createdAt: new Date()
+      });
+    } else {
+      // Se o Firestore não estiver disponível, lança um erro para evitar um admin "incompleto"
+      console.error("Firestore (db) não está disponível. Não foi possível definir a função de admin.");
+      // Opcional: deletar o usuário recém-criado para evitar inconsistência
+      await user.delete();
+      throw new Error("Falha ao acessar o banco de dados para definir a função de admin.");
+    }
+
+    return userCredential;
+  }
+
+  /**
    * Requires admin authentication
    * @throws {Error} - If user is not admin
    */
