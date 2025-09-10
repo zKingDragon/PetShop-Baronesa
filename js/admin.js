@@ -478,6 +478,7 @@ async init() {
 
 
 
+
         this.renderProducts();
         this.updateProductsCount();
     } catch (error) {
@@ -550,6 +551,7 @@ async init() {
         this.setupProductCardListeners();
         
 
+
     } catch (error) {
         console.error('❌ Erro ao renderizar produtos:', error);
         this.elements.productsGrid.innerHTML = `
@@ -586,6 +588,11 @@ async init() {
           <img src="${imageUrl}" alt="${product.name}" loading="lazy">
           <div class="product-category">${product.category}</div>
           ${onSale ? `<div class="product-tag sale-tag">Promoção</div>` : ""}
+
+          <!-- Novo ícone de status -->
+          <div class="product-status ${product.ativo ? 'active' : 'inactive'}">
+            ${product.ativo ? 'Ativo' : 'Inativo'}
+          </div>
         </div>
         
         <div class="product-info">
@@ -1182,7 +1189,7 @@ async init() {
  */
 
 class AdminSlidesManager {
-    constructor() {
+  constructor() {
         this.slides = [];
         this.tempFileData = {};
         this.isLoading = false;
@@ -1191,7 +1198,7 @@ class AdminSlidesManager {
     }
 
     /**
-     * Initialize the slides manager
+     * Initialize the slide manager
      */
     async init() {
 
@@ -1689,95 +1696,350 @@ class AdminSlidesManager {
         }
     }
 
-/**
- * Reset file upload UI helper method
- */
-resetFileUploadUI(slideNumber) {
-    try {
-        const fileInput = document.getElementById(`slide${slideNumber}Image`);
-        const container = fileInput?.closest('.file-upload-container');
-        const fileInfo = container?.querySelector('.file-info');
+    /**
+     * Reset file upload UI helper method
+     */
+    resetFileUploadUI(slideNumber) {
+        try {
+            const fileInput = document.getElementById(`slide${slideNumber}Image`);
+            const container = fileInput?.closest('.file-upload-container');
+            const fileInfo = container?.querySelector('.file-info');
 
-        if (fileInput) {
-            fileInput.value = '';
-        }
-
-        if (container) {
-            container.classList.remove('has-file');
-        }
-
-        if (fileInfo) {
-            fileInfo.style.display = 'none';
-        }
-    } catch (error) {
-        console.warn(`⚠️ Erro ao resetar UI do upload para slide ${slideNumber}:`, error);
-    }
-}
-
-/**
- * Load slides data from localStorage or use defaults
- */
-loadSlidesData() {
-    try {
-        // Inicializar com dados padrão
-        this.slides = {
-            slide1: {
-                title: "Desconto especial na Ração Golden até domingo!",
-                image: "../assets/images/slides/caoPoteDesconto.jpg"
-            },
-            slide2: {
-                title: "Banho & Tosa com 20% de desconto às quartas-feiras!",
-                image: "../assets/images/slides/goldenBanhoDesconto.jpg"
-            },
-            slide3: {
-                title: "Novos acessórios para seu pet chegaram!",
-                image: "../assets/images/slides/gatoCasinha.png"
+            if (fileInput) {
+                fileInput.value = '';
             }
-        };
 
-        // Tentar carregar dados salvos
-        const savedSlides = localStorage.getItem('petshop_baronesa_slides');
-        if (savedSlides) {
-            const parsedSlides = JSON.parse(savedSlides);
-            this.slides = { ...this.slides, ...parsedSlides };
+            if (container) {
+                container.classList.remove('has-file');
+            }
 
-        }
-        
-        this.updatePreviewsFromData();
-    } catch (error) {
-        console.error('❌ Erro ao carregar dados dos slides:', error);
-        // Manter dados padrão em caso de erro
-    }
-}
-
-/**
- * Setup event listeners
- */
-setupEventListeners() {
-    // Save slide buttons
-    document.querySelectorAll('.save-slide').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const slideNumber = e.target.getAttribute('data-slide') || e.currentTarget.getAttribute('data-slide');
-
-            this.saveSlide(slideNumber);
-        });
-    });
-
-    // Title input changes (real-time preview)
-    for (let i = 1; i <= 3; i++) {
-        const titleInput = document.getElementById(`slide${i}Title`);
-        if (titleInput) {
-            titleInput.addEventListener('input', () => {
-                this.updateTitlePreview(i);
-                this.updateCharCount(i);
-            });
+            if (fileInfo) {
+                fileInfo.style.display = 'none';
+            }
+        } catch (error) {
+            console.warn(`⚠️ Erro ao resetar UI do upload para slide ${slideNumber}:`, error);
         }
     }
-}
 
     /**
-     * Convert file to base64
+     * Load slides data from localStorage or use defaults
      */
+    loadSlidesData() {
+        try {
+            // Inicializar com dados padrão
+            this.slides = {
+                slide1: {
+                    title: "Desconto especial na Ração Golden até domingo!",
+                    image: "../assets/images/slides/caoPoteDesconto.jpg"
+                },
+                slide2: {
+                    title: "Banho & Tosa com 20% de desconto às quartas-feiras!",
+                    image: "../assets/images/slides/goldenBanhoDesconto.jpg"
+                },
+                slide3: {
+                    title: "Novos acessórios para seu pet chegaram!",
+                    image: "../assets/images/slides/gatoCasinha.png"
+                }
+            };
+
+            // Tentar carregar dados salvos
+            const savedSlides = localStorage.getItem('petshop_baronesa_slides');
+            if (savedSlides) {
+                const parsedSlides = JSON.parse(savedSlides);
+                this.slides = { ...this.slides, ...parsedSlides };
+
+            }
+            
+            this.updatePreviewsFromData();
+        } catch (error) {
+            console.error('❌ Erro ao carregar dados dos slides:', error);
+            // Manter dados padrão em caso de erro
+        }
+    }
+
+    /**
+     * Create HTML for a slide card
+     * @param {Object} slide - The slide data
+     * @returns {string} - The HTML string for the slide card
+     */
+    createSlideCard(slide) {
+    const imageUrl = window.buildStorageUrl(slide.image);
+    const isActive = slide.isActive !== false; // Default to true if undefined
+
+    return `
+        <div class="slide-card" data-slide-id="${slide.id}">
+          <div class="slide-card-content">
+            <div class="slide-image-container">
+              <img src="${imageUrl}" alt="${slide.title}" class="slide-preview-image" loading="lazy">
+            </div>
+            <div class="slide-details">
+              <h3 class="slide-title">${slide.title}</h3>
+              <div class="slide-status">
+                <span class="status-label">Status:</span>
+                <span class="status-badge ${isActive ? 'active' : 'inactive'}">
+                  ${isActive ? "Ativo" : "Inativo"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+  }
+
+  /**
+   * Set up event listeners for slide cards
+   */
+  setupSlideCardListeners() {
+    // Edit buttons
+    document.querySelectorAll(".edit-slide-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const slideId = e.target.closest(".slide-card").dataset.slideId
+        this.openEditSlideModal(slideId)
+      })
+    })
+
+    // Delete buttons
+    document.querySelectorAll(".delete-slide-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const slideId = e.target.closest(".slide-card").dataset.slideId
+        this.openDeleteSlideModal(slideId)
+      })
+    })
+  }
+
+  /**
+   * Open edit slide modal
+   */
+  openEditSlideModal(slideId) {
+    const slide = this.slides[`slide${slideId}`];
+    if (!slide) {
+      return console.error("Slide not found:", slideId);
+    }
+
+    // Preencher o formulário com os dados do slide
+    document.getElementById("editSlideTitle").value = slide.title;
+    document.getElementById("editSlideImage").value = ""; // Limpar campo de arquivo
+    this.updateSlideImagePreview(slide.image); // Atualizar preview da imagem
+
+    // Armazenar ID do slide atual para edição
+    this.currentEditingSlideId = slideId;
+
+    // Abrir o modal
+    this.toggleModal("editSlideModal", true);
+  }
+
+  /**
+   * Open delete slide modal
+   */
+  openDeleteSlideModal(slideId) {
+    const slide = this.slides[`slide${slideId}`];
+    if (!slide) {
+      return console.error("Slide not found:", slideId);
+    }
+
+    // Definir nome do slide a ser excluído
+    document.getElementById("deleteSlideName").textContent = slide.title;
+
+    // Armazenar ID do slide atual para exclusão
+    this.currentDeletingSlideId = slideId;
+
+    // Abrir o modal de exclusão
+    this.toggleModal("deleteSlideModal", true);
+  }
+
+  /**
+   * Toggle modal visibility
+   */
+  toggleModal(modalId, isOpen) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    modal.style.display = isOpen ? "flex" : "none";
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+  }
+
+  /**
+   * Update slide image preview
+   */
+  updateSlideImagePreview(imageUrl) {
+    const preview = document.getElementById("slideImagePreview");
+    if (!preview) return;
+
+    if (imageUrl && imageUrl.trim()) {
+      preview.src = imageUrl;
+      preview.onerror = () => {
+        preview.src = "../assets/images/gerais/iconeBaronesa.png";
+      };
+    } else {
+      preview.src = "../assets/images/gerais/iconeBaronesa.png";
+    }
+  }
+
+  /**
+   * Save slide data
+   */
+  async saveSlide(slideNumber) {
+        const saveButton = document.querySelector(`.save-slide[data-slide="${slideNumber}"]`);
+        const slideCard = saveButton?.closest('.slide-card');
+        const titleInput = document.getElementById(`slide${slideNumber}Title`);
+
+        if (!saveButton) {
+            console.error(`❌ Botão de salvar não encontrado para slide ${slideNumber}`);
+            this.showToast(`Erro: Botão não encontrado`, 'error');
+            return;
+        }
+
+        if (!slideCard) {
+            console.error(`❌ Card do slide não encontrado para slide ${slideNumber}`);
+            this.showToast(`Erro: Card do slide não encontrado`, 'error');
+            return;
+        }
+
+        if (!titleInput) {
+            console.error(`❌ Input de título não encontrado para slide ${slideNumber}`);
+            this.showToast(`Erro: Campo de título não encontrado`, 'error');
+            return;
+        }
+
+        try {
+            // Disable button and show loading
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            slideCard.classList.add('slide-updating');
+
+            // Get form data
+            const title = titleInput.value.trim();
+
+            // Validate
+            if (!title) {
+                throw new Error('O título não pode estar vazio');
+            }
+
+            if (title.length > 100) {
+                throw new Error('O título não pode ter mais de 100 caracteres');
+            }
+
+            // Inicializar slides se não existir
+            if (!this.slides) {
+                this.slides = {};
+            }
+
+            // Inicializar slide específico se não existir
+            if (!this.slides[`slide${slideNumber}`]) {
+                this.slides[`slide${slideNumber}`] = {
+                    title: '',
+                    image: '../assets/images/gerais/iconeBaronesa.png',
+                    slideNumber: parseInt(slideNumber),
+                    order: parseInt(slideNumber)
+                };
+            }
+
+            // Prepare slide data
+            const slideData = {
+                title: title,
+                image: this.slides[`slide${slideNumber}`].image || '../assets/images/gerais/iconeBaronesa.png',
+                slideNumber: parseInt(slideNumber),
+                order: parseInt(slideNumber),
+                isActive: true
+            };
+
+            // Use new image if uploaded
+            if (this.tempFileData && this.tempFileData[`slide${slideNumber}`]) {
+                slideData.image = this.tempFileData[`slide${slideNumber}`];
+                delete this.tempFileData[`slide${slideNumber}`];
+            }
+
+            // Save to database using upsert
+            const slideId = await this.slidesService.upsertSlide(parseInt(slideNumber), slideData);
+            
+            // Update local slides data
+            this.slides[`slide${slideNumber}`] = {
+                ...slideData,
+                id: slideId
+            };
+
+            // Backup to localStorage
+            localStorage.setItem('petshop_baronesa_slides', JSON.stringify(this.slides));
+
+            // Update preview
+            this.updateTitlePreview(slideNumber);
+
+            // Show success
+            slideCard.classList.add('slide-success');
+            this.showToast(`Slide ${slideNumber} salvo no banco de dados!`, 'success');
+
+            // Reset file upload UI
+            this.resetFileUploadUI(slideNumber);
+
+
+
+        } catch (error) {
+            console.error(`❌ Erro ao salvar slide ${slideNumber}:`, error);
+            slideCard.classList.add('slide-error');
+            
+            // Fallback: save to localStorage only
+            try {
+                const slideData = {
+                    title: titleInput.value.trim(),
+                    image: this.slides[`slide${slideNumber}`]?.image || '../assets/images/gerais/iconeBaronesa.png'
+                };
+                
+                if (this.tempFileData && this.tempFileData[`slide${slideNumber}`]) {
+                    slideData.image = this.tempFileData[`slide${slideNumber}`];
+                    delete this.tempFileData[`slide${slideNumber}`];
+                }
+                
+                this.slides[`slide${slideNumber}`] = slideData;
+                localStorage.setItem('petshop_baronesa_slides', JSON.stringify(this.slides));
+                
+                this.showToast(`Slide ${slideNumber} salvo localmente (banco indisponível)`, 'warning');
+            } catch (fallbackError) {
+                this.showToast(error.message || `Erro ao salvar slide ${slideNumber}`, 'error');
+            }
+        } finally {
+            // Reset button
+            saveButton.disabled = false;
+            saveButton.innerHTML = `<i class="fas fa-save"></i> Salvar Slide ${slideNumber}`;
+            
+            // Remove animation classes
+            setTimeout(() => {
+                slideCard.classList.remove('slide-updating', 'slide-success', 'slide-error');
+            }, 2000);
+        }
+    }
+
+    /**
+     * Confirm slide deletion
+     */
+    async confirmDelete() {
+        try {
+            if (!this.currentDeletingSlideId) return
+
+            // Disable delete button
+            this.elements.confirmDeleteBtn.disabled = true
+            this.elements.confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...'
+
+            // Delete slide
+            await this.slidesService.deleteSlide(this.currentDeletingSlideId)
+
+            this.showToast("Slide excluído com sucesso!", "success")
+
+            // Reload slides from database and close modal
+            await this.loadSlidesData()
+            this.toggleModal("deleteSlideModal", false)
+        } catch (error) {
+            console.error("Error deleting slide:", error)
+            this.showToast("Erro ao excluir slide", "error")
+        } finally {
+            // Re-enable delete button
+            this.elements.confirmDeleteBtn.disabled = false
+            this.elements.confirmDeleteBtn.innerHTML = '<i class="fas fa-trash"></i> Excluir Slide'
+        }
+    }
+
+  /**
+   * Convert file to base64
+   */
 fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1843,7 +2105,7 @@ showToast(message, type = 'info') {
         try {
             // Verificações de segurança
             if (!window.SlidesService) {
-                throw new Error('SlidesService não está disponível. Verifique se o script foi carregado.');
+                throw new Error('SlidesService não está disponível. Verifique se o script slides.js foi carregado.');
             }
             
             if (!this.slidesService) {
@@ -1855,6 +2117,7 @@ showToast(message, type = 'info') {
                 throw new Error('Firebase database não está disponível. Verifique a configuração do Firebase.');
             }
             
+
 
             
             if (initBtn) {
@@ -1933,8 +2196,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // Export for global access
-window.AdminPanel = AdminPanel;
-window.AdminSlidesManager = AdminSlidesManager;// Export for global access
 window.AdminPanel = AdminPanel;
 window.AdminSlidesManager = AdminSlidesManager;
 

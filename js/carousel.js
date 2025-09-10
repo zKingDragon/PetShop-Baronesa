@@ -166,8 +166,10 @@ class Carousel {
       const slideElement = document.createElement('div');
       slideElement.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
       
+      const imageUrl = window.buildStorageUrl ? window.buildStorageUrl(slide.image) : slide.image;
+
       slideElement.innerHTML = `
-        <img src="${slide.image}" alt="${slide.title}" loading="lazy">
+        <img src="${imageUrl}" alt="${slide.title}" loading="lazy">
         <div class="carousel-caption">
           <div class="caption-box">
             <h2>${slide.title}</h2>
@@ -190,8 +192,6 @@ class Carousel {
     this.slides = this.carousel.querySelectorAll('.carousel-slide');
     this.indicators = indicatorsContainer ? indicatorsContainer.querySelectorAll('.indicator') : [];
     
-
-
     // Start carousel if we have slides
     if (this.autoPlay && this.slides.length > 0) {
       this.startAutoSlide();
@@ -246,13 +246,13 @@ class Carousel {
   }
 
   /**
-   * Start automatic slideshow
+   * Start auto-sliding
    */
   startAutoSlide() {
     if (this.interval) {
       clearInterval(this.interval);
     }
-  this.interval = setInterval(() => this.nextSlide(), this.autoPlayDelay);
+    this.interval = setInterval(() => this.nextSlide(), this.autoPlayDelay);
   }
 
   /**
