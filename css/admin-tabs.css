@@ -10,10 +10,14 @@
     padding: 0.5rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
+    /* Permitir que os botões quebrem em várias linhas no mobile */
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .tab-button {
-    flex: 1;
+    /* permitir encolher e crescer; definir base para evitar overflow no mobile */
+    flex: 1 1 120px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -27,6 +31,9 @@
     color: #6c757d;
     cursor: pointer;
     transition: all 0.3s ease;
+    min-width: 0; /* permite que o conteúdo encolha corretamente */
+    -webkit-appearance: none; /* remove estilo padrão para elementos <button> no mobile */
+    appearance: none;
 }
 
 .tab-button:hover {
@@ -356,6 +363,31 @@
     .services-actions button {
         width: 100%;
         max-width: 300px;
+    }
+
+    .tab-nav {
+        padding: 0.25rem;
+    }
+
+    .tab-button {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.95rem;
+        gap: 0.4rem;
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    /* For very small screens, make icons smaller and allow two rows */
+    @media (max-width: 420px) {
+        .tab-button {
+            padding: 0.5rem 0.6rem;
+            font-size: 0.9rem;
+            gap: 0.35rem;
+        }
+
+        .tab-button i {
+            font-size: 1rem;
+        }
     }
 }
 
@@ -946,4 +978,18 @@
     .slides-actions .btn-primary {
         justify-content: center;
     }
+}
+
+.savePrices {
+    background: #4CAF50;
+    color: white;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.savePrices:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }

@@ -616,6 +616,12 @@ img {
   align-items: flex-end;
 }
 
+@media (max-width: 770px) {
+  .footer-column-social {
+    align-items: flex-start;
+  }
+}
+
 .address {
   display: flex;
   gap: 0.75rem;

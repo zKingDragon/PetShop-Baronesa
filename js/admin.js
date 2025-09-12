@@ -591,7 +591,7 @@ async init() {
 
           <!-- Novo ícone de status -->
           <div class="product-status ${product.ativo ? 'active' : 'inactive'}">
-            ${product.ativo ? 'Ativo' : 'Inativo'}
+            ${product.ativo ? 'Ativo' : ''}
           </div>
         </div>
         
@@ -1777,7 +1777,6 @@ class AdminSlidesManager {
               <div class="slide-status">
                 <span class="status-label">Status:</span>
                 <span class="status-badge ${isActive ? 'active' : 'inactive'}">
-                  ${isActive ? "Ativo" : "Inativo"}
                 </span>
               </div>
             </div>
