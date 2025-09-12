@@ -120,10 +120,10 @@
                     <h4 style="margin-top: 0; margin-bottom: 1rem;">
                         <i class="fas fa-link"></i> Links Rápidos
                     </h4>
-                    <ul class="quick-links">
-                        <li><a href="#" class="header-link" data-page="catalogo"><i class="fas fa-box"></i> Catálogo</a></li>
-                        <li><a href="#" class="header-link" data-page="banho-tosa"><i class="fas fa-bath"></i> Banho & Tosa</a></li>
-                        <li><a href="#" class="header-link" data-page="carrinho"><i class="fas fa-shopping-cart"></i> Carrinho</a></li>
+                        <ul class="quick-links">
+                        <li><a href="/html/catalogo.html"><i class="fas fa-box"></i> Catálogo</a></li>
+                        <li><a href="/html/banho-tosa.html"><i class="fas fa-bath"></i> Banho & Tosa</a></li>
+                        <li><a href="/html/carrinho.html"><i class="fas fa-shopping-cart"></i> Carrinho</a></li>
                     </ul>
                 </div>
 
@@ -152,64 +152,3 @@
             </div>
         </div>
     </footer>
-
-    <script>
-// Script para ajustar caminhos dinamicamente após carregamento do header
-(function() {
-    'use strict';
-    
-    // Detecta se estamos na raiz ou em subpasta
-    const currentPath = window.location.pathname;
-    const isInRoot = !currentPath.includes('/html/');
-    const pathPrefix = isInRoot ? 'html/' : '';
-    const assetPrefix = isInRoot ? '' : '../';
-    
-
-    
-    // Função para atualizar links imediatamente
-    function updateHeaderLinks() {
-        // Atualiza logo
-        const homeLink = document.querySelector('.header-home-link');
-        if (homeLink) {
-            homeLink.href = isInRoot ? 'index.html' : '../index.html';
-
-        }
-        
-        // Atualiza imagem do logo
-        const logoImg = document.querySelector('.header-logo-img');
-        if (logoImg) {
-            logoImg.src = assetPrefix + 'assets/images/gerais/iconeBaronesa.png';
-
-        }
-        
-        // Configura todos os links com data-page usando event listeners
-        const headerLinks = document.querySelectorAll('.header-link[data-page]');
-
-        
-        headerLinks.forEach(link => {
-            const page = link.getAttribute('data-page');
-            if (page) {
-                // Remove event listeners antigos
-                link.removeAttribute('href');
-                
-                // Adiciona novo event listener
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetUrl = pathPrefix + page + '.html';
-
-                    window.location.href = targetUrl;
-                });
-                
-                // Adiciona cursor pointer
-                link.style.cursor = 'pointer';
-                
-
-            }
-        });
-    }
-    
-
-    
-
-})();
-</script>
