@@ -152,3 +152,25 @@
             </div>
         </div>
     </footer>
+    
+<script>
+// Ajusta links do footer para funcionar tanto a partir da raiz quanto do diretório /html/
+(function() {
+    'use strict';
+    const currentPath = window.location.pathname;
+    const isInRoot = !currentPath.includes('/html/');
+    const pathPrefix = isInRoot ? 'html/' : '';
+
+    // Atualiza os links rápidos no footer
+    document.querySelectorAll('footer .quick-links a').forEach(function(a) {
+        const href = a.getAttribute('href') || '';
+        // Não modificar links externos
+        if (/^https?:\/\//i.test(href)) return;
+
+        // Normaliza o nome da página: remove leading slashes, possível 'html/' e '.html'
+        let name = href.replace(/^\/+/, '').replace(/^html\//, '').replace(/\.html$/i, '');
+        if (!name) return;
+        a.setAttribute('href', pathPrefix + name + '.html');
+    });
+})();
+</script>
