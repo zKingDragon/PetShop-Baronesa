@@ -127,7 +127,7 @@ class Carousel {
       {
         id: 'default-1',
         title: 'Banho e Tosa Profissional',
-        image: 'assets/images/slides/banhoeETosa.jpg',
+        image: 'assets/images/slides/goldenBanhoDesconto.jpg',
         slideNumber: 1
       },
       {
