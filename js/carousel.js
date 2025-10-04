@@ -96,6 +96,13 @@ class Carousel {
         slidesData = this.getDefaultSlides();
       }
 
+      // Override images with static ones
+      const staticImages = this.getStaticImages();
+      slidesData = slidesData.map(slide => ({
+        ...slide,
+        image: staticImages[slide.slideNumber] || slide.image
+      }));
+
       // Render slides
       this.renderSlides(slidesData);
       
@@ -146,6 +153,17 @@ class Carousel {
   }
 
   /**
+   * Get static images mapping
+   */
+  getStaticImages() {
+    return {
+      1: 'assets/images/slides/goldenBanhoDesconto.jpg',
+      2: 'assets/images/slides/caoPoteDesconto.jpg',
+      3: 'assets/images/slides/gatoCasinha.png'
+    };
+  }
+
+  /**
    * Render slides dynamically
    */
   renderSlides(slidesData) {
@@ -166,7 +184,8 @@ class Carousel {
       const slideElement = document.createElement('div');
       slideElement.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
       
-      const imageUrl = window.buildStorageUrl ? window.buildStorageUrl(slide.image) : slide.image;
+      // Use image directly without storage URL conversion (static local images)
+      const imageUrl = slide.image;
 
       slideElement.innerHTML = `
         <img src="${imageUrl}" alt="${slide.title}" loading="lazy">
